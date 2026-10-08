@@ -207,6 +207,7 @@
       .wrap { padding: 14px; }
       .grid { grid-template-columns: 1fr; }
       .panel { padding: 14px; }
+
       .item {
         align-items: flex-start;
         flex-direction: column;
@@ -223,6 +224,7 @@
       <p class="muted" style="margin:0 0 6px">
         <a href="tutor.html">← Volver a mis cursos</a>
       </p>
+
       <h1 id="courseName">Cargando curso…</h1>
       <p class="muted" id="courseDesc"></p>
     </div>
@@ -238,9 +240,11 @@
     <button class="tab active" data-tab="contenido">
       <i class="fa-solid fa-book"></i> Contenido
     </button>
+
     <button class="tab" data-tab="estudiantes">
       <i class="fa-solid fa-users"></i> Estudiantes
     </button>
+
     <button class="tab" data-tab="notas">
       <i class="fa-solid fa-clipboard-check"></i> Calificaciones
     </button>
@@ -271,6 +275,7 @@
               <select id="parentTopic">
                 <option value="">Tema principal</option>
               </select>
+
               <small class="small">
                 Déjalo vacío para crear un tema principal.
               </small>
@@ -282,6 +287,7 @@
 
         <div class="box">
           <h3><i class="fa-solid fa-cloud"></i> Archivos de Google Drive</h3>
+
           <p class="muted">
             Los archivos grandes continúan guardándose en el Drive institucional.
             Utiliza el flujo de Drive existente para subirlos. Aquí puedes
@@ -302,6 +308,7 @@
     <div class="grid">
       <div class="box">
         <h3>Inscribir estudiante</h3>
+
         <p class="muted">
           Busca por nombre, apellido o correo. Solo se muestran cuentas
           activas con rol de estudiante.
@@ -312,6 +319,7 @@
             <label for="studentSearch">Buscar estudiante</label>
             <input id="studentSearch" placeholder="Nombre o correo" required>
           </div>
+
           <button class="btn" type="submit">Buscar</button>
         </form>
 
@@ -323,6 +331,7 @@
           Estudiantes inscritos
           <span class="pill" id="studentCount">0</span>
         </h3>
+
         <div id="enrolled" class="list">Cargando estudiantes…</div>
       </div>
     </div>
@@ -412,6 +421,12 @@ let topics = [];
 let enrolled = [];
 let activities = [];
 
+/*
+ * Se conserva la clave pública (anon key) del proyecto.
+ * Nunca coloques aquí la clave service_role.
+ */
+let anonKey = null;
+
 const STUDENTS_FN_URL =
   "https://zrascvakpwiwzqzliyuq.supabase.co/functions/v1/course-students";
 
@@ -462,9 +477,11 @@ async function init() {
       );
     }
 
+    anonKey = cfg.supabase.anonKey;
+
     sb = window.supabase.createClient(
       cfg.supabase.url,
-      cfg.supabase.anonKey
+      anonKey
     );
 
     const { data: sessionData, error: sessionError } =
@@ -563,6 +580,9 @@ async function cargarTodo() {
       cargarInscritos(),
       cargarActividades()
     ]);
+  } catch (error) {
+    console.error("Error actualizando el curso:", error);
+    show(error.message || "No se pudo actualizar el curso.", true);
   } finally {
     button.disabled = false;
   }
@@ -734,10 +754,7 @@ async function borrarTema(id) {
   );
 
   if (hasChildren) {
-    show(
-      "Primero elimina los subtemas de este tema.",
-      true
-    );
+    show("Primero elimina los subtemas de este tema.", true);
     return;
   }
 
@@ -757,15 +774,17 @@ async function borrarTema(id) {
 }
 
 /* =========================================================
-   ESTUDIANTES: LLAMADA CORREGIDA A LA EDGE FUNCTION
+   ESTUDIANTES: EDGE FUNCTION CORREGIDA
 ========================================================= */
 
 async function callStudents(action, extra = {}) {
-  if (!sb || !courseId) {
-    throw new Error("No se ha inicializado el curso.");
+  if (!sb || !courseId || !anonKey) {
+    throw new Error(
+      "No se ha inicializado el curso. Regresa al panel y vuelve a abrirlo."
+    );
   }
 
-  // Obtener una sesión actual antes de cada solicitud.
+  // Recuperar la sesión actual antes de cada solicitud.
   const { data: sessionData, error: sessionError } =
     await sb.auth.getSession();
 
@@ -791,23 +810,32 @@ async function callStudents(action, extra = {}) {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${currentSession.access_token}`,
-        "apikey": sb.supabaseKey
+        "apikey": anonKey
       },
       body: JSON.stringify({
-        action,
-        cursoId,
+        action: action,
+
+        // CORRECCIÓN: la variable declarada es courseId.
+        // La Edge Function espera recibirla con el nombre cursoId.
+        cursoId: courseId,
+
         ...extra
       })
     });
-  } 
-catch (error) {
-  console.error("Error real al conectar con course-students:", error);
-  throw new Error(
-    "No se pudo conectar con course-students. " +
-    "Revisa F12 > Network y la solicitud OPTIONS/POST. " +
-    "Detalle: " + (error instanceof Error ? error.message : String(error))
-  );
-}
+
+  } catch (error) {
+    console.error(
+      "Error real al conectar con course-students:",
+      error
+    );
+
+    throw new Error(
+      "No se pudo conectar con course-students. " +
+      "Comprueba la URL, el despliegue de la función y CORS. " +
+      "Detalle: " +
+      (error instanceof Error ? error.message : String(error))
+    );
+  }
 
   const responseText = await response.text();
   let result = {};
@@ -910,11 +938,10 @@ document.getElementById("searchForm").addEventListener(
       '<p class="muted">Buscando estudiantes…</p>';
 
     try {
-      // Actualizar la matrícula antes de filtrar resultados.
       await cargarInscritos();
 
       const result = await callStudents("search", {
-        query
+        query: query
       });
 
       const enrolledIds = new Set(
@@ -960,7 +987,7 @@ document.getElementById("searchForm").addEventListener(
 );
 
 /* =========================================================
-   MATRICULAR Y RETIRAR
+   MATRICULAR Y RETIRAR ESTUDIANTES
 ========================================================= */
 
 async function inscribir(studentId) {
@@ -1245,7 +1272,6 @@ async function seleccionarActividad(activityId) {
           return;
         }
 
-        // Actualizar la información guardada sin perder la actividad.
         show("Nota guardada correctamente.");
       });
     });
