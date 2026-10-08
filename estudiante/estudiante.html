@@ -1,0 +1,2514 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aula Virtual | Estudiante</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --primary:#1d4ed8;
+  --primary2:#2563eb;
+  --navy:#0f172a;
+  --bg:#f5f7fb;
+  --card:#fff;
+  --text:#172033;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --success:#15803d;
+  --warning:#b45309;
+  --danger:#dc2626;
+  --shadow:0 10px 30px rgba(15,23,42,.07)
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text)
+}
+
+button,input{font:inherit}
+
+.hidden{
+  display:none!important
+}
+
+/* =========================
+   CAMBIO DE CONTRASEÑA
+========================= */
+
+.password-screen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:
+    radial-gradient(circle at top right,rgba(37,99,235,.15),transparent 35%),
+    linear-gradient(135deg,#eff6ff,#f8fafc);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.password-card{
+  width:100%;
+  max-width:470px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:34px;
+  box-shadow:0 20px 60px rgba(15,23,42,.12);
+}
+
+.password-logo{
+  width:64px;
+  height:64px;
+  margin:0 auto 18px;
+  border-radius:18px;
+  background:#eff6ff;
+  color:var(--primary2);
+  display:grid;
+  place-items:center;
+  font-size:28px;
+}
+
+.password-card h1{
+  text-align:center;
+  margin:0 0 8px;
+  font-size:25px;
+}
+
+.password-card .subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+  margin:0 0 25px;
+}
+
+.password-user{
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:20px;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.password-user strong{
+  display:block;
+  color:var(--text);
+  font-size:14px;
+  margin-top:3px;
+}
+
+.password-field{
+  margin-bottom:16px;
+}
+
+.password-field label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.password-input{
+  position:relative;
+}
+
+.password-input input{
+  width:100%;
+  padding:13px 45px 13px 13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:#f8fafc;
+  outline:none;
+  transition:.2s;
+}
+
+.password-input input:focus{
+  border-color:var(--primary2);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.toggle-password{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  border:0;
+  background:none;
+  color:#64748b;
+  cursor:pointer;
+}
+
+.password-requirements{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  padding:13px 15px;
+  margin:18px 0;
+  font-size:12px;
+  color:#1e40af;
+}
+
+.password-requirements div{
+  margin:4px 0;
+}
+
+.password-message{
+  display:none;
+  padding:12px 14px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.password-message.error{
+  display:block;
+  background:#fef2f2;
+  color:#991b1b;
+  border:1px solid #fecaca;
+}
+
+.password-message.success{
+  display:block;
+  background:#f0fdf4;
+  color:#166534;
+  border:1px solid #bbf7d0;
+}
+
+.password-submit{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:13px 16px;
+  background:var(--primary2);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.password-submit:hover{
+  background:#1d4ed8;
+}
+
+.password-submit:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.password-logout{
+  width:100%;
+  border:0;
+  background:none;
+  color:#64748b;
+  padding:12px;
+  margin-top:8px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.password-logout:hover{
+  color:#1d4ed8;
+}
+
+/* =========================
+   AULA VIRTUAL
+========================= */
+
+.layout{
+  min-height:100vh;
+  display:flex
+}
+
+.sidebar{
+  width:270px;
+  background:linear-gradient(180deg,#0b1730,#111827);
+  color:#fff;
+  padding:20px 14px;
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:10
+}
+
+.brand{
+  padding:5px 10px 25px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  margin-bottom:18px
+}
+
+.brand-logo{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  color:#1746a2;
+  font-size:23px;
+  overflow:hidden
+}
+
+.brand-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:none
+}
+
+.brand-row{
+  display:flex;
+  gap:12px;
+  align-items:center
+}
+
+.brand-name{
+  font-weight:800;
+  font-size:16px;
+  line-height:1.15
+}
+
+.brand-sub{
+  font-size:11px;
+  color:#94a3b8;
+  margin-top:4px
+}
+
+.nav a{
+  display:flex;
+  gap:13px;
+  align-items:center;
+  padding:12px 14px;
+  margin:5px 0;
+  border-radius:11px;
+  color:#cbd5e1;
+  text-decoration:none;
+  transition:.2s
+}
+
+.nav a:hover,
+.nav a.active{
+  background:#1e3a66;
+  color:#fff
+}
+
+.nav i{
+  width:20px;
+  text-align:center
+}
+
+.nav-title{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:#64748b;
+  padding:16px 14px 7px
+}
+
+.sidebar-footer{
+  position:absolute;
+  bottom:18px;
+  left:14px;
+  right:14px
+}
+
+.logout{
+  width:100%;
+  background:rgba(255,255,255,.07);
+  color:#cbd5e1;
+  border:0
+}
+
+.logout:hover{
+  background:rgba(255,255,255,.13)
+}
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  padding:24px 32px
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:26px
+}
+
+.welcome h1{
+  margin:0 0 6px;
+  font-size:28px
+}
+
+.muted{
+  color:var(--muted)
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:12px;
+  color:#475569;
+  cursor:pointer;
+  position:relative
+}
+
+.dot{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#ef4444;
+  right:8px;
+  top:7px
+}
+
+.profile-mini{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:6px 10px 6px 7px;
+  border-radius:14px;
+  cursor:pointer
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-weight:800;
+  overflow:hidden
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none
+}
+
+.mini-name{
+  font-weight:750;
+  font-size:14px
+}
+
+.mini-role{
+  font-size:11px;
+  color:var(--muted)
+}
+
+.hero{
+  background:linear-gradient(120deg,#123b83,#2563eb 65%,#60a5fa);
+  color:#fff;
+  border-radius:20px;
+  padding:25px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  right:-80px;
+  top:-100px;
+  background:rgba(255,255,255,.09)
+}
+
+.hero h2{
+  margin:0 0 7px;
+  font-size:24px
+}
+
+.hero p{
+  margin:0;
+  color:#dbeafe
+}
+
+.hero-badge{
+  position:relative;
+  z-index:1;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);
+  padding:12px 16px;
+  border-radius:14px;
+  text-align:center
+}
+
+.hero-badge strong{
+  font-size:22px;
+  display:block
+}
+
+.hero-badge span{
+  font-size:11px;
+  color:#dbeafe
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-top:20px
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:19px;
+  box-shadow:0 5px 18px rgba(15,23,42,.035)
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+
+.stat strong{
+  font-size:27px;
+  display:block;
+  margin-top:6px
+}
+
+.stat-icon{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  background:#eff6ff;
+  color:var(--primary2);
+  display:grid;
+  place-items:center;
+  font-size:18px
+}
+
+.section{
+  margin-top:24px
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:13px
+}
+
+.section h2{
+  margin:0;
+  font-size:19px
+}
+
+.link-btn{
+  border:0;
+  background:none;
+  color:var(--primary2);
+  font-weight:700;
+  cursor:pointer
+}
+
+.two-col{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:18px
+}
+
+.course-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px
+}
+
+.course{
+  padding:0;
+  overflow:hidden
+}
+
+.course-cover{
+  height:92px;
+  background:linear-gradient(120deg,#1e3a8a,#60a5fa);
+  padding:16px;
+  color:#fff
+}
+
+.course-body{
+  padding:16px
+}
+
+.course h3{
+  margin:0 0 7px;
+  font-size:16px
+}
+
+.course small{
+  color:var(--muted)
+}
+
+.empty{
+  text-align:center;
+  padding:30px 18px;
+  color:var(--muted)
+}
+
+.empty i{
+  font-size:29px;
+  color:#94a3b8;
+  margin-bottom:8px
+}
+
+.activity{
+  display:flex;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid var(--border)
+}
+
+.activity:last-child{
+  border-bottom:0
+}
+
+.activity-icon{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:#eff6ff;
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  flex:none
+}
+
+.activity h4{
+  margin:0 0 4px;
+  font-size:14px
+}
+
+.activity small{
+  color:var(--muted)
+}
+
+.storage{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+
+.drive-card{
+  display:flex;
+  gap:13px;
+  align-items:center;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff
+}
+
+.drive-icon{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:#eef2ff;
+  color:#4338ca;
+  display:grid;
+  place-items:center
+}
+
+.drive-card h4{
+  margin:0 0 4px
+}
+
+.drive-card p{
+  margin:0;
+  font-size:12px;
+  color:var(--muted)
+}
+
+.profile-panel{
+  display:none
+}
+
+.profile-panel.show{
+  display:block
+}
+
+.profile-head{
+  display:flex;
+  align-items:center;
+  gap:18px
+}
+
+.big-avatar{
+  width:94px;
+  height:94px;
+  border-radius:50%;
+  background:#dbeafe;
+  color:#1d4ed8;
+  display:grid;
+  place-items:center;
+  font-size:34px;
+  overflow:hidden;
+  border:4px solid #fff;
+  box-shadow:0 4px 18px rgba(15,23,42,.12)
+}
+
+.big-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none
+}
+
+.photo-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px
+}
+
+.btn-primary{
+  background:var(--primary2);
+  color:#fff
+}
+
+.btn-secondary{
+  background:#e2e8f0;
+  color:#172033
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-top:20px
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:750;
+  margin-bottom:6px
+}
+
+.field input{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#f8fafc
+}
+
+.field input[readonly]{
+  color:#64748b
+}
+
+.info{
+  padding:13px 15px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  color:#1e40af;
+  font-size:13px;
+  margin-top:18px
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:var(--bg);
+  z-index:50
+}
+
+.spinner{
+  width:42px;
+  height:42px;
+  border:4px solid #dbeafe;
+  border-top-color:var(--primary2);
+  border-radius:50%;
+  animation:spin .8s linear infinite
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.error{
+  max-width:500px;
+  margin:80px auto;
+  background:#fff;
+  padding:28px;
+  border-radius:16px;
+  border:1px solid #fecaca;
+  text-align:center
+}
+
+@media(max-width:1100px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+}
+
+@media(max-width:800px){
+  .sidebar{width:74px}
+  .brand-name,.brand-sub,.nav span,.nav-title{display:none}
+  .brand{padding:5px 0 25px}
+  .brand-row{justify-content:center}
+  .main{
+    margin-left:74px;
+    width:calc(100% - 74px);
+    padding:20px
+  }
+  .course-grid,.storage{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  .sidebar{display:none}
+  .main{
+    margin:0;
+    width:100%;
+    padding:16px
+  }
+  .topbar{
+    align-items:flex-start;
+    gap:12px;
+    flex-direction:column
+  }
+  .grid,.form-grid{grid-template-columns:1fr}
+  .hero{
+    align-items:flex-start;
+    gap:18px;
+    flex-direction:column
+  }
+  .top-actions{
+    width:100%;
+    justify-content:flex-end
+  }
+  .mini-name{display:none}
+
+  .password-card{
+    padding:25px 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     PANTALLA OBLIGATORIA DE CAMBIO DE PASSWORD
+========================================= -->
+
+<div id="passwordScreen" class="password-screen hidden">
+
+  <div class="password-card">
+
+    <div class="password-logo">
+      <i class="fa-solid fa-lock"></i>
+    </div>
+
+    <h1>Actualiza tu contraseña</h1>
+
+    <p class="subtitle">
+      Por seguridad, debes cambiar tu contraseña temporal antes de ingresar al Aula Virtual.
+    </p>
+
+    <div class="password-user">
+      Cuenta
+      <strong id="passwordUserEmail">Cargando...</strong>
+    </div>
+
+    <div id="passwordMessage" class="password-message"></div>
+
+    <form id="changePasswordForm">
+
+      <div class="password-field">
+        <label for="currentPassword">
+          Contraseña actual
+        </label>
+
+        <div class="password-input">
+          <input
+            id="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Escribe tu contraseña actual"
+            required
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            onclick="togglePassword('currentPassword',this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="password-field">
+        <label for="newPassword">
+          Nueva contraseña
+        </label>
+
+        <div class="password-input">
+          <input
+            id="newPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Escribe tu nueva contraseña"
+            required
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            onclick="togglePassword('newPassword',this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="password-field">
+        <label for="repeatPassword">
+          Repetir nueva contraseña
+        </label>
+
+        <div class="password-input">
+          <input
+            id="repeatPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Repite tu nueva contraseña"
+            required
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            onclick="togglePassword('repeatPassword',this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="password-requirements">
+        <div>
+          <i class="fa-solid fa-circle-check"></i>
+          La nueva contraseña debe tener al menos 8 caracteres.
+        </div>
+
+        <div>
+          <i class="fa-solid fa-circle-check"></i>
+          Las dos nuevas contraseñas deben coincidir.
+        </div>
+
+        <div>
+          <i class="fa-solid fa-circle-check"></i>
+          No utilices nuevamente la contraseña temporal.
+        </div>
+      </div>
+
+      <button
+        id="changePasswordButton"
+        type="submit"
+        class="password-submit"
+      >
+        <i class="fa-solid fa-key"></i>
+        Cambiar contraseña
+      </button>
+
+    </form>
+
+    <button
+      type="button"
+      class="password-logout"
+      onclick="cerrarSesion()"
+    >
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Cerrar sesión
+    </button>
+
+  </div>
+</div>
+
+
+<!-- =========================================
+     CARGANDO
+========================================= -->
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+</div>
+
+
+<!-- =========================================
+     ERROR
+========================================= -->
+
+<div id="errorBox" class="error hidden">
+  <h2>Acceso denegado</h2>
+  <p>No tienes permisos para esta pantalla.</p>
+
+  <a
+    class="btn btn-primary"
+    href="../index.html"
+  >
+    Volver al inicio
+  </a>
+</div>
+
+
+<!-- =========================================
+     AULA VIRTUAL
+========================================= -->
+
+<div id="aulaLayout" class="layout">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-row">
+
+        <div class="brand-logo">
+
+          <img
+            id="fundacionLogo"
+            alt="Fundación Academia Forum"
+          >
+
+          <i class="fa-solid fa-graduation-cap"></i>
+
+        </div>
+
+        <div>
+
+          <div class="brand-name">
+            Fundación Academia Forum
+          </div>
+
+          <div class="brand-sub">
+            AULA VIRTUAL
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <nav class="nav">
+
+      <div class="nav-title">
+        Principal
+      </div>
+
+      <a
+        class="active"
+        href="#inicio"
+      >
+        <i class="fa-solid fa-house"></i>
+        <span>Inicio</span>
+      </a>
+
+      <a href="#cursos">
+        <i class="fa-solid fa-book-open"></i>
+        <span>Mis cursos</span>
+      </a>
+
+      <a href="#actividades">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Actividades</span>
+      </a>
+
+      <a href="#calificaciones">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Calificaciones</span>
+      </a>
+
+      <div class="nav-title">
+        Mi cuenta
+      </div>
+
+      <a
+        href="#perfil"
+        onclick="mostrarPerfil();return true"
+      >
+        <i class="fa-solid fa-user"></i>
+        <span>Mi perfil</span>
+      </a>
+
+      <a href="#archivos">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>Mis archivos</span>
+      </a>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+      <button
+        class="btn logout"
+        onclick="cerrarSesion()"
+      >
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Cerrar sesión</span>
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <main
+    class="main"
+    id="inicio"
+  >
+
+    <div class="topbar">
+
+      <div class="welcome">
+
+        <h1>
+          ¡Bienvenido/a,
+          <span data-user-name>
+            estudiante
+          </span>!
+        </h1>
+
+        <div class="muted">
+          Aquí encontrarás tus cursos, actividades, calificaciones y materiales.
+        </div>
+
+      </div>
+
+
+      <div class="top-actions">
+
+        <button
+          class="icon-btn"
+          title="Notificaciones"
+        >
+          <i class="fa-regular fa-bell"></i>
+          <span class="dot"></span>
+        </button>
+
+
+        <div
+          class="profile-mini"
+          onclick="mostrarPerfil()"
+        >
+
+          <div class="avatar">
+
+            <img
+              class="profile-photo"
+              alt="Foto de perfil"
+            >
+
+            <i class="fa-solid fa-user profile-icon"></i>
+
+          </div>
+
+
+          <div>
+
+            <div
+              class="mini-name"
+              data-user-name
+            ></div>
+
+            <div class="mini-role">
+              Estudiante
+            </div>
+
+          </div>
+
+          <i
+            class="fa-solid fa-chevron-down muted"
+            style="font-size:11px"
+          ></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <section class="hero">
+
+      <div>
+
+        <h2>
+          Tu espacio de aprendizaje
+        </h2>
+
+        <p>
+          Todo lo que necesitas para continuar aprendiendo está aquí.
+        </p>
+
+      </div>
+
+
+      <div class="hero-badge">
+
+        <strong id="heroStatus">
+          Activo
+        </strong>
+
+        <span>
+          Estado de cuenta
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <div class="grid">
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Mis cursos
+          </span>
+
+          <strong id="countCourses">
+            0
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-book"></i>
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Actividades
+          </span>
+
+          <strong id="countActivities">
+            0
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Pendientes
+          </span>
+
+          <strong id="countPending">
+            0
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Promedio
+          </span>
+
+          <strong id="average">
+            —
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-star"></i>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <section
+      id="cursos"
+      class="section"
+    >
+
+      <div class="section-head">
+
+        <h2>
+          Mis cursos
+        </h2>
+
+        <button class="link-btn">
+          Ver todos
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+      </div>
+
+
+      <div class="course-grid">
+
+        <div class="card course">
+
+          <div class="course-cover">
+
+            <i class="fa-solid fa-book-open"></i>
+
+          </div>
+
+          <div class="course-body">
+
+            <h3>
+              Todavía no tienes cursos
+            </h3>
+
+            <small>
+              Cuando un tutor te inscriba, aparecerán aquí.
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="card empty">
+
+          <i class="fa-solid fa-chalkboard-user"></i>
+
+          <div>
+            Los cursos asignados aparecerán en este espacio.
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <div class="two-col">
+
+      <section
+        id="actividades"
+        class="section"
+      >
+
+        <div class="section-head">
+
+          <h2>
+            Próximas actividades
+          </h2>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="empty">
+
+            <i class="fa-solid fa-calendar-check"></i>
+
+            <div>
+              No tienes actividades pendientes.
+            </div>
+
+            <small>
+              Las actividades publicadas por tus tutores aparecerán aquí.
+            </small>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <section
+        id="calificaciones"
+        class="section"
+      >
+
+        <div class="section-head">
+
+          <h2>
+            Últimas calificaciones
+          </h2>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="empty">
+
+            <i class="fa-solid fa-award"></i>
+
+            <div>
+              Aún no hay calificaciones.
+            </div>
+
+            <small>
+              Tus resultados aparecerán aquí.
+            </small>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <section
+      id="archivos"
+      class="section"
+    >
+
+      <div class="section-head">
+
+        <h2>
+          Mis archivos
+        </h2>
+
+      </div>
+
+
+      <div class="storage">
+
+        <div class="drive-card">
+
+          <div class="drive-icon">
+            <i class="fa-solid fa-building-columns"></i>
+          </div>
+
+          <div>
+
+            <h4>
+              Materiales del aula
+            </h4>
+
+            <p>
+              Archivos compartidos por tus tutores desde el Drive institucional.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="drive-card">
+
+          <div class="drive-icon">
+            <i class="fa-brands fa-google-drive"></i>
+          </div>
+
+          <div>
+
+            <h4>
+              Mi espacio personal
+            </h4>
+
+            <p>
+              Tus trabajos y archivos personales podrán guardarse en tu Google Drive.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section
+      id="perfil"
+      class="section profile-panel"
+    >
+
+      <div class="section-head">
+
+        <h2>
+          Mi perfil
+        </h2>
+
+        <button
+          class="link-btn"
+          onclick="ocultarPerfil()"
+        >
+          Cerrar
+        </button>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="profile-head">
+
+          <div class="big-avatar">
+
+            <img
+              id="bigProfilePhoto"
+              alt="Foto de perfil"
+            >
+
+            <i
+              id="bigProfileIcon"
+              class="fa-solid fa-user"
+            ></i>
+
+          </div>
+
+
+          <div>
+
+            <h2
+              style="margin:0 0 5px"
+              data-user-name
+            ></h2>
+
+            <div
+              class="muted"
+              data-user-email
+            ></div>
+
+
+            <div class="photo-actions">
+
+              <button
+                class="btn btn-primary"
+                onclick="seleccionarFoto()"
+              >
+                <i class="fa-solid fa-camera"></i>
+                Cambiar foto
+              </button>
+
+              <button
+                class="btn btn-secondary"
+                onclick="quitarFoto()"
+              >
+                Quitar foto
+              </button>
+
+              <input
+                id="photoInput"
+                type="file"
+                accept="image/*"
+                hidden
+                onchange="previsualizarFoto(event)"
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+          <div class="field">
+
+            <label>
+              Nombre
+            </label>
+
+            <input
+              id="perfilNombre"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Apellido
+            </label>
+
+            <input
+              id="perfilApellido"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Correo electrónico
+            </label>
+
+            <input
+              id="perfilEmail"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Rol
+            </label>
+
+            <input
+              id="perfilRol"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Estado
+            </label>
+
+            <input
+              id="perfilActivo"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Identificador de usuario
+            </label>
+
+            <input
+              id="perfilId"
+              readonly
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="info">
+
+          <i class="fa-solid fa-circle-info"></i>
+
+          Tus datos de acceso y rol son administrados por la plataforma.
+          Los archivos grandes no se guardarán en la base de datos;
+          se manejarán mediante Google Drive.
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+
+/* =========================================
+   AUTENTICACIÓN
+========================================= */
+
+async function initAuth(allowedRoles){
+
+  try{
+
+    const cfg = await fetch('../config.json',{
+      cache:'no-store'
+    }).then(r=>{
+
+      if(!r.ok){
+        throw new Error('No se pudo cargar config.json');
+      }
+
+      return r.json();
+
+    });
+
+
+    supabaseClient = window.supabase.createClient(
+      cfg.supabase.url,
+      cfg.supabase.anonKey
+    );
+
+
+    const {
+      data:{session},
+      error:sessionError
+    } = await supabaseClient.auth.getSession();
+
+
+    if(sessionError){
+      throw sessionError;
+    }
+
+
+    if(!session){
+
+      location.href='../index.html';
+      return;
+
+    }
+
+
+    currentUser = session.user;
+
+
+    /* =========================================
+       COMPROBAR SI DEBE CAMBIAR PASSWORD
+    ========================================= */
+
+    const debeCambiarPassword =
+      currentUser.user_metadata?.debe_cambiar_password === true;
+
+
+    /* =========================================
+       BUSCAR PERFIL
+    ========================================= */
+
+    const {
+      data:perfil,
+      error
+    } = await supabaseClient
+      .from('usuarios')
+      .select('id,nombre,apellido,email,rol,activo,created_at')
+      .eq('id',currentUser.id)
+      .maybeSingle();
+
+
+    if(
+      error ||
+      !perfil ||
+      perfil.activo !== true ||
+      !allowedRoles.includes(perfil.rol)
+    ){
+
+      await supabaseClient.auth.signOut();
+
+      location.href='../index.html';
+
+      return;
+
+    }
+
+
+    currentProfile = perfil;
+
+
+    /* =========================================
+       SI TIENE QUE CAMBIAR PASSWORD
+    ========================================= */
+
+    if(debeCambiarPassword){
+
+      mostrarCambioPassword();
+
+      return;
+
+    }
+
+
+    /* =========================================
+       CARGAR AULA NORMAL
+    ========================================= */
+
+    cargarAula(perfil);
+
+  }
+
+  catch(e){
+
+    console.error('Error de autenticación:',e);
+
+    document.getElementById('loading')?.remove();
+
+    document
+      .getElementById('aulaLayout')
+      ?.classList.add('hidden');
+
+    document
+      .getElementById('errorBox')
+      ?.classList.remove('hidden');
+
+  }
+
+}
+
+
+/* =========================================
+   MOSTRAR CAMBIO DE PASSWORD
+========================================= */
+
+function mostrarCambioPassword(){
+
+  document
+    .getElementById('loading')
+    ?.remove();
+
+
+  document
+    .getElementById('aulaLayout')
+    ?.classList.add('hidden');
+
+
+  document
+    .getElementById('errorBox')
+    ?.classList.add('hidden');
+
+
+  const email =
+    currentUser?.email ||
+    currentProfile?.email ||
+    '';
+
+
+  document.getElementById(
+    'passwordUserEmail'
+  ).textContent = email;
+
+
+  document
+    .getElementById('passwordScreen')
+    ?.classList.remove('hidden');
+
+}
+
+
+/* =========================================
+   CARGAR AULA
+========================================= */
+
+function cargarAula(perfil){
+
+  document
+    .getElementById('passwordScreen')
+    ?.classList.add('hidden');
+
+
+  document
+    .getElementById('aulaLayout')
+    ?.classList.remove('hidden');
+
+
+  cargarPerfil(perfil);
+
+
+  document
+    .querySelectorAll('[data-user-name]')
+    .forEach(e=>{
+
+      e.textContent =
+        (
+          (perfil.nombre||'')+
+          ' '+
+          (perfil.apellido||'')
+        ).trim() ||
+        perfil.email;
+
+    });
+
+
+  document
+    .querySelectorAll('[data-user-email]')
+    .forEach(e=>{
+
+      e.textContent =
+        perfil.email || '';
+
+    });
+
+
+  const heroStatus =
+    document.getElementById('heroStatus');
+
+
+  if(heroStatus){
+
+    heroStatus.textContent =
+      perfil.activo
+      ? 'Activo'
+      : 'Inactivo';
+
+  }
+
+
+  document
+    .getElementById('loading')
+    ?.remove();
+
+}
+
+
+/* =========================================
+   CAMBIO DE CONTRASEÑA
+========================================= */
+
+document
+  .getElementById('changePasswordForm')
+  .addEventListener('submit',async function(e){
+
+    e.preventDefault();
+
+
+    const currentPassword =
+      document
+        .getElementById('currentPassword')
+        .value
+        .trim();
+
+
+    const newPassword =
+      document
+        .getElementById('newPassword')
+        .value;
+
+
+    const repeatPassword =
+      document
+        .getElementById('repeatPassword')
+        .value;
+
+
+    const message =
+      document.getElementById('passwordMessage');
+
+
+    const button =
+      document.getElementById('changePasswordButton');
+
+
+    ocultarMensaje();
+
+
+    /* =========================================
+       VALIDACIONES
+    ========================================= */
+
+    if(!currentPassword){
+
+      mostrarMensaje(
+        'Debes escribir tu contraseña actual.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(!newPassword){
+
+      mostrarMensaje(
+        'Debes escribir una nueva contraseña.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(newPassword.length < 8){
+
+      mostrarMensaje(
+        'La nueva contraseña debe tener al menos 8 caracteres.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(newPassword === 'AulaFAF2020'){
+
+      mostrarMensaje(
+        'Debes elegir una contraseña diferente a la contraseña temporal.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(newPassword !== repeatPassword){
+
+      mostrarMensaje(
+        'Las nuevas contraseñas no coinciden.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(!currentUser?.email){
+
+      mostrarMensaje(
+        'No se pudo identificar tu cuenta.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    try{
+
+      button.disabled = true;
+
+      button.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+
+
+      /* =========================================
+         VERIFICAR CONTRASEÑA ACTUAL
+      ========================================= */
+
+      const {
+        error:loginError
+      } = await supabaseClient.auth.signInWithPassword({
+
+        email:currentUser.email,
+
+        password:currentPassword
+
+      });
+
+
+      if(loginError){
+
+        throw new Error(
+          'La contraseña actual es incorrecta.'
+        );
+
+      }
+
+
+      button.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
+
+
+      /* =========================================
+         ACTUALIZAR PASSWORD
+      ========================================= */
+
+      const metadataActual =
+        currentUser.user_metadata || {};
+
+
+      const {
+        data:updateData,
+        error:updateError
+      } = await supabaseClient.auth.updateUser({
+
+        password:newPassword,
+
+        data:{
+          ...metadataActual,
+          debe_cambiar_password:false
+        }
+
+      });
+
+
+      if(updateError){
+
+        throw updateError;
+
+      }
+
+
+      /* =========================================
+         ACTUALIZAR USUARIO LOCAL
+      ========================================= */
+
+      if(updateData?.user){
+
+        currentUser =
+          updateData.user;
+
+      }
+
+
+      mostrarMensaje(
+        'Contraseña actualizada correctamente. Entrando al Aula Virtual...',
+        'success'
+      );
+
+
+      button.innerHTML =
+        '<i class="fa-solid fa-check"></i> Contraseña actualizada';
+
+
+      /* =========================================
+         ESPERAR Y ENTRAR
+      ========================================= */
+
+      setTimeout(()=>{
+
+        cargarAula(currentProfile);
+
+      },1200);
+
+
+    }
+
+    catch(error){
+
+      console.error(
+        'Error cambiando contraseña:',
+        error
+      );
+
+
+      mostrarMensaje(
+        error.message ||
+        'No se pudo cambiar la contraseña.',
+        'error'
+      );
+
+
+      button.disabled = false;
+
+      button.innerHTML =
+        '<i class="fa-solid fa-key"></i> Cambiar contraseña';
+
+    }
+
+  });
+
+
+/* =========================================
+   MENSAJES
+========================================= */
+
+function mostrarMensaje(texto,tipo){
+
+  const message =
+    document.getElementById('passwordMessage');
+
+
+  message.textContent = texto;
+
+  message.className =
+    'password-message '+
+    tipo;
+
+}
+
+
+function ocultarMensaje(){
+
+  const message =
+    document.getElementById('passwordMessage');
+
+
+  message.textContent = '';
+
+  message.className =
+    'password-message';
+
+}
+
+
+/* =========================================
+   MOSTRAR / OCULTAR PASSWORD
+========================================= */
+
+function togglePassword(id,button){
+
+  const input =
+    document.getElementById(id);
+
+
+  if(input.type === 'password'){
+
+    input.type = 'text';
+
+    button.innerHTML =
+      '<i class="fa-regular fa-eye-slash"></i>';
+
+  }
+
+  else{
+
+    input.type = 'password';
+
+    button.innerHTML =
+      '<i class="fa-regular fa-eye"></i>';
+
+  }
+
+}
+
+
+/* =========================================
+   PERFIL
+========================================= */
+
+function cargarPerfil(p){
+
+  document.getElementById('perfilNombre').value =
+    p.nombre || '';
+
+  document.getElementById('perfilApellido').value =
+    p.apellido || '';
+
+  document.getElementById('perfilEmail').value =
+    p.email || '';
+
+  document.getElementById('perfilRol').value =
+    p.rol || '';
+
+  document.getElementById('perfilActivo').value =
+    p.activo
+      ? 'Activo'
+      : 'Inactivo';
+
+  document.getElementById('perfilId').value =
+    p.id || '';
+
+
+  const saved =
+    localStorage.getItem(
+      'aula_virtual_foto_'+p.id
+    );
+
+
+  if(saved){
+
+    aplicarFoto(saved);
+
+  }
+
+}
+
+
+function mostrarPerfil(){
+
+  document
+    .getElementById('perfil')
+    .classList.add('show');
+
+
+  setTimeout(()=>{
+
+    document
+      .getElementById('perfil')
+      .scrollIntoView({
+        behavior:'smooth',
+        block:'start'
+      });
+
+  },30);
+
+}
+
+
+function ocultarPerfil(){
+
+  document
+    .getElementById('perfil')
+    .classList.remove('show');
+
+}
+
+
+function seleccionarFoto(){
+
+  document
+    .getElementById('photoInput')
+    .click();
+
+}
+
+
+function previsualizarFoto(e){
+
+  const f =
+    e.target.files?.[0];
+
+
+  if(!f || !currentUser)
+    return;
+
+
+  if(f.size > 5*1024*1024){
+
+    alert(
+      'La foto debe pesar menos de 5 MB.'
+    );
+
+    return;
+
+  }
+
+
+  const r =
+    new FileReader();
+
+
+  r.onload = ()=>{
+
+    localStorage.setItem(
+      'aula_virtual_foto_'+currentUser.id,
+      r.result
+    );
+
+
+    aplicarFoto(r.result);
+
+
+    alert(
+      'Foto actualizada en este dispositivo. La conexión con Google Drive permitirá guardarla en tu almacenamiento personal.'
+    );
+
+  };
+
+
+  r.readAsDataURL(f);
+
+}
+
+
+function aplicarFoto(src){
+
+  document
+    .querySelectorAll('.profile-photo')
+    .forEach(i=>{
+
+      i.src = src;
+
+      i.style.display =
+        'block';
+
+    });
+
+
+  document
+    .querySelectorAll('.profile-icon')
+    .forEach(i=>{
+
+      i.style.display =
+        'none';
+
+    });
+
+
+  const b =
+    document.getElementById(
+      'bigProfilePhoto'
+    );
+
+
+  const bi =
+    document.getElementById(
+      'bigProfileIcon'
+    );
+
+
+  if(b){
+
+    b.src = src;
+
+    b.style.display =
+      'block';
+
+  }
+
+
+  if(bi){
+
+    bi.style.display =
+      'none';
+
+  }
+
+}
+
+
+function quitarFoto(){
+
+  if(!currentUser)
+    return;
+
+
+  localStorage.removeItem(
+    'aula_virtual_foto_'+currentUser.id
+  );
+
+
+  document
+    .querySelectorAll('.profile-photo')
+    .forEach(i=>{
+
+      i.style.display =
+        'none';
+
+    });
+
+
+  document
+    .querySelectorAll('.profile-icon')
+    .forEach(i=>{
+
+      i.style.display =
+        'block';
+
+    });
+
+
+  const b =
+    document.getElementById(
+      'bigProfilePhoto'
+    );
+
+
+  const bi =
+    document.getElementById(
+      'bigProfileIcon'
+    );
+
+
+  if(b)
+    b.style.display='none';
+
+
+  if(bi)
+    bi.style.display='block';
+
+}
+
+
+/* =========================================
+   CERRAR SESIÓN
+========================================= */
+
+async function cerrarSesion(){
+
+  try{
+
+    if(supabaseClient){
+
+      await supabaseClient.auth.signOut();
+
+    }
+
+  }
+
+  finally{
+
+    location.href =
+      '../index.html';
+
+  }
+
+}
+
+
+/* =========================================
+   INICIAR
+========================================= */
+
+initAuth(['estudiante']);
+
+</script>
+
+</body>
+</html>

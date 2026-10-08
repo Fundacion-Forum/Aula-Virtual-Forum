@@ -1,0 +1,2953 @@
+```html
+<!doctype html>
+<html lang="es">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Aula Virtual | Administrador</title>
+
+<style>
+
+:root{
+  --primary:#2563eb;
+  --bg:#f4f7fb;
+  --card:#fff;
+  --text:#172033;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --success:#166534;
+  --danger:#991b1b;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.layout{
+  min-height:100vh;
+  display:flex;
+}
+
+.sidebar{
+  width:260px;
+  background:#0f172a;
+  color:#fff;
+  padding:24px 16px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+}
+
+.brand{
+  font-size:21px;
+  font-weight:800;
+  padding:8px 12px 26px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.brand i{
+  color:#60a5fa;
+}
+
+.nav a{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px 14px;
+  margin:5px 0;
+  border-radius:10px;
+  color:#cbd5e1;
+  text-decoration:none;
+}
+
+.nav a:hover,
+.nav a.active{
+  background:#1e293b;
+  color:#fff;
+}
+
+.nav i{
+  width:20px;
+  text-align:center;
+}
+
+.main{
+  margin-left:260px;
+  width:calc(100% - 260px);
+  padding:28px 34px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:26px;
+}
+
+.welcome h1{
+  margin:0 0 5px;
+  font-size:28px;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:9px 13px;
+  border-radius:12px;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-weight:800;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 5px 18px rgba(15,23,42,.04);
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.stat-icon{
+  width:46px;
+  height:46px;
+  border-radius:12px;
+  background:#eff6ff;
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  font-size:19px;
+}
+
+.stat strong{
+  font-size:28px;
+  display:block;
+  margin-top:7px;
+}
+
+.section{
+  margin-top:24px;
+}
+
+.section h2{
+  margin:0 0 14px;
+  font-size:20px;
+}
+
+.empty{
+  text-align:center;
+  padding:34px;
+  color:var(--muted);
+}
+
+button,
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+}
+
+button:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:#fff;
+}
+
+.btn-secondary{
+  background:#e2e8f0;
+  color:#172033;
+}
+
+.btn-success{
+  background:#16a34a;
+  color:#fff;
+}
+
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  gap:12px;
+}
+
+.toolbar-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.table th,
+.table td{
+  text-align:left;
+  padding:13px;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+
+.table th{
+  font-size:13px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font:inherit;
+}
+
+.note{
+  padding:14px;
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  border-radius:12px;
+  color:#854d0e;
+  margin-bottom:18px;
+}
+
+.success-box{
+  padding:18px;
+  background:#ecfdf5;
+  border:1px solid #a7f3d0;
+  border-radius:12px;
+  color:#166534;
+}
+
+.error-box{
+  padding:18px;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  border-radius:12px;
+  color:#991b1b;
+}
+
+.credentials{
+  margin-top:14px;
+  padding:14px;
+  background:#fff;
+  border:1px solid #bbf7d0;
+  border-radius:10px;
+}
+
+.credential-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  padding:9px 0;
+  border-bottom:1px solid #dcfce7;
+}
+
+.credential-row:last-child{
+  border-bottom:0;
+}
+
+.credential-value{
+  font-family:monospace;
+  font-weight:700;
+  background:#f8fafc;
+  padding:6px 9px;
+  border-radius:6px;
+  color:#172033;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:var(--bg);
+  z-index:20;
+}
+
+.spinner{
+  width:40px;
+  height:40px;
+  border:4px solid #dbeafe;
+  border-top-color:var(--primary);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.error{
+  max-width:500px;
+  margin:80px auto;
+  background:#fff;
+  padding:28px;
+  border-radius:16px;
+  border:1px solid #fecaca;
+  text-align:center;
+}
+
+#createMessage{
+  margin-top:14px;
+}
+
+
+/* ==========================================
+   GOOGLE DRIVE
+========================================== */
+
+.drive-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.drive-header-icon{
+  width:42px;
+  height:42px;
+  border-radius:11px;
+  background:#eff6ff;
+  color:#2563eb;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+}
+
+.drive-breadcrumb{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:15px 0;
+  padding:11px 13px;
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.drive-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:14px;
+  border-bottom:1px solid var(--border);
+}
+
+.drive-item:last-child{
+  border-bottom:0;
+}
+
+.drive-item-left{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  min-width:0;
+}
+
+.drive-icon{
+  width:38px;
+  height:38px;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  background:#eff6ff;
+  color:#2563eb;
+}
+
+.drive-icon.file{
+  background:#f8fafc;
+  color:#64748b;
+}
+
+.drive-name{
+  font-weight:700;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.drive-info{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.drive-actions{
+  display:flex;
+  gap:7px;
+  flex-shrink:0;
+}
+
+.drive-empty{
+  padding:45px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.drive-loading{
+  padding:45px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.drive-error{
+  padding:18px;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  color:#991b1b;
+  border-radius:12px;
+}
+
+.breadcrumb-btn{
+  background:none;
+  border:0;
+  padding:3px;
+  color:#2563eb;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.breadcrumb-current{
+  font-weight:700;
+  color:#172033;
+}
+
+.drive-account{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 10px;
+  background:#ecfdf5;
+  color:#166534;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:900px){
+
+  .sidebar{
+    width:72px;
+  }
+
+  .brand span,
+  .nav span{
+    display:none;
+  }
+
+  .main{
+    margin-left:72px;
+    width:calc(100% - 72px);
+    padding:20px;
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:600px){
+
+  .grid,
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    display:none;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .topbar{
+    align-items:flex-start;
+    gap:12px;
+    flex-direction:column;
+  }
+
+  .credential-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .toolbar{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .drive-item{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .drive-actions{
+    width:100%;
+  }
+
+}
+
+</style>
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+</head>
+
+
+<body>
+
+
+<div id="loading" class="loading">
+
+  <div class="spinner"></div>
+
+</div>
+
+
+<div id="errorBox" class="error hidden">
+
+  <h2>Acceso denegado</h2>
+
+  <p>
+    Esta pantalla requiere una cuenta de administrador.
+  </p>
+
+  <a
+    class="btn btn-primary"
+    href="../index.html"
+  >
+    Volver al inicio
+  </a>
+
+</div>
+
+
+<div class="layout">
+
+
+  <!-- ==========================================
+       SIDEBAR
+  =========================================== -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <i class="fa-solid fa-shield-halved"></i>
+
+      <span>
+        Administración
+      </span>
+
+    </div>
+
+
+    <nav class="nav">
+
+      <a
+        class="active"
+        href="#"
+      >
+
+        <i class="fa-solid fa-house"></i>
+
+        <span>
+          Dashboard
+        </span>
+
+      </a>
+
+
+      <a href="#usuarios">
+
+        <i class="fa-solid fa-users"></i>
+
+        <span>
+          Usuarios
+        </span>
+
+      </a>
+
+
+      <a href="#crear">
+
+        <i class="fa-solid fa-user-plus"></i>
+
+        <span>
+          Crear usuario
+        </span>
+
+      </a>
+
+
+      <a href="#drive">
+
+        <i class="fa-brands fa-google-drive"></i>
+
+        <span>
+          Drive institucional
+        </span>
+
+      </a>
+
+
+      <a href="#cursos">
+
+        <i class="fa-solid fa-book"></i>
+
+        <span>
+          Cursos
+        </span>
+
+      </a>
+
+
+      <a
+        href="#"
+        onclick="cerrarSesion();return false"
+      >
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        <span>
+          Cerrar sesión
+        </span>
+
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- ==========================================
+       MAIN
+  =========================================== -->
+
+  <main class="main">
+
+
+    <div class="topbar">
+
+      <div class="welcome">
+
+        <h1>
+          Panel de administración
+        </h1>
+
+        <div class="muted">
+          Control general del Aula Virtual.
+        </div>
+
+      </div>
+
+
+      <div class="profile">
+
+        <div class="avatar">
+
+          <i class="fa-solid fa-shield-halved"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong data-user-name></strong>
+
+          <small
+            class="muted"
+            style="display:block"
+          >
+            Administrador
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         ESTADÍSTICAS
+    =========================================== -->
+
+    <div class="grid">
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Usuarios
+          </span>
+
+          <strong id="totalUsuarios">
+            —
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+
+          <i class="fa-solid fa-users"></i>
+
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Estudiantes
+          </span>
+
+          <strong id="totalEstudiantes">
+            —
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+
+          <i class="fa-solid fa-user-graduate"></i>
+
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Tutores
+          </span>
+
+          <strong id="totalTutores">
+            —
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+
+          <i class="fa-solid fa-chalkboard-user"></i>
+
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Administradores
+          </span>
+
+          <strong id="totalAdministradores">
+            —
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+
+          <i class="fa-solid fa-user-shield"></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         CREAR USUARIO
+    =========================================== -->
+
+    <section
+      id="crear"
+      class="section"
+    >
+
+      <div class="card">
+
+        <h2>
+          Crear usuario
+        </h2>
+
+
+        <div class="note">
+
+          <i class="fa-solid fa-circle-info"></i>
+
+          El administrador crea directamente la cuenta.
+          No se enviará ningún correo de invitación.
+
+          <br><br>
+
+          <strong>
+            Contraseña inicial para todos los usuarios:
+            AulaFAF2020
+          </strong>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <div class="field">
+
+            <label for="nombre">
+              Nombre
+            </label>
+
+            <input
+              id="nombre"
+              type="text"
+              placeholder="Nombre"
+              autocomplete="given-name"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="apellido">
+              Apellido
+            </label>
+
+            <input
+              id="apellido"
+              type="text"
+              placeholder="Apellido"
+              autocomplete="family-name"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="email">
+              Correo electrónico
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              placeholder="correo@gmail.com"
+              autocomplete="email"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="rol">
+              Rol
+            </label>
+
+            <select id="rol">
+
+              <option value="estudiante">
+                Estudiante
+              </option>
+
+              <option value="tutor">
+                Tutor
+              </option>
+
+              <option value="administrador">
+                Administrador
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div style="margin-top:18px">
+
+          <button
+            id="crearUsuarioBtn"
+            class="btn btn-primary"
+            onclick="crearUsuario()"
+          >
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Crear usuario
+
+          </button>
+
+
+          <div id="createMessage"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         USUARIOS
+    =========================================== -->
+
+    <section
+      id="usuarios"
+      class="section"
+    >
+
+      <div class="card">
+
+
+        <div class="toolbar">
+
+          <h2>
+            Usuarios registrados
+          </h2>
+
+
+          <button
+            class="btn btn-secondary"
+            onclick="cargarUsuarios()"
+          >
+
+            <i class="fa-solid fa-rotate"></i>
+
+            Actualizar
+
+          </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table class="table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Nombre
+                </th>
+
+                <th>
+                  Email
+                </th>
+
+                <th>
+                  Rol
+                </th>
+
+                <th>
+                  Estado
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="usuariosBody">
+
+              <tr>
+
+                <td
+                  colspan="4"
+                  class="empty"
+                >
+                  Cargando...
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         DRIVE INSTITUCIONAL
+    =========================================== -->
+
+    <section
+      id="drive"
+      class="section"
+    >
+
+      <div class="card">
+
+
+        <div class="toolbar">
+
+
+          <div class="drive-header">
+
+            <div class="drive-header-icon">
+
+              <i class="fa-brands fa-google-drive"></i>
+
+            </div>
+
+
+            <div>
+
+              <h2 style="margin:0">
+                Drive institucional
+              </h2>
+
+              <div
+                class="muted"
+                style="font-size:13px"
+              >
+                Archivos y carpetas del Aula Virtual
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="toolbar-actions">
+
+
+            <button
+              id="driveBackBtn"
+              class="btn btn-secondary"
+              onclick="driveVolver()"
+              disabled
+            >
+
+              <i class="fa-solid fa-arrow-left"></i>
+
+              Atrás
+
+            </button>
+
+
+            <button
+              class="btn btn-secondary"
+              onclick="cargarDrive()"
+            >
+
+              <i class="fa-solid fa-rotate"></i>
+
+              Actualizar
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <span
+            id="driveAccount"
+            class="drive-account hidden"
+          >
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <span id="driveAccountEmail"></span>
+
+          </span>
+
+        </div>
+
+
+        <div
+          id="driveBreadcrumb"
+          class="drive-breadcrumb"
+        >
+
+          <span class="breadcrumb-current">
+
+            <i class="fa-solid fa-house"></i>
+
+            Drive
+
+          </span>
+
+        </div>
+
+
+        <div id="driveContent">
+
+          <div class="drive-loading">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            Cargando Drive institucional...
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         CURSOS
+    =========================================== -->
+
+    <section
+      id="cursos"
+      class="section"
+    >
+
+      <div class="card">
+
+        <h2>
+          Gestión de cursos
+        </h2>
+
+        <div class="empty">
+
+          Aquí administraremos los cursos
+          creados por los tutores.
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+/* ==========================================
+   VARIABLES
+========================================== */
+
+let supabaseClient = null;
+
+let currentUser = null;
+
+let currentProfile = null;
+
+
+/* ==========================================
+   DRIVE
+========================================== */
+
+let driveCurrentFolderId = null;
+
+let driveCurrentFolderName = 'Drive';
+
+let driveFolderHistory = [];
+
+
+/* ==========================================
+   AUTENTICACIÓN
+========================================== */
+
+async function initAuth(allowedRoles){
+
+  try{
+
+    const response =
+      await fetch(
+        '../config.json',
+        {
+          cache:'no-store'
+        }
+      );
+
+    if(!response.ok){
+
+      throw new Error(
+        'No se pudo cargar config.json'
+      );
+
+    }
+
+    const cfg =
+      await response.json();
+
+
+    supabaseClient =
+      window.supabase.createClient(
+        cfg.supabase.url,
+        cfg.supabase.anonKey
+      );
+
+
+    const {
+      data:{
+        session
+      }
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if(!session){
+
+      location.href =
+        '../index.html';
+
+      return;
+
+    }
+
+
+    currentUser =
+      session.user;
+
+
+    const {
+      data:perfil,
+      error
+    } =
+      await supabaseClient
+        .from('usuarios')
+        .select(
+          'id,nombre,apellido,email,rol,activo'
+        )
+        .eq(
+          'id',
+          currentUser.id
+        )
+        .maybeSingle();
+
+
+    if(
+      error ||
+      !perfil ||
+      perfil.activo !== true ||
+      !allowedRoles.includes(
+        perfil.rol
+      )
+    ){
+
+      await supabaseClient.auth.signOut();
+
+      location.href =
+        '../index.html';
+
+      return;
+
+    }
+
+
+    currentProfile =
+      perfil;
+
+
+    document
+      .querySelectorAll(
+        '[data-user-name]'
+      )
+      .forEach(
+        element => {
+
+          element.textContent =
+            (
+              (perfil.nombre || '') +
+              ' ' +
+              (perfil.apellido || '')
+            ).trim() ||
+            perfil.email;
+
+        }
+      );
+
+
+    document
+      .getElementById('loading')
+      ?.remove();
+
+
+    onAuthenticated();
+
+  }
+  catch(error){
+
+    console.error(
+      'Error de autenticación:',
+      error
+    );
+
+
+    document
+      .getElementById('loading')
+      ?.remove();
+
+
+    document
+      .getElementById('errorBox')
+      ?.classList.remove(
+        'hidden'
+      );
+
+  }
+
+}
+
+
+/* ==========================================
+   CERRAR SESIÓN
+========================================== */
+
+async function cerrarSesion(){
+
+  if(supabaseClient){
+
+    await supabaseClient.auth.signOut();
+
+  }
+
+  location.href =
+    '../index.html';
+
+}
+
+
+/* ==========================================
+   CARGAR USUARIOS
+========================================== */
+
+async function cargarUsuarios(){
+
+  if(!supabaseClient){
+    return;
+  }
+
+
+  const body =
+    document.getElementById(
+      'usuariosBody'
+    );
+
+
+  body.innerHTML = `
+    <tr>
+      <td
+        colspan="4"
+        class="empty"
+      >
+        Cargando...
+      </td>
+    </tr>
+  `;
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from('usuarios')
+        .select(
+          'nombre,apellido,email,rol,activo,created_at'
+        )
+        .order(
+          'created_at',
+          {
+            ascending:false
+          }
+        );
+
+
+    if(error){
+
+      console.error(
+        'Error cargando usuarios:',
+        error
+      );
+
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="4"
+            class="empty"
+          >
+            ${esc(error.message)}
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    const usuarios =
+      data || [];
+
+
+    document.getElementById(
+      'totalUsuarios'
+    ).textContent =
+      usuarios.length;
+
+
+    document.getElementById(
+      'totalEstudiantes'
+    ).textContent =
+      usuarios.filter(
+        u => u.rol === 'estudiante'
+      ).length;
+
+
+    document.getElementById(
+      'totalTutores'
+    ).textContent =
+      usuarios.filter(
+        u => u.rol === 'tutor'
+      ).length;
+
+
+    document.getElementById(
+      'totalAdministradores'
+    ).textContent =
+      usuarios.filter(
+        u => u.rol === 'administrador'
+      ).length;
+
+
+    if(!usuarios.length){
+
+      body.innerHTML = `
+        <tr>
+          <td
+            colspan="4"
+            class="empty"
+          >
+            No hay usuarios registrados.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    body.innerHTML =
+      usuarios.map(
+        usuario => `
+
+          <tr>
+
+            <td>
+              ${esc(
+                (
+                  (usuario.nombre || '') +
+                  ' ' +
+                  (usuario.apellido || '')
+                ).trim()
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                usuario.email || '—'
+              )}
+            </td>
+
+            <td>
+
+              <span class="badge">
+
+                ${esc(
+                  usuario.rol || ''
+                )}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              ${
+                usuario.activo
+                  ? 'Activo'
+                  : 'Inactivo'
+              }
+
+            </td>
+
+          </tr>
+
+        `
+      ).join('');
+
+
+  }
+  catch(error){
+
+    console.error(
+      error
+    );
+
+
+    body.innerHTML = `
+      <tr>
+        <td
+          colspan="4"
+          class="empty"
+        >
+          ${esc(
+            error.message ||
+            'Error al cargar usuarios.'
+          )}
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+/* ==========================================
+   CREAR USUARIO
+========================================== */
+
+async function crearUsuario(){
+
+  const btn =
+    document.getElementById(
+      'crearUsuarioBtn'
+    );
+
+
+  const box =
+    document.getElementById(
+      'createMessage'
+    );
+
+
+  const nombre =
+    document
+      .getElementById('nombre')
+      .value
+      .trim();
+
+
+  const apellido =
+    document
+      .getElementById('apellido')
+      .value
+      .trim();
+
+
+  const email =
+    document
+      .getElementById('email')
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const rol =
+    document
+      .getElementById('rol')
+      .value;
+
+
+  if(
+    !nombre ||
+    !apellido ||
+    !email
+  ){
+
+    mostrarError(
+      'Completa nombre, apellido y correo electrónico.'
+    );
+
+    return;
+
+  }
+
+
+  const emailValido =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+  if(
+    !emailValido.test(email)
+  ){
+
+    mostrarError(
+      'Introduce un correo electrónico válido.'
+    );
+
+    return;
+
+  }
+
+
+  if(!supabaseClient){
+
+    mostrarError(
+      'Supabase todavía no está inicializado. Recarga la página.'
+    );
+
+    return;
+
+  }
+
+
+  btn.disabled = true;
+
+
+  btn.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    Creando usuario...
+  `;
+
+
+  box.innerHTML = '';
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.functions.invoke(
+        'admin-create-user',
+        {
+          body:{
+            nombre,
+            apellido,
+            email,
+            rol
+          }
+        }
+      );
+
+
+    if(error){
+
+      console.error(
+        'Error Edge Function:',
+        error
+      );
+
+
+      let mensaje =
+        error.message ||
+        'No se pudo crear el usuario.';
+
+
+      if(error.context){
+
+        try{
+
+          const errorBody =
+            await error.context.json();
+
+          if(errorBody?.error){
+
+            mensaje =
+              errorBody.error;
+
+          }
+
+        }
+        catch(e){
+
+          console.error(e);
+
+        }
+
+      }
+
+
+      throw new Error(
+        mensaje
+      );
+
+    }
+
+
+    if(
+      !data ||
+      data.ok !== true
+    ){
+
+      throw new Error(
+        data?.error ||
+        'La cuenta no pudo ser creada.'
+      );
+
+    }
+
+
+    const password =
+      data.user?.password_temporal ||
+      'AulaFAF2020';
+
+
+    box.innerHTML = `
+
+      <div class="success-box">
+
+        <div>
+
+          <i class="fa-solid fa-circle-check"></i>
+
+          <strong>
+            Usuario creado correctamente.
+          </strong>
+
+        </div>
+
+
+        <div class="credentials">
+
+          <div class="credential-row">
+
+            <strong>
+              Nombre:
+            </strong>
+
+            <span class="credential-value">
+
+              ${esc(
+                nombre +
+                ' ' +
+                apellido
+              )}
+
+            </span>
+
+          </div>
+
+
+          <div class="credential-row">
+
+            <strong>
+              Correo:
+            </strong>
+
+            <span class="credential-value">
+
+              ${esc(email)}
+
+            </span>
+
+          </div>
+
+
+          <div class="credential-row">
+
+            <strong>
+              Contraseña:
+            </strong>
+
+            <span class="credential-value">
+
+              ${esc(password)}
+
+            </span>
+
+          </div>
+
+
+          <div class="credential-row">
+
+            <strong>
+              Rol:
+            </strong>
+
+            <span class="credential-value">
+
+              ${esc(rol)}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div style="margin-top:14px">
+
+          <button
+            class="btn btn-success"
+            onclick="copiarCredenciales(
+              '${escapeJS(email)}',
+              '${escapeJS(password)}'
+            )"
+          >
+
+            <i class="fa-solid fa-copy"></i>
+
+            Copiar credenciales
+
+          </button>
+
+        </div>
+
+
+        <div style="margin-top:12px">
+
+          <small>
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            No se envió ningún correo.
+            Entrega estas credenciales al usuario.
+
+          </small>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    document.getElementById(
+      'nombre'
+    ).value = '';
+
+
+    document.getElementById(
+      'apellido'
+    ).value = '';
+
+
+    document.getElementById(
+      'email'
+    ).value = '';
+
+
+    document.getElementById(
+      'rol'
+    ).value =
+      'estudiante';
+
+
+    await cargarUsuarios();
+
+
+  }
+  catch(error){
+
+    console.error(
+      'Error creando usuario:',
+      error
+    );
+
+
+    mostrarError(
+      error?.message ||
+      'No se pudo crear el usuario.'
+    );
+
+  }
+  finally{
+
+    btn.disabled = false;
+
+
+    btn.innerHTML = `
+      <i class="fa-solid fa-user-plus"></i>
+      Crear usuario
+    `;
+
+  }
+
+}
+
+
+/* ==========================================
+   COPIAR CREDENCIALES
+========================================== */
+
+async function copiarCredenciales(
+  email,
+  password
+){
+
+  const texto =
+    `Aula Virtual - Credenciales
+
+Correo: ${email}
+Contraseña: ${password}`;
+
+
+  try{
+
+    await navigator.clipboard.writeText(
+      texto
+    );
+
+
+    alert(
+      'Credenciales copiadas correctamente.'
+    );
+
+  }
+  catch(error){
+
+    console.error(error);
+
+
+    alert(
+      'No se pudieron copiar las credenciales.'
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   GOOGLE DRIVE
+========================================== */
+
+async function cargarDrive(){
+
+  if(!supabaseClient){
+
+    return;
+
+  }
+
+
+  const content =
+    document.getElementById(
+      'driveContent'
+    );
+
+
+  content.innerHTML = `
+    <div class="drive-loading">
+
+      <i class="fa-solid fa-spinner fa-spin"></i>
+
+      Cargando Drive institucional...
+
+    </div>
+  `;
+
+
+  try{
+
+    // ========================================
+    // OBTENER SESIÓN ACTUAL
+    // ========================================
+
+    const {
+      data:sessionData,
+      error:sessionError
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if(sessionError){
+
+      throw new Error(
+        'No se pudo obtener la sesión.'
+      );
+
+    }
+
+
+    const session =
+      sessionData?.session;
+
+
+    if(!session){
+
+      throw new Error(
+        'La sesión del administrador ha expirado.'
+      );
+
+    }
+
+
+    // ========================================
+    // URL DE LA EDGE FUNCTION
+    // ========================================
+
+    let functionUrl =
+      `${supabaseClient.supabaseUrl}/functions/v1/google-drive-files`;
+
+
+    // ========================================
+    // CARPETA ACTUAL
+    // ========================================
+
+    if(driveCurrentFolderId){
+
+      functionUrl +=
+        `?folderId=${encodeURIComponent(
+          driveCurrentFolderId
+        )}`;
+
+    }
+
+
+    console.log(
+      'Google Drive URL:',
+      functionUrl
+    );
+
+
+    // ========================================
+    // LLAMADA DIRECTA
+    // ========================================
+
+    const response =
+      await fetch(
+        functionUrl,
+        {
+          method:'GET',
+
+          headers:{
+  'Authorization':
+    `Bearer ${session.access_token}`,
+
+  'apikey':
+    supabaseClient.supabaseKey
+}
+
+        }
+      );
+
+
+    // ========================================
+    // LEER RESPUESTA
+    // ========================================
+
+    let data = null;
+
+
+    try{
+
+      data =
+        await response.json();
+
+    }
+    catch(error){
+
+      throw new Error(
+        `La Edge Function respondió con HTTP ${response.status}, pero no devolvió JSON.`
+      );
+
+    }
+
+
+    console.log(
+      'Respuesta Google Drive:',
+      data
+    );
+
+
+    // ========================================
+    // ERROR HTTP
+    // ========================================
+
+    if(!response.ok){
+
+      throw new Error(
+        data?.error ||
+        `Error HTTP ${response.status}`
+      );
+
+    }
+
+
+    // ========================================
+    // VALIDAR RESPUESTA
+    // ========================================
+
+    if(
+      !data ||
+      data.success !== true
+    ){
+
+      throw new Error(
+        data?.error ||
+        'Google Drive no devolvió información.'
+      );
+
+    }
+
+
+    // ========================================
+    // MOSTRAR CUENTA
+    // ========================================
+
+    const account =
+      document.getElementById(
+        'driveAccount'
+      );
+
+
+    const accountEmail =
+      document.getElementById(
+        'driveAccountEmail'
+      );
+
+
+    accountEmail.textContent =
+      data.account ||
+      'Drive institucional';
+
+
+    account.classList.remove(
+      'hidden'
+    );
+
+
+    // ========================================
+    // MOSTRAR ARCHIVOS
+    // ========================================
+
+    mostrarArchivosDrive(
+      data.files || []
+    );
+
+
+    actualizarBreadcrumb();
+
+    actualizarBotonAtras();
+
+  }
+  catch(error){
+
+    console.error(
+      'Error cargando Drive:',
+      error
+    );
+
+
+    content.innerHTML = `
+      <div class="drive-error">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <strong>
+          No se pudo cargar Google Drive.
+        </strong>
+
+        <br><br>
+
+        ${esc(
+          error.message ||
+          'Error desconocido.'
+        )}
+
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* ==========================================
+   MOSTRAR ARCHIVOS
+========================================== */
+
+function mostrarArchivosDrive(files){
+
+  const content =
+    document.getElementById(
+      'driveContent'
+    );
+
+
+  if(!files.length){
+
+    content.innerHTML = `
+      <div class="drive-empty">
+
+        <i
+          class="fa-regular fa-folder-open"
+          style="font-size:40px;margin-bottom:12px"
+        ></i>
+
+        <div>
+          Esta carpeta está vacía.
+        </div>
+
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  files.sort(
+    (a,b) => {
+
+      const aFolder =
+        a.mimeType ===
+        'application/vnd.google-apps.folder';
+
+
+      const bFolder =
+        b.mimeType ===
+        'application/vnd.google-apps.folder';
+
+
+      if(aFolder && !bFolder){
+        return -1;
+      }
+
+
+      if(!aFolder && bFolder){
+        return 1;
+      }
+
+
+      return (
+        a.name || ''
+      ).localeCompare(
+        b.name || '',
+        'es'
+      );
+
+    }
+  );
+
+
+  content.innerHTML =
+    files.map(
+      file => {
+
+        const isFolder =
+          file.mimeType ===
+          'application/vnd.google-apps.folder';
+
+
+        const icon =
+          obtenerIconoDrive(
+            file.mimeType
+          );
+
+
+        const size =
+          !isFolder &&
+          file.size
+            ? formatearTamano(
+                file.size
+              )
+            : '';
+
+
+        const modified =
+          file.modifiedTime
+            ? formatearFecha(
+                file.modifiedTime
+              )
+            : '';
+
+
+        return `
+
+          <div class="drive-item">
+
+            <div class="drive-item-left">
+
+              <div
+                class="drive-icon ${
+                  isFolder ? '' : 'file'
+                }"
+              >
+
+                <i class="${icon}"></i>
+
+              </div>
+
+
+              <div style="min-width:0">
+
+                <div class="drive-name">
+
+                  ${esc(file.name)}
+
+                </div>
+
+
+                <div class="drive-info">
+
+                  ${
+                    isFolder
+                      ? 'Carpeta'
+                      : (
+                          [
+                            size,
+                            modified
+                          ]
+                          .filter(Boolean)
+                          .join(' · ')
+                          ||
+                          'Archivo'
+                        )
+                  }
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="drive-actions">
+
+              ${
+                isFolder
+                  ? `
+                    <button
+                      class="btn btn-secondary"
+                      onclick="abrirCarpeta(
+                        '${escapeJS(file.id)}',
+                        '${escapeJS(file.name)}'
+                      )"
+                    >
+
+                      <i class="fa-solid fa-folder-open"></i>
+
+                      Abrir
+
+                    </button>
+                  `
+                  : (
+                      file.webViewLink
+                        ? `
+                          <a
+                            class="btn btn-primary"
+                            href="${esc(file.webViewLink)}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                            Abrir
+
+                          </a>
+                        `
+                        : ''
+                    )
+              }
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join('');
+
+}
+
+
+/* ==========================================
+   ABRIR CARPETA
+========================================== */
+
+async function abrirCarpeta(
+  folderId,
+  folderName
+){
+
+  driveFolderHistory.push({
+
+    id:
+      driveCurrentFolderId,
+
+    name:
+      driveCurrentFolderName
+
+  });
+
+
+  driveCurrentFolderId =
+    folderId;
+
+
+  driveCurrentFolderName =
+    folderName;
+
+
+  actualizarBreadcrumb();
+
+  actualizarBotonAtras();
+
+
+  await cargarDrive();
+
+}
+
+
+/* ==========================================
+   VOLVER
+========================================== */
+
+async function driveVolver(){
+
+  if(
+    !driveFolderHistory.length
+  ){
+
+    return;
+
+  }
+
+
+  const previous =
+    driveFolderHistory.pop();
+
+
+  driveCurrentFolderId =
+    previous.id;
+
+
+  driveCurrentFolderName =
+    previous.name;
+
+
+  actualizarBreadcrumb();
+
+  actualizarBotonAtras();
+
+
+  await cargarDrive();
+
+}
+
+
+/* ==========================================
+   BREADCRUMB
+========================================== */
+
+function actualizarBreadcrumb(){
+
+  const breadcrumb =
+    document.getElementById(
+      'driveBreadcrumb'
+    );
+
+
+  let html = `
+
+    <button
+      class="breadcrumb-btn"
+      onclick="volverDriveInicio()"
+    >
+
+      <i class="fa-solid fa-house"></i>
+
+      Drive
+
+    </button>
+
+  `;
+
+
+  if(driveCurrentFolderId){
+
+    html += `
+
+      <i
+        class="fa-solid fa-chevron-right"
+        style="font-size:11px;color:#94a3b8"
+      ></i>
+
+      <span class="breadcrumb-current">
+
+        ${esc(
+          driveCurrentFolderName
+        )}
+
+      </span>
+
+    `;
+
+  }
+
+
+  breadcrumb.innerHTML =
+    html;
+
+}
+
+
+/* ==========================================
+   VOLVER AL INICIO
+========================================== */
+
+async function volverDriveInicio(){
+
+  driveCurrentFolderId =
+    null;
+
+
+  driveCurrentFolderName =
+    'Drive';
+
+
+  driveFolderHistory =
+    [];
+
+
+  actualizarBreadcrumb();
+
+  actualizarBotonAtras();
+
+
+  await cargarDrive();
+
+}
+
+
+/* ==========================================
+   BOTÓN ATRÁS
+========================================== */
+
+function actualizarBotonAtras(){
+
+  const btn =
+    document.getElementById(
+      'driveBackBtn'
+    );
+
+
+  if(!btn){
+    return;
+  }
+
+
+  btn.disabled =
+    driveFolderHistory.length === 0;
+
+}
+
+
+/* ==========================================
+   ICONOS
+========================================== */
+
+function obtenerIconoDrive(mimeType){
+
+  mimeType =
+    mimeType || '';
+
+
+  if(
+    mimeType ===
+    'application/vnd.google-apps.folder'
+  ){
+
+    return 'fa-solid fa-folder';
+
+  }
+
+
+  if(
+    mimeType.includes(
+      'google-apps.document'
+    )
+  ){
+
+    return 'fa-solid fa-file-word';
+
+  }
+
+
+  if(
+    mimeType.includes(
+      'google-apps.spreadsheet'
+    )
+  ){
+
+    return 'fa-solid fa-file-excel';
+
+  }
+
+
+  if(
+    mimeType.includes(
+      'google-apps.presentation'
+    )
+  ){
+
+    return 'fa-solid fa-file-powerpoint';
+
+  }
+
+
+  if(
+    mimeType.startsWith('image/')
+  ){
+
+    return 'fa-solid fa-file-image';
+
+  }
+
+
+  if(
+    mimeType === 'application/pdf'
+  ){
+
+    return 'fa-solid fa-file-pdf';
+
+  }
+
+
+  if(
+    mimeType.startsWith('video/')
+  ){
+
+    return 'fa-solid fa-file-video';
+
+  }
+
+
+  if(
+    mimeType.startsWith('audio/')
+  ){
+
+    return 'fa-solid fa-file-audio';
+
+  }
+
+
+  return 'fa-solid fa-file';
+
+}
+
+
+/* ==========================================
+   FORMATEAR TAMAÑO
+========================================== */
+
+function formatearTamano(bytes){
+
+  const numero =
+    Number(bytes);
+
+
+  if(!numero){
+    return '';
+  }
+
+
+  const unidades =
+    [
+      'B',
+      'KB',
+      'MB',
+      'GB',
+      'TB'
+    ];
+
+
+  const indice =
+    Math.min(
+      Math.floor(
+        Math.log(numero) /
+        Math.log(1024)
+      ),
+      unidades.length - 1
+    );
+
+
+  return (
+    numero /
+    Math.pow(
+      1024,
+      indice
+    )
+  ).toFixed(
+    indice === 0
+      ? 0
+      : 1
+  ) +
+  ' ' +
+  unidades[indice];
+
+}
+
+
+/* ==========================================
+   FORMATEAR FECHA
+========================================== */
+
+function formatearFecha(fecha){
+
+  try{
+
+    return new Date(
+      fecha
+    ).toLocaleDateString(
+      'es-PA',
+      {
+        day:'2-digit',
+        month:'2-digit',
+        year:'numeric'
+      }
+    );
+
+  }
+  catch(error){
+
+    return '';
+
+  }
+
+}
+
+
+/* ==========================================
+   MOSTRAR ERROR
+========================================== */
+
+function mostrarError(mensaje){
+
+  const box =
+    document.getElementById(
+      'createMessage'
+    );
+
+
+  box.innerHTML = `
+
+    <div class="error-box">
+
+      <i
+        class="fa-solid fa-triangle-exclamation"
+      ></i>
+
+      <strong>
+        No se pudo crear el usuario.
+      </strong>
+
+      <br><br>
+
+      ${esc(mensaje)}
+
+    </div>
+
+  `;
+
+}
+
+
+/* ==========================================
+   ESCAPAR HTML
+========================================== */
+
+function esc(valor){
+
+  return String(
+    valor ?? ''
+  )
+  .replace(
+    /[&<>'"]/g,
+    caracter => ({
+
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      "'":'&#39;',
+      '"':'&quot;'
+
+    }[caracter])
+  );
+
+}
+
+
+/* ==========================================
+   ESCAPAR JAVASCRIPT
+========================================== */
+
+function escapeJS(valor){
+
+  return String(
+    valor ?? ''
+  )
+  .replace(
+    /\\/g,
+    '\\\\'
+  )
+  .replace(
+    /'/g,
+    "\\'"
+  )
+  .replace(
+    /\n/g,
+    '\\n'
+  )
+  .replace(
+    /\r/g,
+    '\\r'
+  );
+
+}
+
+
+/* ==========================================
+   INICIO
+========================================== */
+
+function onAuthenticated(){
+
+  cargarUsuarios();
+
+  cargarDrive();
+
+}
+
+
+initAuth([
+  'administrador'
+]);
+
+</script>
+
+</body>
+</html>
+```

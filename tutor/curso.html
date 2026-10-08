@@ -1,0 +1,2173 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Curso | Aula Virtual FAF</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            background: #0F3876;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-family: inherit;
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        main {
+            max-width: 1200px;
+
+            margin: 30px auto;
+
+            padding: 0 20px 50px;
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+            text-align: center;
+
+            padding: 60px 20px;
+
+            color: #6b7280;
+
+            font-size: 16px;
+        }
+
+        /* =========================
+           COURSE HEADER
+        ========================= */
+
+        .course-header {
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            margin-bottom: 28px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .course-header h1 {
+            color: #0F3876;
+
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+        .course-header p {
+            color: #6b7280;
+
+            font-size: 16px;
+
+            line-height: 1.6;
+        }
+
+        .drive-status {
+            margin-top: 18px;
+
+            padding: 11px 14px;
+
+            background: #f0fdf4;
+
+            border: 1px solid #bbf7d0;
+
+            border-radius: 8px;
+
+            color: #166534;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           SECTION TITLE
+        ========================= */
+
+        .section-title {
+            margin: 30px 0 15px;
+
+            color: #0F3876;
+
+            font-size: 22px;
+        }
+
+        /* =========================
+           FOLDERS
+        ========================= */
+
+        .folders-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+        .folder-card {
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 25px 20px;
+
+            cursor: pointer;
+
+            border: 2px solid transparent;
+
+            box-shadow:
+                0 5px 18px rgba(0,0,0,0.05);
+
+            transition: 0.2s;
+        }
+
+        .folder-card:hover {
+            transform: translateY(-3px);
+
+            border-color: #0F3876;
+
+            box-shadow:
+                0 8px 22px rgba(15,56,118,0.12);
+        }
+
+        .folder-card.active {
+            border-color: #F4A21D;
+
+            box-shadow:
+                0 8px 22px rgba(244,162,29,0.15);
+        }
+
+        .folder-icon {
+            font-size: 42px;
+
+            margin-bottom: 12px;
+        }
+
+        .folder-card h3 {
+            color: #0F3876;
+
+            margin-bottom: 5px;
+
+            font-size: 18px;
+        }
+
+        .folder-card p {
+            color: #6b7280;
+
+            font-size: 14px;
+
+            line-height: 1.4;
+        }
+
+        /* =========================
+           FILES SECTION
+        ========================= */
+
+        .files-section {
+            margin-top: 30px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .files-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+        }
+
+        .files-header h2 {
+            color: #0F3876;
+
+            font-size: 22px;
+
+            margin-bottom: 4px;
+        }
+
+        .current-folder {
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           UPLOAD BUTTON
+        ========================= */
+
+        .upload-btn {
+            border: none;
+
+            background: #F4A21D;
+
+            color: white;
+
+            padding: 11px 18px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+
+            transition: 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: #df9113;
+
+            transform: translateY(-1px);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+        /* =========================
+           FILE LIST
+        ========================= */
+
+        .files-list {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+        .file-item {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding: 14px;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            transition: 0.2s;
+        }
+
+        .file-item:hover {
+            background: #f9fafb;
+
+            border-color: #d1d5db;
+        }
+
+        .file-info {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            min-width: 0;
+        }
+
+        .file-icon {
+            font-size: 25px;
+
+            flex-shrink: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+        .file-action {
+            text-decoration: none;
+
+            background: #0F3876;
+
+            color: white;
+
+            padding: 8px 13px;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+
+            transition: 0.2s;
+        }
+
+        .file-action:hover {
+            background: #092d63;
+        }
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 40px 20px;
+
+            color: #6b7280;
+
+            line-height: 1.6;
+        }
+
+        /* =========================
+           ALERT
+        ========================= */
+
+        .alert {
+            position: fixed;
+
+            right: 20px;
+
+            bottom: 20px;
+
+            max-width: 380px;
+
+            background: #0F3876;
+
+            color: white;
+
+            padding: 14px 18px;
+
+            border-radius: 10px;
+
+            display: none;
+
+            z-index: 9999;
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,0.20);
+
+            font-size: 14px;
+
+            line-height: 1.4;
+        }
+
+        .alert.error {
+            background: #b91c1c;
+        }
+
+        .alert.success {
+            background: #15803d;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .folders-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            header {
+                padding: 15px;
+            }
+
+            .header-title {
+                font-size: 17px;
+            }
+
+            main {
+                margin-top: 20px;
+            }
+
+            .folders-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .course-header {
+                padding: 22px;
+            }
+
+            .course-header h1 {
+                font-size: 24px;
+            }
+
+            .files-header {
+                align-items: stretch;
+
+                flex-direction: column;
+            }
+
+            .upload-btn {
+                width: 100%;
+            }
+
+            .file-item {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .file-action {
+                width: 100%;
+
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="header-left">
+
+        <button
+            class="back-btn"
+            onclick="volverCursos()">
+
+            ← Cursos
+
+        </button>
+
+        <div class="header-title">
+            Aula Virtual FAF
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <!-- =========================
+         LOADING
+    ========================= -->
+
+    <div
+        id="loadingCurso"
+        class="loading">
+
+        Cargando curso...
+
+    </div>
+
+
+    <!-- =========================
+         CONTENIDO
+    ========================= -->
+
+    <section
+        id="contenidoCurso"
+        style="display:none;">
+
+
+        <!-- =========================
+             INFORMACIÓN DEL CURSO
+        ========================= -->
+
+        <div class="course-header">
+
+            <h1 id="nombreCurso">
+                Curso
+            </h1>
+
+            <p id="descripcionCurso">
+                Descripción del curso
+            </p>
+
+            <div class="drive-status">
+
+                ✓ Curso conectado con Google Drive institucional
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             CARPETAS
+        ========================= -->
+
+        <h2 class="section-title">
+
+            📁 Contenido del curso
+
+        </h2>
+
+
+        <div class="folders-grid">
+
+
+            <div
+                class="folder-card"
+                data-folder="Materiales"
+                onclick="abrirCarpeta('Materiales')">
+
+                <div class="folder-icon">
+                    📚
+                </div>
+
+                <h3>
+                    Materiales
+                </h3>
+
+                <p>
+                    Documentos y material de estudio.
+                </p>
+
+            </div>
+
+
+            <div
+                class="folder-card"
+                data-folder="Tareas"
+                onclick="abrirCarpeta('Tareas')">
+
+                <div class="folder-icon">
+                    📝
+                </div>
+
+                <h3>
+                    Tareas
+                </h3>
+
+                <p>
+                    Trabajos y actividades.
+                </p>
+
+            </div>
+
+
+            <div
+                class="folder-card"
+                data-folder="Evaluaciones"
+                onclick="abrirCarpeta('Evaluaciones')">
+
+                <div class="folder-icon">
+                    📋
+                </div>
+
+                <h3>
+                    Evaluaciones
+                </h3>
+
+                <p>
+                    Evaluaciones y pruebas.
+                </p>
+
+            </div>
+
+
+            <div
+                class="folder-card"
+                data-folder="Recursos"
+                onclick="abrirCarpeta('Recursos')">
+
+                <div class="folder-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Recursos
+                </h3>
+
+                <p>
+                    Recursos adicionales.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =========================
+             ARCHIVOS
+        ========================= -->
+
+        <section class="files-section">
+
+
+            <div class="files-header">
+
+
+                <div>
+
+                    <h2 id="tituloCarpeta">
+                        Selecciona una carpeta
+                    </h2>
+
+                    <div
+                        class="current-folder"
+                        id="descripcionCarpeta">
+
+                        Selecciona una de las carpetas
+                        para ver sus archivos.
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="btnSubirArchivo"
+                    class="upload-btn"
+                    onclick="abrirSelectorArchivo()"
+                    style="display:none;">
+
+                    ⬆️ Subir archivo
+
+                </button>
+
+
+            </div>
+
+
+            <!-- INPUT OCULTO -->
+
+            <input
+                type="file"
+                id="inputArchivo"
+                style="display:none;"
+                onchange="subirArchivoSeleccionado(event)"
+            >
+
+
+            <!-- LISTA DE ARCHIVOS -->
+
+            <div id="listaArchivos">
+
+                <div class="empty">
+
+                    📂 Selecciona una carpeta.
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </section>
+
+</main>
+
+
+<!-- =========================
+     ALERTA
+========================= -->
+
+<div
+    id="alerta"
+    class="alert">
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   CONFIGURACIÓN
+===================================================== */
+
+const DRIVE_FILES_FUNCTION =
+    "https://zrascvakpwiwzqzliyuq.supabase.co/functions/v1/google-drive-files";
+
+
+const UPLOAD_FUNCTION =
+    "https://zrascvakpwiwzqzliyuq.supabase.co/functions/v1/google-drive-upload";
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let supabaseClient = null;
+
+let currentUser = null;
+
+let perfil = null;
+
+let curso = null;
+
+let carpetas = {};
+
+let carpetaActual = null;
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+async function iniciar() {
+
+    try {
+
+        /*
+         * Cargar configuración
+         */
+
+        const cfg =
+            await fetch(
+                "../config.json",
+                {
+                    cache: "no-store"
+                }
+            ).then(
+                response => response.json()
+            );
+
+
+        /*
+         * Crear cliente Supabase
+         */
+
+        supabaseClient =
+            window.supabase.createClient(
+                cfg.supabase.url,
+                cfg.supabase.anonKey
+            );
+
+
+        /*
+         * Comprobar sesión
+         */
+
+        const {
+            data: { session },
+            error
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (error || !session) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        currentUser =
+            session.user;
+
+
+        /*
+         * Obtener perfil
+         */
+
+        const {
+            data: perfilData,
+            error: perfilError
+        } =
+            await supabaseClient
+                .from("usuarios")
+                .select(
+                    "id,nombre,apellido,email,rol,activo"
+                )
+                .eq(
+                    "id",
+                    currentUser.id
+                )
+                .maybeSingle();
+
+
+        if (
+            perfilError ||
+            !perfilData ||
+            !perfilData.activo
+        ) {
+
+            mostrarAlerta(
+                "No se pudo cargar tu perfil.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        perfil =
+            perfilData;
+
+
+        /*
+         * Verificar permisos
+         */
+
+        if (
+            perfil.rol !== "tutor" &&
+            perfil.rol !== "administrador"
+        ) {
+
+            mostrarAlerta(
+                "No tienes permiso para acceder a esta página.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+         * Cargar curso
+         */
+
+        await cargarCurso();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        mostrarAlerta(
+            "Ocurrió un error al cargar el curso.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CARGAR CURSO
+===================================================== */
+
+async function cargarCurso() {
+
+    const cursoId =
+        sessionStorage.getItem(
+            "cursoSeleccionado"
+        );
+
+
+    if (!cursoId) {
+
+        mostrarAlerta(
+            "No se encontró el curso seleccionado.",
+            "error"
+        );
+
+
+        setTimeout(
+            () => {
+                volverCursos();
+            },
+            1500
+        );
+
+        return;
+    }
+
+
+    /*
+     * Buscar curso
+     */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("cursos")
+            .select(`
+                id,
+                nombre,
+                descripcion,
+                tutor_id,
+                drive_folder_id,
+                activo,
+                created_at
+            `)
+            .eq(
+                "id",
+                cursoId
+            )
+            .maybeSingle();
+
+
+    if (error) {
+
+        console.error(error);
+
+        mostrarAlerta(
+            "No se pudo cargar la información del curso.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (!data) {
+
+        mostrarAlerta(
+            "El curso no existe o no tienes acceso.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (!data.activo) {
+
+        mostrarAlerta(
+            "Este curso está inactivo.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    curso =
+        data;
+
+
+    /*
+     * Mostrar información
+     */
+
+    document.getElementById(
+        "nombreCurso"
+    ).textContent =
+        curso.nombre;
+
+
+    document.getElementById(
+        "descripcionCurso"
+    ).textContent =
+        curso.descripcion ||
+        "Sin descripción.";
+
+
+    /*
+     * Mostrar contenido
+     */
+
+    document.getElementById(
+        "loadingCurso"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "contenidoCurso"
+    ).style.display =
+        "block";
+
+
+    /*
+     * Cargar carpetas Drive
+     */
+
+    await cargarCarpetasCurso();
+
+}
+
+
+/* =====================================================
+   CARGAR CARPETAS DEL CURSO
+===================================================== */
+
+async function cargarCarpetasCurso() {
+
+    try {
+
+        const token =
+            await obtenerToken();
+
+
+        const response =
+            await fetch(
+                DRIVE_FILES_FUNCTION +
+                "?folderId=" +
+                encodeURIComponent(
+                    curso.drive_folder_id
+                ),
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " +
+                            token
+                    }
+                }
+            );
+
+
+        const resultado =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                resultado
+            );
+
+            mostrarAlerta(
+                "No se pudieron cargar las carpetas de Google Drive.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const archivos =
+            resultado.files ||
+            resultado ||
+            [];
+
+
+        /*
+         * Reiniciar carpetas
+         */
+
+        carpetas = {};
+
+
+        /*
+         * Buscar carpetas
+         */
+
+        archivos.forEach(
+            file => {
+
+                if (
+                    file.mimeType ===
+                    "application/vnd.google-apps.folder"
+                ) {
+
+                    carpetas[
+                        file.name
+                    ] =
+                        file.id;
+
+                }
+
+            }
+        );
+
+
+        console.log(
+            "Carpetas encontradas:",
+            carpetas
+        );
+
+
+        /*
+         * Comprobar las carpetas
+         */
+
+        actualizarEstadoCarpetas();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        mostrarAlerta(
+            "Error al conectar con Google Drive.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ACTUALIZAR ESTADO DE CARPETAS
+===================================================== */
+
+function actualizarEstadoCarpetas() {
+
+    const tarjetas =
+        document.querySelectorAll(
+            ".folder-card"
+        );
+
+
+    tarjetas.forEach(
+        tarjeta => {
+
+            const nombre =
+                tarjeta.dataset.folder;
+
+
+            if (!carpetas[nombre]) {
+
+                tarjeta.style.opacity =
+                    "0.55";
+
+            } else {
+
+                tarjeta.style.opacity =
+                    "1";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ABRIR CARPETA
+===================================================== */
+
+async function abrirCarpeta(nombre) {
+
+    /*
+     * Guardar carpeta actual
+     */
+
+    carpetaActual = {
+
+        nombre: nombre,
+
+        id: carpetas[nombre]
+
+    };
+
+
+    /*
+     * Mostrar botón
+     */
+
+    document.getElementById(
+        "btnSubirArchivo"
+    ).style.display =
+        "block";
+
+
+    /*
+     * Marcar tarjeta activa
+     */
+
+    document
+        .querySelectorAll(
+            ".folder-card"
+        )
+        .forEach(
+            tarjeta => {
+
+                tarjeta.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    const tarjetaActiva =
+        document.querySelector(
+            `[data-folder="${CSS.escape(nombre)}"]`
+        );
+
+
+    if (tarjetaActiva) {
+
+        tarjetaActiva.classList.add(
+            "active"
+        );
+
+    }
+
+
+    /*
+     * Título
+     */
+
+    document.getElementById(
+        "tituloCarpeta"
+    ).textContent =
+        nombre;
+
+
+    document.getElementById(
+        "descripcionCarpeta"
+    ).textContent =
+        "Cargando archivos...";
+
+
+    /*
+     * Contenedor
+     */
+
+    const contenedor =
+        document.getElementById(
+            "listaArchivos"
+        );
+
+
+    contenedor.innerHTML =
+        `
+        <div class="loading">
+            Cargando archivos...
+        </div>
+        `;
+
+
+    /*
+     * ID de carpeta
+     */
+
+    const folderId =
+        carpetas[nombre];
+
+
+    if (!folderId) {
+
+        contenedor.innerHTML =
+            `
+            <div class="empty">
+
+                📂 La carpeta
+                <strong>
+                    ${escapeHtml(nombre)}
+                </strong>
+                no fue encontrada
+                en Google Drive.
+
+            </div>
+            `;
+
+
+        document.getElementById(
+            "descripcionCarpeta"
+        ).textContent =
+            "Carpeta no encontrada.";
+
+
+        return;
+    }
+
+
+    try {
+
+        const token =
+            await obtenerToken();
+
+
+        /*
+         * Obtener archivos
+         */
+
+        const response =
+            await fetch(
+                DRIVE_FILES_FUNCTION +
+                "?folderId=" +
+                encodeURIComponent(
+                    folderId
+                ),
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " +
+                            token
+                    }
+                }
+            );
+
+
+        const resultado =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                resultado
+            );
+
+            throw new Error(
+                resultado.error ||
+                "No se pudieron obtener los archivos."
+            );
+
+        }
+
+
+        const archivos =
+            resultado.files ||
+            resultado ||
+            [];
+
+
+        /*
+         * Cantidad
+         */
+
+        document.getElementById(
+            "descripcionCarpeta"
+        ).textContent =
+
+            archivos.length +
+
+            (
+                archivos.length === 1
+                    ? " archivo"
+                    : " archivos"
+            );
+
+
+        /*
+         * Mostrar
+         */
+
+        mostrarArchivos(
+            archivos
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        contenedor.innerHTML =
+            `
+            <div class="empty">
+
+                ❌ No se pudieron cargar
+                los archivos.
+
+                <br><br>
+
+                <small>
+                    ${escapeHtml(
+                        error.message ||
+                        ""
+                    )}
+                </small>
+
+            </div>
+            `;
+
+
+        document.getElementById(
+            "descripcionCarpeta"
+        ).textContent =
+            "Error al cargar archivos.";
+
+    }
+
+}
+
+
+/* =====================================================
+   MOSTRAR ARCHIVOS
+===================================================== */
+
+function mostrarArchivos(archivos) {
+
+    const contenedor =
+        document.getElementById(
+            "listaArchivos"
+        );
+
+
+    /*
+     * Carpeta vacía
+     */
+
+    if (!archivos.length) {
+
+        contenedor.innerHTML =
+            `
+            <div class="empty">
+
+                📂 Esta carpeta está vacía.
+
+                <br><br>
+
+                Puedes utilizar
+                <strong>
+                    ⬆️ Subir archivo
+                </strong>
+                para agregar contenido.
+
+            </div>
+            `;
+
+        return;
+    }
+
+
+    /*
+     * Crear lista
+     */
+
+    contenedor.innerHTML =
+        `
+        <div class="files-list"></div>
+        `;
+
+
+    const lista =
+        contenedor.querySelector(
+            ".files-list"
+        );
+
+
+    archivos.forEach(
+        file => {
+
+            /*
+             * No mostrar carpetas
+             */
+
+            if (
+                file.mimeType ===
+                "application/vnd.google-apps.folder"
+            ) {
+                return;
+            }
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "file-item";
+
+
+            /*
+             * Icono
+             */
+
+            const icono =
+                obtenerIconoArchivo(
+                    file.mimeType
+                );
+
+
+            /*
+             * Nombre
+             */
+
+            const nombre =
+                escapeHtml(
+                    file.name ||
+                    "Archivo sin nombre"
+                );
+
+
+            /*
+             * Link
+             */
+
+            const link =
+                file.webViewLink ||
+                file.webContentLink ||
+                "#";
+
+
+            /*
+             * HTML
+             */
+
+            item.innerHTML =
+                `
+                <div class="file-info">
+
+                    <div class="file-icon">
+                        ${icono}
+                    </div>
+
+                    <div
+                        class="file-name"
+                        title="${nombre}">
+
+                        ${nombre}
+
+                    </div>
+
+                </div>
+
+
+                ${
+                    link !== "#"
+
+                    ?
+
+                    `
+                    <a
+                        class="file-action"
+                        href="${link}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        Abrir
+
+                    </a>
+                    `
+
+                    :
+
+                    ""
+                }
+
+                `;
+
+
+            lista.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ICONOS
+===================================================== */
+
+function obtenerIconoArchivo(
+    mimeType
+) {
+
+    if (!mimeType) {
+
+        return "📄";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "folder"
+        )
+    ) {
+
+        return "📁";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "pdf"
+        )
+    ) {
+
+        return "📕";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "word"
+        ) ||
+        mimeType.includes(
+            "document"
+        )
+    ) {
+
+        return "📘";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "sheet"
+        ) ||
+        mimeType.includes(
+            "excel"
+        )
+    ) {
+
+        return "📊";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "presentation"
+        ) ||
+        mimeType.includes(
+            "powerpoint"
+        )
+    ) {
+
+        return "📙";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "image"
+        )
+    ) {
+
+        return "🖼️";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "video"
+        )
+    ) {
+
+        return "🎥";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "audio"
+        )
+    ) {
+
+        return "🎵";
+
+    }
+
+
+    if (
+        mimeType.includes(
+            "zip"
+        )
+    ) {
+
+        return "🗜️";
+
+    }
+
+
+    return "📄";
+
+}
+
+
+/* =====================================================
+   ABRIR SELECTOR
+===================================================== */
+
+function abrirSelectorArchivo() {
+
+    if (!carpetaActual) {
+
+        mostrarAlerta(
+            "Primero selecciona una carpeta.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /*
+     * Verificar que exista la carpeta
+     */
+
+    if (!carpetaActual.id) {
+
+        mostrarAlerta(
+            "La carpeta no está disponible en Google Drive.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    document
+        .getElementById(
+            "inputArchivo"
+        )
+        .click();
+
+}
+
+
+/* =====================================================
+   SUBIR ARCHIVO
+===================================================== */
+
+async function subirArchivoSeleccionado(
+    event
+) {
+
+    const archivo =
+        event.target.files[0];
+
+
+    if (!archivo) {
+
+        return;
+
+    }
+
+
+    /*
+     * Verificaciones
+     */
+
+    if (!curso) {
+
+        mostrarAlerta(
+            "No se ha cargado el curso.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (!carpetaActual) {
+
+        mostrarAlerta(
+            "No se ha seleccionado una carpeta.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /*
+     * Límite 50 MB
+     */
+
+    const MAX_FILE_SIZE =
+        50 * 1024 * 1024;
+
+
+    if (
+        archivo.size >
+        MAX_FILE_SIZE
+    ) {
+
+        mostrarAlerta(
+            "El archivo supera el límite de 50 MB.",
+            "error"
+        );
+
+        event.target.value =
+            "";
+
+        return;
+    }
+
+
+    /*
+     * Botón
+     */
+
+    const btn =
+        document.getElementById(
+            "btnSubirArchivo"
+        );
+
+
+    btn.disabled =
+        true;
+
+
+    btn.textContent =
+        "⏳ Subiendo...";
+
+
+    try {
+
+        /*
+         * Token
+         */
+
+        const token =
+            await obtenerToken();
+
+
+        /*
+         * FormData
+         */
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "cursoId",
+            curso.id
+        );
+
+
+        formData.append(
+            "folderId",
+            carpetaActual.id
+        );
+
+
+        formData.append(
+            "archivo",
+            archivo
+        );
+
+
+        /*
+         * Enviar
+         */
+
+        const response =
+            await fetch(
+                UPLOAD_FUNCTION,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " +
+                            token
+                    },
+
+                    body:
+                        formData
+                }
+            );
+
+
+        const resultado =
+            await response.json();
+
+
+        /*
+         * Error
+         */
+
+        if (!response.ok) {
+
+            console.error(
+                resultado
+            );
+
+            throw new Error(
+                resultado.error ||
+                "No se pudo subir el archivo."
+            );
+
+        }
+
+
+        /*
+         * Éxito
+         */
+
+        mostrarAlerta(
+            "Archivo subido correctamente.",
+            "success"
+        );
+
+
+        /*
+         * Limpiar input
+         */
+
+        document.getElementById(
+            "inputArchivo"
+        ).value =
+            "";
+
+
+        /*
+         * Actualizar lista
+         */
+
+        await abrirCarpeta(
+            carpetaActual.nombre
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        mostrarAlerta(
+            error.message ||
+            "Ocurrió un error al subir el archivo.",
+            "error"
+        );
+
+
+    } finally {
+
+        btn.disabled =
+            false;
+
+
+        btn.textContent =
+            "⬆️ Subir archivo";
+
+    }
+
+}
+
+
+/* =====================================================
+   OBTENER TOKEN
+===================================================== */
+
+async function obtenerToken() {
+
+    const {
+        data: { session }
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+        window.location.href =
+            "login.html";
+
+
+        throw new Error(
+            "Sesión no válida."
+        );
+
+    }
+
+
+    return session.access_token;
+
+}
+
+
+/* =====================================================
+   VOLVER A CURSOS
+===================================================== */
+
+function volverCursos() {
+
+    sessionStorage.removeItem(
+        "cursoSeleccionado"
+    );
+
+
+    window.location.href =
+        "tutor.html";
+
+}
+
+
+/* =====================================================
+   ALERTAS
+===================================================== */
+
+function mostrarAlerta(
+    mensaje,
+    tipo = "normal"
+) {
+
+    const alerta =
+        document.getElementById(
+            "alerta"
+        );
+
+
+    alerta.textContent =
+        mensaje;
+
+
+    alerta.className =
+        "alert";
+
+
+    if (tipo === "error") {
+
+        alerta.classList.add(
+            "error"
+        );
+
+    }
+
+
+    if (tipo === "success") {
+
+        alerta.classList.add(
+            "success"
+        );
+
+    }
+
+
+    alerta.style.display =
+        "block";
+
+
+    setTimeout(
+        () => {
+
+            alerta.style.display =
+                "none";
+
+        },
+        4000
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(
+    texto
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        texto ?? "";
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   INICIAR APLICACIÓN
+===================================================== */
+
+iniciar();
+
+</script>
+
+</body>
+</html>

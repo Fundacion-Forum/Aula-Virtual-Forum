@@ -1,0 +1,1667 @@
+```html
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aula Virtual | Tutor</title>
+
+<style>
+:root{
+  --primary:#2563eb;
+  --bg:#f4f7fb;
+  --card:#fff;
+  --text:#172033;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --success:#16a34a;
+  --danger:#dc2626;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.layout{
+  min-height:100vh;
+  display:flex;
+}
+
+.sidebar{
+  width:260px;
+  background:#0f172a;
+  color:#fff;
+  padding:24px 16px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+}
+
+.brand{
+  font-size:21px;
+  font-weight:800;
+  padding:8px 12px 26px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.brand i{
+  color:#60a5fa;
+}
+
+.nav a{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px 14px;
+  margin:5px 0;
+  border-radius:10px;
+  color:#cbd5e1;
+  text-decoration:none;
+}
+
+.nav a:hover,
+.nav a.active{
+  background:#1e293b;
+  color:#fff;
+}
+
+.nav i{
+  width:20px;
+  text-align:center;
+}
+
+.main{
+  margin-left:260px;
+  width:calc(100% - 260px);
+  padding:28px 34px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:26px;
+}
+
+.welcome h1{
+  margin:0 0 5px;
+  font-size:28px;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:9px 13px;
+  border-radius:12px;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-weight:800;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 5px 18px rgba(15,23,42,.04);
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.stat-icon{
+  width:46px;
+  height:46px;
+  border-radius:12px;
+  background:#eff6ff;
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  font-size:19px;
+}
+
+.stat strong{
+  font-size:28px;
+  display:block;
+  margin-top:7px;
+}
+
+.section{
+  margin-top:24px;
+}
+
+.section h2{
+  margin:0 0 14px;
+  font-size:20px;
+}
+
+.course-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.course-card{
+  position:relative;
+}
+
+.course-icon{
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#eff6ff;
+  color:var(--primary);
+  font-size:20px;
+  margin-bottom:14px;
+}
+
+.course-card h3{
+  margin:0 0 8px;
+  font-size:18px;
+}
+
+.course-description{
+  color:var(--muted);
+  min-height:42px;
+  line-height:1.5;
+  margin-bottom:16px;
+}
+
+.course-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.course-date{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.empty{
+  text-align:center;
+  padding:34px;
+  color:var(--muted);
+}
+
+button,
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:#fff;
+}
+
+.btn-primary:hover{
+  background:#1d4ed8;
+}
+
+.btn-secondary{
+  background:#e2e8f0;
+  color:#172033;
+}
+
+.btn-danger{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font:inherit;
+  outline:none;
+}
+
+.field input:focus,
+.field textarea:focus{
+  border-color:var(--primary);
+}
+
+.field textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.note{
+  padding:14px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  color:#1e40af;
+  margin-bottom:18px;
+  line-height:1.5;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.55);
+  display:grid;
+  place-items:center;
+  padding:20px;
+  z-index:50;
+}
+
+.modal-box{
+  width:min(520px,100%);
+  background:#fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.modal-header h2{
+  margin:0;
+  font-size:21px;
+}
+
+.close-btn{
+  width:36px;
+  height:36px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  background:#f1f5f9;
+  color:#334155;
+  border-radius:10px;
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:20px;
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:var(--bg);
+  z-index:100;
+}
+
+.spinner{
+  width:40px;
+  height:40px;
+  border:4px solid #dbeafe;
+  border-top-color:var(--primary);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.hidden{
+  display:none!important;
+}
+
+.error{
+  max-width:500px;
+  margin:80px auto;
+  background:#fff;
+  padding:28px;
+  border-radius:16px;
+  border:1px solid #fecaca;
+  text-align:center;
+}
+
+.alert{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:min(420px,calc(100% - 48px));
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:15px 17px;
+  box-shadow:0 15px 40px rgba(15,23,42,.15);
+  z-index:200;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+
+.alert.success{
+  border-color:#bbf7d0;
+}
+
+.alert.error{
+  border-color:#fecaca;
+}
+
+.alert i{
+  margin-top:2px;
+}
+
+.alert.success i{
+  color:var(--success);
+}
+
+.alert.error i{
+  color:var(--danger);
+}
+
+@media(max-width:900px){
+  .sidebar{
+    width:72px;
+  }
+
+  .brand span,
+  .nav span{
+    display:none;
+  }
+
+  .main{
+    margin-left:72px;
+    width:calc(100% - 72px);
+    padding:20px;
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .course-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:600px){
+  .grid,
+  .course-grid{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    display:none;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .topbar{
+    align-items:flex-start;
+    gap:12px;
+    flex-direction:column;
+  }
+
+  .toolbar{
+    align-items:flex-start;
+    gap:12px;
+    flex-direction:column;
+  }
+}
+</style>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+</div>
+
+<div id="errorBox" class="error hidden">
+  <h2>Acceso denegado</h2>
+  <p>Esta pantalla es para tutores y administradores.</p>
+  <a class="btn btn-primary" href="../index.html">
+    Volver al inicio
+  </a>
+</div>
+
+<div id="alertBox" class="alert hidden">
+  <i id="alertIcon" class="fa-solid"></i>
+  <div id="alertMessage"></div>
+</div>
+
+<div id="courseModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>Crear nuevo curso</h2>
+
+      <button
+        class="close-btn"
+        type="button"
+        onclick="cerrarModalCurso()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="note">
+      <i class="fa-solid fa-cloud"></i>
+      Al crear el curso se generará automáticamente una carpeta
+      en el Drive institucional con las carpetas de Materiales,
+      Tareas, Evaluaciones y Recursos.
+    </div>
+
+    <form id="courseForm">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="courseName">
+            Nombre del curso
+          </label>
+
+          <input
+            id="courseName"
+            type="text"
+            maxlength="150"
+            placeholder="Ej. Informática Básica"
+            required>
+        </div>
+
+        <div class="field">
+          <label for="courseDescription">
+            Descripción
+          </label>
+
+          <textarea
+            id="courseDescription"
+            maxlength="500"
+            placeholder="Describe brevemente el curso..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="cerrarModalCurso()">
+          Cancelar
+        </button>
+
+        <button
+          id="createCourseBtn"
+          type="submit"
+          class="btn btn-primary">
+          <i class="fa-solid fa-plus"></i>
+          Crear curso
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+  <div class="brand">
+    <i class="fa-solid fa-chalkboard-user"></i>
+    <span>Aula Virtual</span>
+  </div>
+
+  <nav class="nav">
+
+    <a class="active" href="#">
+      <i class="fa-solid fa-house"></i>
+      <span>Inicio</span>
+    </a>
+
+    <a href="#cursos">
+      <i class="fa-solid fa-book"></i>
+      <span>Mis cursos</span>
+    </a>
+
+    <a href="#actividades">
+      <i class="fa-solid fa-list-check"></i>
+      <span>Actividades</span>
+    </a>
+
+    <a href="#estudiantes">
+      <i class="fa-solid fa-users"></i>
+      <span>Estudiantes</span>
+    </a>
+
+    <a href="#calificaciones">
+      <i class="fa-solid fa-chart-column"></i>
+      <span>Calificaciones</span>
+    </a>
+
+    <a href="#"
+       onclick="cerrarSesion();return false">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span>Cerrar sesión</span>
+    </a>
+
+  </nav>
+
+</aside>
+
+<main class="main">
+
+<div class="topbar">
+
+  <div class="welcome">
+
+    <h1>Panel del tutor</h1>
+
+    <div class="muted">
+      Administra tus cursos, contenidos y actividades.
+    </div>
+
+  </div>
+
+  <div class="profile">
+
+    <div class="avatar">
+      <i class="fa-solid fa-chalkboard-user"></i>
+    </div>
+
+    <div>
+
+      <strong data-user-name></strong>
+
+      <small
+        id="roleLabel"
+        class="muted"
+        style="display:block">
+        Tutor
+      </small>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ESTADÍSTICAS -->
+
+<div class="grid">
+
+  <div class="card stat">
+
+    <div>
+      <span class="muted">Mis cursos</span>
+      <strong id="coursesCount">0</strong>
+    </div>
+
+    <div class="stat-icon">
+      <i class="fa-solid fa-book"></i>
+    </div>
+
+  </div>
+
+  <div class="card stat">
+
+    <div>
+      <span class="muted">Estudiantes</span>
+      <strong>0</strong>
+    </div>
+
+    <div class="stat-icon">
+      <i class="fa-solid fa-users"></i>
+    </div>
+
+  </div>
+
+  <div class="card stat">
+
+    <div>
+      <span class="muted">Actividades</span>
+      <strong>0</strong>
+    </div>
+
+    <div class="stat-icon">
+      <i class="fa-solid fa-list-check"></i>
+    </div>
+
+  </div>
+
+  <div class="card stat">
+
+    <div>
+      <span class="muted">Por revisar</span>
+      <strong>0</strong>
+    </div>
+
+    <div class="stat-icon">
+      <i class="fa-solid fa-inbox"></i>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CURSOS -->
+
+<section id="cursos" class="section">
+
+  <div class="toolbar">
+
+    <h2>Mis cursos</h2>
+
+    <button
+      id="newCourseButton"
+      class="btn btn-primary"
+      onclick="abrirModalCurso()">
+
+      <i class="fa-solid fa-plus"></i>
+
+      Crear curso
+
+    </button>
+
+  </div>
+
+  <div id="coursesContainer">
+
+    <div class="card empty">
+
+      <i
+        class="fa-solid fa-spinner fa-spin"
+        style="font-size:30px">
+      </i>
+
+      <p>Cargando cursos...</p>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ACTIVIDADES -->
+
+<section id="actividades" class="section">
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <h2>Actividades</h2>
+
+      <button
+        class="btn btn-primary"
+        onclick="mostrarProximamente('actividades')">
+
+        <i class="fa-solid fa-plus"></i>
+
+        Nueva actividad
+
+      </button>
+
+    </div>
+
+    <div class="empty">
+
+      Aquí aparecerán las actividades de tus cursos.
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ESTUDIANTES -->
+
+<section id="estudiantes" class="section">
+
+  <div class="card">
+
+    <h2>Estudiantes</h2>
+
+    <div class="empty">
+
+      Los estudiantes inscritos en tus cursos aparecerán aquí.
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CALIFICACIONES -->
+
+<section id="calificaciones" class="section">
+
+  <div class="card">
+
+    <h2>Calificaciones</h2>
+
+    <div class="empty">
+
+      Las entregas aparecerán aquí para ser calificadas.
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+const CREATE_COURSE_FUNCTION =
+  "google-drive-create-course";
+
+
+/* ==========================================
+   ALERTAS
+========================================== */
+
+function mostrarAlerta(mensaje, tipo = "success") {
+
+  const box =
+    document.getElementById("alertBox");
+
+  const icon =
+    document.getElementById("alertIcon");
+
+  const text =
+    document.getElementById("alertMessage");
+
+  box.className =
+    "alert " + tipo;
+
+  icon.className =
+    tipo === "success"
+      ? "fa-solid fa-circle-check"
+      : "fa-solid fa-circle-exclamation";
+
+  text.textContent = mensaje;
+
+  setTimeout(() => {
+    box.classList.add("hidden");
+  }, 4500);
+}
+
+
+/* ==========================================
+   AUTENTICACIÓN
+========================================== */
+
+async function initAuth(allowedRoles) {
+
+  try {
+
+    const cfg =
+      await fetch(
+        "../config.json",
+        { cache:"no-store" }
+      ).then(r => {
+
+        if(!r.ok)
+          throw new Error(
+            "No se pudo cargar config.json."
+          );
+
+        return r.json();
+
+      });
+
+    supabaseClient =
+      window.supabase.createClient(
+        cfg.supabase.url,
+        cfg.supabase.anonKey
+      );
+
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if(sessionError)
+      throw sessionError;
+
+
+    const session =
+      sessionData?.session;
+
+
+    if(!session){
+
+      location.href =
+        "../index.html";
+
+      return;
+
+    }
+
+
+    currentUser =
+      session.user;
+
+
+    const {
+      data: perfil,
+      error
+    } =
+      await supabaseClient
+        .from("usuarios")
+        .select(
+          "id,nombre,apellido,email,rol,activo"
+        )
+        .eq(
+          "id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+
+    if(
+      error ||
+      !perfil ||
+      perfil.activo !== true ||
+      !allowedRoles.includes(
+        perfil.rol
+      )
+    ){
+
+      await supabaseClient.auth.signOut();
+
+      location.href =
+        "../index.html";
+
+      return;
+
+    }
+
+
+    currentProfile =
+      perfil;
+
+
+    const nombreCompleto =
+      (
+        (perfil.nombre || "") +
+        " " +
+        (perfil.apellido || "")
+      ).trim();
+
+
+    document
+      .querySelectorAll(
+        "[data-user-name]"
+      )
+      .forEach(el => {
+
+        el.textContent =
+          nombreCompleto ||
+          perfil.email;
+
+      });
+
+
+    document
+      .querySelectorAll(
+        "[data-user-email]"
+      )
+      .forEach(el => {
+
+        el.textContent =
+          perfil.email;
+
+      });
+
+
+    if(perfil.rol === "administrador"){
+
+      document.getElementById(
+        "roleLabel"
+      ).textContent =
+        "Administrador · acceso tutor";
+
+    }
+
+
+    document
+      .getElementById("loading")
+      ?.remove();
+
+
+    await cargarCursos();
+
+
+  } catch(error){
+
+    console.error(
+      "Error de autenticación:",
+      error
+    );
+
+    document
+      .getElementById("loading")
+      ?.remove();
+
+    document
+      .getElementById("errorBox")
+      ?.classList.remove(
+        "hidden"
+      );
+
+  }
+
+}
+
+
+/* ==========================================
+   CARGAR CURSOS
+========================================== */
+
+async function cargarCursos(){
+
+  const container =
+    document.getElementById(
+      "coursesContainer"
+    );
+
+
+  container.innerHTML = `
+    <div class="card empty">
+      <i class="fa-solid fa-spinner fa-spin"
+         style="font-size:30px"></i>
+      <p>Cargando cursos...</p>
+    </div>
+  `;
+
+
+  try{
+
+    let query =
+      supabaseClient
+        .from("cursos")
+        .select(
+          "id,nombre,descripcion,tutor_id,drive_folder_id,activo,created_at"
+        )
+        .eq(
+          "activo",
+          true
+        )
+        .order(
+          "created_at",
+          { ascending:false }
+        );
+
+
+    /*
+      Los tutores solamente ven
+      sus cursos.
+
+      El administrador puede
+      visualizar todos.
+    */
+
+    if(
+      currentProfile.rol !==
+      "administrador"
+    ){
+
+      query =
+        query.eq(
+          "tutor_id",
+          currentProfile.id
+        );
+
+    }
+
+
+    const {
+      data: cursos,
+      error
+    } =
+      await query;
+
+
+    if(error)
+      throw error;
+
+
+    const lista =
+      cursos || [];
+
+
+    document.getElementById(
+      "coursesCount"
+    ).textContent =
+      lista.length;
+
+
+    if(lista.length === 0){
+
+      container.innerHTML = `
+        <div class="card empty">
+
+          <i class="fa-solid fa-book-open"
+             style="font-size:30px"></i>
+
+          <p>
+            Todavía no tienes cursos creados.
+          </p>
+
+          <span>
+            Pulsa "Crear curso" para comenzar.
+          </span>
+
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML = `
+      <div class="course-grid">
+
+        ${lista.map(
+          curso => crearTarjetaCurso(curso)
+        ).join("")}
+
+      </div>
+    `;
+
+
+  }catch(error){
+
+    console.error(
+      "Error cargando cursos:",
+      error
+    );
+
+
+    container.innerHTML = `
+      <div class="card empty">
+
+        <i class="fa-solid fa-triangle-exclamation"
+           style="font-size:30px;color:#dc2626"></i>
+
+        <p>
+          No se pudieron cargar los cursos.
+        </p>
+
+        <small>
+          ${escapeHtml(
+            error.message ||
+            "Error desconocido"
+          )}
+        </small>
+
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* ==========================================
+   TARJETA DEL CURSO
+========================================== */
+
+function crearTarjetaCurso(curso){
+
+  const fecha =
+    curso.created_at
+      ? new Date(
+          curso.created_at
+        ).toLocaleDateString(
+          "es-PA"
+        )
+      : "";
+
+
+  return `
+    <div class="card course-card">
+
+      <div class="course-icon">
+
+        <i class="fa-solid fa-book-open"></i>
+
+      </div>
+
+      <h3>
+        ${escapeHtml(
+          curso.nombre
+        )}
+      </h3>
+
+      <div class="course-description">
+
+        ${
+          curso.descripcion
+            ? escapeHtml(
+                curso.descripcion
+              )
+            : "Sin descripción."
+        }
+
+      </div>
+
+      <div class="course-footer">
+
+        <span class="course-date">
+
+          <i class="fa-regular fa-calendar"></i>
+
+          ${fecha}
+
+        </span>
+
+        <button
+          class="btn btn-primary"
+          onclick="abrirCurso('${curso.id}')">
+
+          <i class="fa-solid fa-arrow-right"></i>
+
+          Abrir
+
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+/* ==========================================
+   CREAR CURSO
+========================================== */
+
+function abrirModalCurso(){
+
+  if(
+    currentProfile &&
+    currentProfile.rol !== "tutor"
+  ){
+
+    mostrarAlerta(
+      "Los administradores pueden consultar los cursos, pero la creación de cursos está reservada para los tutores.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  document
+    .getElementById(
+      "courseModal"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+
+  setTimeout(() => {
+
+    document
+      .getElementById(
+        "courseName"
+      )
+      ?.focus();
+
+  },100);
+
+}
+
+
+function cerrarModalCurso(){
+
+  document
+    .getElementById(
+      "courseModal"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+}
+
+
+document
+  .getElementById(
+    "courseForm"
+  )
+  .addEventListener(
+    "submit",
+    crearCurso
+  );
+
+
+async function crearCurso(event){
+
+  event.preventDefault();
+
+
+  if(
+    !supabaseClient ||
+    !currentUser ||
+    !currentProfile
+  ){
+
+    mostrarAlerta(
+      "La sesión todavía no está disponible.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    currentProfile.rol !== "tutor"
+  ){
+
+    mostrarAlerta(
+      "Solo los tutores pueden crear cursos.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const nombre =
+    document
+      .getElementById(
+        "courseName"
+      )
+      .value
+      .trim();
+
+
+  const descripcion =
+    document
+      .getElementById(
+        "courseDescription"
+      )
+      .value
+      .trim();
+
+
+  if(!nombre){
+
+    mostrarAlerta(
+      "Escribe el nombre del curso.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "createCourseBtn"
+    );
+
+
+  const original =
+    button.innerHTML;
+
+
+  button.disabled = true;
+
+  button.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    Creando...
+  `;
+
+
+  try{
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if(sessionError)
+      throw sessionError;
+
+
+    const session =
+      sessionData?.session;
+
+
+    if(!session){
+
+      throw new Error(
+        "La sesión ha expirado. Vuelve a iniciar sesión."
+      );
+
+    }
+
+
+    /*
+      Usamos fetch directamente
+      para evitar problemas de CORS
+      que ya tuvimos anteriormente
+      con las Edge Functions.
+    */
+
+    const functionUrl =
+      `${supabaseClient.supabaseUrl}/functions/v1/${CREATE_COURSE_FUNCTION}`;
+
+
+    const response =
+      await fetch(
+        functionUrl,
+        {
+          method:"POST",
+
+          headers:{
+            "Authorization":
+              `Bearer ${session.access_token}`,
+
+            "apikey":
+              supabaseClient.supabaseKey,
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            nombre,
+            descripcion
+          })
+        }
+      );
+
+
+    let data = null;
+
+
+    try{
+
+      data =
+        await response.json();
+
+    }catch{
+
+      throw new Error(
+        `La Edge Function respondió con HTTP ${response.status}, pero no devolvió JSON.`
+      );
+
+    }
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data?.error ||
+        `Error HTTP ${response.status}`
+      );
+
+    }
+
+
+    if(
+      !data ||
+      data.success !== true
+    ){
+
+      throw new Error(
+        data?.error ||
+        "No se pudo crear el curso."
+      );
+
+    }
+
+
+    cerrarModalCurso();
+
+
+    document
+      .getElementById(
+        "courseForm"
+      )
+      .reset();
+
+
+    mostrarAlerta(
+      `Curso "${nombre}" creado correctamente en Supabase y Google Drive.`,
+      "success"
+    );
+
+
+    await cargarCursos();
+
+
+  }catch(error){
+
+    console.error(
+      "Error creando curso:",
+      error
+    );
+
+
+    mostrarAlerta(
+      error.message ||
+      "No se pudo crear el curso.",
+      "error"
+    );
+
+  }finally{
+
+    button.disabled = false;
+
+    button.innerHTML =
+      original;
+
+  }
+
+}
+
+
+/* ==========================================
+   ABRIR CURSO
+========================================== */
+
+function abrirCurso(cursoId) { 
+  sessionStorage.setItem("cursoSeleccionado", cursoId); 
+  window.location.href = "curso.html"; 
+}
+
+
+/* ==========================================
+   ESCAPE HTML
+========================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* ==========================================
+   FUNCIONES TEMPORALES
+========================================== */
+
+function mostrarProximamente(modulo){
+
+  mostrarAlerta(
+    `El módulo de ${modulo} lo construiremos después de terminar los cursos.`,
+    "success"
+  );
+
+}
+
+
+/* ==========================================
+   CERRAR SESIÓN
+========================================== */
+
+async function cerrarSesion(){
+
+  if(supabaseClient){
+
+    await supabaseClient.auth.signOut();
+
+  }
+
+  location.href =
+    "../index.html";
+
+}
+
+
+/* ==========================================
+   CERRAR MODAL AL HACER CLICK FUERA
+========================================== */
+
+document
+  .getElementById(
+    "courseModal"
+  )
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target === this
+      ){
+
+        cerrarModalCurso();
+
+      }
+
+    }
+  );
+
+
+/* ==========================================
+   INICIAR
+========================================== */
+
+initAuth([
+  "tutor",
+  "administrador"
+]);
+
+</script>
+
+</body>
+</html>
+```
