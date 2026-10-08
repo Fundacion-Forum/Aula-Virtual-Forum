@@ -799,14 +799,15 @@ async function callStudents(action, extra = {}) {
         ...extra
       })
     });
-  } catch (error) {
-    console.error("Error de red en course-students:", error);
-
-    throw new Error(
-      "No se pudo conectar con la función course-students. " +
-      "Comprueba la URL, el despliegue y la configuración CORS."
-    );
-  }
+  } 
+catch (error) {
+  console.error("Error real al conectar con course-students:", error);
+  throw new Error(
+    "No se pudo conectar con course-students. " +
+    "Revisa F12 > Network y la solicitud OPTIONS/POST. " +
+    "Detalle: " + (error instanceof Error ? error.message : String(error))
+  );
+}
 
   const responseText = await response.text();
   let result = {};
