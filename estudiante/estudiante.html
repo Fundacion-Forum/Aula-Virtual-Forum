@@ -1804,7 +1804,278 @@ async function initAuth(allowedRoles){
        CARGAR AULA NORMAL
     ========================================= */
 
-    cargarAula(perfil);
+    
+async function cargarAula(perfil) {
+  // Mantener la información del perfil
+  document.querySelectorAll('[data-user-name]').forEach(el => {
+    el.textContent = `${perfil.nombre || ''} ${perfil.apellido || ''}`.trim();
+  });
+
+  document.querySelectorAll('[data-user-email]').forEach(el => {
+    el.textContent = perfil.email || '';
+  });
+
+  const heroStatus = document.getElementById('heroStatus');
+  if (heroStatus) heroStatus.textContent = 'Estudiante activo';
+
+  try {
+    await cargarDatosEstudiante(perfil.id);
+  } catch (error) {
+    console.error('Error cargando el aula:', error);
+    mostrarErrorAula('No se pudieron cargar los datos del aula. Verifica tu conexión y los permisos de Supabase.');
+  } finally {
+    document.body.classList.remove('loading');
+    const loader = document.getElementById('loading');
+    if (loader) loader.style.display = 'none';
+  }
+}
+
+let cursosEstudiante = [];
+let actividadesEstudiante = [];
+let calificacionesEstudiante = [];
+
+async function cargarDatosEstudiante(estudianteId) {
+  // 1. Obtener las inscripciones activas del estudiante
+  const { data: inscripciones, error: errorInscripciones } =
+    await supabaseClient
+      .from('curso_estudiantes')
+      .select('curso_id')
+      .eq('estudiante_id', estudianteId)
+      .eq('activo', true);
+
+  if (errorInscripciones) throw errorInscripciones;
+
+  const cursoIds = [...new Set(
+    (inscripciones || []).map(i => i.curso_id).filter(Boolean)
+  )];
+
+  cursosEstudiante = [];
+  actividadesEstudiante = [];
+  calificacionesEstudiante = [];
+
+  if (cursoIds.length > 0) {
+    // 2. Obtener los cursos activos
+    const { data: cursos, error: errorCursos } = await supabaseClient
+      .from('cursos')
+      .select('id, nombre, descripcion, tutor_id')
+      .in('id', cursoIds)
+      .eq('activo', true)
+      .order('nombre');
+
+    if (errorCursos) throw errorCursos;
+
+    cursosEstudiante = cursos || [];
+
+    const idsActivos = cursosEstudiante.map(c => c.id);
+
+    if (idsActivos.length > 0) {
+      // 3. Obtener las actividades activas de esos cursos
+      const { data: actividades, error: errorActividades } =
+        await supabaseClient
+          .from('actividades')
+          .select('id, curso_id, tema_id, titulo, descripcion, tipo, puntaje_maximo, fecha_inicio, fecha_entrega')
+          .in('curso_id', idsActivos)
+          .eq('activo', true)
+          .order('fecha_entrega', { ascending: true, nullsFirst: false });
+
+      if (errorActividades) throw errorActividades;
+
+      actividadesEstudiante = actividades || [];
+
+      // 4. Obtener las calificaciones del estudiante
+      const { data: calificaciones, error: errorCalificaciones } =
+        await supabaseClient
+          .from('calificaciones')
+          .select('id, actividad_id, estudiante_id, nota, observacion, fecha_calificacion')
+          .eq('estudiante_id', estudianteId);
+
+      if (errorCalificaciones) throw errorCalificaciones;
+
+      calificacionesEstudiante = calificaciones || [];
+    }
+  }
+
+  renderizarCursos();
+  renderizarActividades();
+  renderizarCalificaciones();
+  actualizarResumen();
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[caracter]);
+}
+
+function formatearFecha(fecha) {
+  if (!fecha) return 'Sin fecha de entrega';
+
+  const fechaObj = new Date(fecha);
+  if (Number.isNaN(fechaObj.getTime())) return 'Fecha no disponible';
+
+  return fechaObj.toLocaleString('es-PA', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+}
+
+function obtenerCalificacion(actividadId) {
+  return calificacionesEstudiante.find(
+    c => c.actividad_id === actividadId
+  );
+}
+
+function renderizarCursos() {
+  const contenedor = document.querySelector('.course-grid');
+  if (!contenedor) return;
+
+  if (!cursosEstudiante.length) {
+    contenedor.innerHTML = `
+      <div class="empty">
+        <p>Todavía no tienes cursos asignados.</p>
+        <span>Cuando te inscriban en un curso, aparecerá aquí.</span>
+      </div>`;
+    return;
+  }
+
+  contenedor.innerHTML = cursosEstudiante.map(curso => {
+    const cantidad = actividadesEstudiante.filter(
+      a => a.curso_id === curso.id
+    ).length;
+
+    return `
+      <article class="course-card">
+        <div class="course-icon">📘</div>
+        <h3>${escaparHTML(curso.nombre)}</h3>
+        <p>${escaparHTML(curso.descripcion || 'Sin descripción disponible.')}</p>
+        <p>${cantidad} actividad${cantidad === 1 ? '' : 'es'}</p>
+      </article>`;
+  }).join('');
+}
+
+function obtenerContenedorLista(seccionId, selectorVacio) {
+  const seccion = document.getElementById(seccionId);
+  if (!seccion) return null;
+
+  const vacio = seccion.querySelector(selectorVacio);
+  if (!vacio) return null;
+
+  const tarjeta = vacio.closest('.card');
+  if (!tarjeta) return null;
+
+  let lista = tarjeta.querySelector('.datos-supabase');
+  if (!lista) {
+    lista = document.createElement('div');
+    lista.className = 'datos-supabase';
+    vacio.insertAdjacentElement('afterend', lista);
+  }
+
+  return lista;
+}
+
+function renderizarActividades() {
+  const lista = obtenerContenedorLista('actividades', '.empty');
+  if (!lista) return;
+
+  if (!actividadesEstudiante.length) {
+    lista.innerHTML = '<p>No hay actividades disponibles en tus cursos.</p>';
+    return;
+  }
+
+  lista.innerHTML = actividadesEstudiante.map(a => {
+    const calificacion = obtenerCalificacion(a.id);
+    const curso = cursosEstudiante.find(c => c.id === a.curso_id);
+    const estado = calificacion
+      ? 'Calificada'
+      : 'Pendiente de calificación';
+
+    return `
+      <article class="activity-item" style="padding:14px 0;border-bottom:1px solid #e5e7eb">
+        <h3>${escaparHTML(a.titulo)}</h3>
+        <p>${escaparHTML(curso?.nombre || 'Curso')}</p>
+        <p>${escaparHTML(a.descripcion || 'Sin descripción.')}</p>
+        <p><strong>Tipo:</strong> ${escaparHTML(a.tipo || 'Actividad')}</p>
+        <p><strong>Puntaje máximo:</strong> ${a.puntaje_maximo ?? 'No especificado'}</p>
+        <p><strong>Entrega:</strong> ${escaparHTML(formatearFecha(a.fecha_entrega))}</p>
+        <p><strong>Estado:</strong> ${estado}</p>
+        ${calificacion
+          ? `<p><strong>Nota:</strong> ${escaparHTML(calificacion.nota)}</p>`
+          : ''}
+      </article>`;
+  }).join('');
+}
+
+function renderizarCalificaciones() {
+  const lista = obtenerContenedorLista('calificaciones', '.empty');
+  if (!lista) return;
+
+  const notas = actividadesEstudiante
+    .map(a => ({ actividad: a, calificacion: obtenerCalificacion(a.id) }))
+    .filter(item => item.calificacion);
+
+  if (!notas.length) {
+    lista.innerHTML = '<p>Todavía no tienes calificaciones registradas.</p>';
+    return;
+  }
+
+  lista.innerHTML = notas.map(({ actividad, calificacion }) => `
+    <article style="padding:12px 0;border-bottom:1px solid #e5e7eb">
+      <h3>${escaparHTML(actividad.titulo)}</h3>
+      <p><strong>Nota:</strong> ${escaparHTML(calificacion.nota)}
+        ${actividad.puntaje_maximo != null
+          ? ` / ${escaparHTML(actividad.puntaje_maximo)}`
+          : ''}
+      </p>
+      <p>${escaparHTML(calificacion.observacion || 'Sin observaciones.')}</p>
+      <p><small>Fecha: ${escaparHTML(formatearFecha(calificacion.fecha_calificacion))}</small></p>
+    </article>
+  `).join('');
+}
+
+function actualizarResumen() {
+  const pendientes = actividadesEstudiante.filter(
+    a => !obtenerCalificacion(a.id)
+  ).length;
+
+  const notas = calificacionesEstudiante
+    .filter(c => c.nota != null)
+    .map(c => Number(c.nota))
+    .filter(n => Number.isFinite(n));
+
+  const promedio = notas.length
+    ? notas.reduce((suma, nota) => suma + nota, 0) / notas.length
+    : null;
+
+  const countCourses = document.getElementById('countCourses');
+  const countActivities = document.getElementById('countActivities');
+  const countPending = document.getElementById('countPending');
+  const average = document.getElementById('average');
+
+  if (countCourses) countCourses.textContent = cursosEstudiante.length;
+  if (countActivities) countActivities.textContent = actividadesEstudiante.length;
+  if (countPending) countPending.textContent = pendientes;
+  if (average) average.textContent = promedio === null
+    ? '—'
+    : promedio.toFixed(2);
+}
+
+function mostrarErrorAula(mensaje) {
+  let aviso = document.getElementById('errorDatosAula');
+
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.id = 'errorDatosAula';
+    aviso.style.cssText =
+      'padding:12px;margin:12px 0;border-radius:8px;background:#fff0f0;color:#8b1e1e';
+    document.querySelector('main')?.prepend(aviso);
+  }
+
+  aviso.textContent = mensaje;
+}
 
   }
 
