@@ -804,6 +804,31 @@ button,input{font:inherit}
   .course-grid,.storage{grid-template-columns:1fr}
 }
 
+/* Pantallas ampliadas del estudiante */
+.member-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.member-course{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px}
+.member-course h3{margin:0 0 5px;font-size:16px}
+.member-list{display:grid;gap:10px;margin-top:14px}
+.member-row{display:flex;align-items:center;gap:11px;padding:10px;border-radius:12px;background:#f8fafc}
+.member-initial{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;background:#dbeafe;color:#1d4ed8;font-weight:800}
+.member-row strong{display:block;font-size:13px}
+.member-row small{color:var(--muted)}
+.task-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.task-filter{border:1px solid var(--border);border-radius:999px;background:#fff;padding:8px 13px;cursor:pointer;color:#475569;font-weight:700}
+.task-filter.active{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+.task-card{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)}
+.task-card:last-child{border-bottom:0}
+.task-badge{font-size:11px;font-weight:800;border-radius:999px;padding:6px 9px;display:inline-block;background:#fef3c7;color:#92400e}
+.task-badge.done{background:#dcfce7;color:#166534}
+.task-badge.late{background:#fee2e2;color:#991b1b}
+.task-meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0}
+.profile-edit-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.notice{padding:12px 14px;border-radius:12px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-size:13px;margin:12px 0}
+.drive-action{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+@media(max-width:800px){.member-groups{grid-template-columns:1fr}}
+}
+
 @media(max-width:600px){
   .sidebar{display:none}
   .main{
@@ -1064,7 +1089,12 @@ button,input{font:inherit}
 
       <a href="#actividades">
         <i class="fa-solid fa-list-check"></i>
-        <span>Actividades</span>
+        <span>Tareas y asignaciones</span>
+      </a>
+
+      <a href="#companeros">
+        <i class="fa-solid fa-users"></i>
+        <span>Mi curso y compañeros</span>
       </a>
 
       <a href="#calificaciones">
@@ -1131,6 +1161,10 @@ button,input{font:inherit}
 
 
       <div class="top-actions">
+
+        <button class="icon-btn" type="button" title="Actualizar información" onclick="actualizarDatos()">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
 
         <button
           class="icon-btn"
@@ -1316,9 +1350,8 @@ button,input{font:inherit}
           Mis cursos
         </h2>
 
-        <button class="link-btn">
-          Ver todos
-          <i class="fa-solid fa-arrow-right"></i>
+        <button class="link-btn" type="button" onclick="document.getElementById('cursos').scrollIntoView({behavior:'smooth'})">
+          Ver cursos <i class="fa-solid fa-arrow-right"></i>
         </button>
 
       </div>
@@ -1364,6 +1397,16 @@ button,input{font:inherit}
     </section>
 
 
+    <section id="companeros" class="section">
+      <div class="section-head">
+        <h2>Mi curso y compañeros</h2>
+        <span class="muted" id="membersSummary">Personas inscritas en tus cursos</span>
+      </div>
+      <div id="membersContent" class="member-groups">
+        <div class="card empty"><i class="fa-solid fa-users"></i><p>Cargando compañeros…</p></div>
+      </div>
+    </section>
+
     <div class="two-col">
 
       <section
@@ -1381,21 +1424,14 @@ button,input{font:inherit}
 
 
         <div class="card">
-
-          <div class="empty">
-
-            <i class="fa-solid fa-calendar-check"></i>
-
-            <div>
-              No tienes actividades pendientes.
-            </div>
-
-            <small>
-              Las actividades publicadas por tus tutores aparecerán aquí.
-            </small>
-
+          <div class="task-filters" aria-label="Filtrar tareas">
+            <button class="task-filter active" type="button" data-task-filter="todas" onclick="filtrarActividades('todas',this)">Todas</button>
+            <button class="task-filter" type="button" data-task-filter="pendientes" onclick="filtrarActividades('pendientes',this)">Pendientes</button>
+            <button class="task-filter" type="button" data-task-filter="calificadas" onclick="filtrarActividades('calificadas',this)">Calificadas</button>
           </div>
-
+          <div id="activityList">
+            <div class="empty"><i class="fa-solid fa-calendar-check"></i><p>Las tareas publicadas por tus tutores aparecerán aquí.</p></div>
+          </div>
         </div>
 
       </section>
@@ -1453,49 +1489,28 @@ button,input{font:inherit}
 
 
       <div class="storage">
-
         <div class="drive-card">
-
-          <div class="drive-icon">
-            <i class="fa-solid fa-building-columns"></i>
-          </div>
-
+          <div class="drive-icon"><i class="fa-solid fa-building-columns"></i></div>
           <div>
-
-            <h4>
-              Materiales del aula
-            </h4>
-
-            <p>
-              Archivos compartidos por tus tutores desde el Drive institucional.
-            </p>
-
+            <h4>Drive institucional</h4>
+            <p>Accede a los materiales y carpetas compartidas por Fundación Academia Forum.</p>
+            <div class="drive-action">
+              <a class="btn btn-primary" id="institutionalDriveLink" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google-drive"></i> Abrir Drive institucional</a>
+            </div>
           </div>
-
         </div>
-
-
         <div class="drive-card">
-
-          <div class="drive-icon">
-            <i class="fa-brands fa-google-drive"></i>
-          </div>
-
+          <div class="drive-icon"><i class="fa-brands fa-google-drive"></i></div>
           <div>
-
-            <h4>
-              Mi espacio personal
-            </h4>
-
-            <p>
-              Tus trabajos y archivos personales podrán guardarse en tu Google Drive.
-            </p>
-
+            <h4>Mi espacio personal</h4>
+            <p>Abre Google Drive para organizar tus archivos y trabajos personales.</p>
+            <div class="drive-action">
+              <a class="btn btn-secondary" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir mi Drive</a>
+            </div>
           </div>
-
         </div>
-
       </div>
+      <div class="notice"><i class="fa-solid fa-circle-info"></i> Para que el acceso institucional abra directamente la carpeta de la Fundación, configura <code>driveInstitutionalUrl</code> en <code>config.json</code> con el enlace de Drive compartido por el administrador. Google puede solicitar que inicies sesión con tu correo institucional.</div>
 
     </section>
 
@@ -1595,7 +1610,7 @@ button,input{font:inherit}
 
             <input
               id="perfilNombre"
-              readonly
+              maxlength="100"
             >
 
           </div>
@@ -1609,7 +1624,7 @@ button,input{font:inherit}
 
             <input
               id="perfilApellido"
-              readonly
+              maxlength="100"
             >
 
           </div>
@@ -1673,6 +1688,12 @@ button,input{font:inherit}
         </div>
 
 
+        <div class="profile-edit-actions">
+          <button class="btn btn-primary" type="button" id="saveProfileButton" onclick="guardarPerfil()"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios</button>
+          <button class="btn btn-secondary" type="button" onclick="cargarPerfil(currentProfile)"><i class="fa-solid fa-rotate-left"></i> Deshacer cambios</button>
+        </div>
+        <div id="profileMessage" class="notice hidden" role="status"></div>
+
         <div class="info">
 
           <i class="fa-solid fa-circle-info"></i>
@@ -1703,6 +1724,10 @@ let currentProfile = null;
 let cursosEstudiante = [];
 let actividadesEstudiante = [];
 let calificacionesEstudiante = [];
+let inscripcionesEstudiante = [];
+let companerosPorCurso = [];
+let driveInstitucionalUrl = 'https://drive.google.com/drive/my-drive';
+let filtroActividadesActual = 'todas';
 
 /* =========================================
    AUTENTICACIÓN E INICIO DEL AULA
@@ -1723,6 +1748,10 @@ async function initAuth(allowedRoles) {
     if (!cfg.supabase?.url || !cfg.supabase?.anonKey) {
       throw new Error('Falta la configuración de Supabase.');
     }
+
+    driveInstitucionalUrl = cfg.driveInstitutionalUrl || 'https://drive.google.com/drive/my-drive';
+    const driveLink = document.getElementById('institutionalDriveLink');
+    if (driveLink) driveLink.href = driveInstitucionalUrl;
 
     supabaseClient = window.supabase.createClient(
       cfg.supabase.url,
@@ -1854,8 +1883,9 @@ async function cargarDatosEstudiante(estudianteId) {
 
   if (errorInscripciones) throw errorInscripciones;
 
+  inscripcionesEstudiante = inscripciones || [];
   const cursoIds = [...new Set(
-    (inscripciones || []).map(item => item.curso_id).filter(Boolean)
+    inscripcionesEstudiante.map(item => item.curso_id).filter(Boolean)
   )];
 
   cursosEstudiante = [];
@@ -1865,7 +1895,7 @@ async function cargarDatosEstudiante(estudianteId) {
   if (cursoIds.length > 0) {
     const { data: cursos, error: errorCursos } = await supabaseClient
       .from('cursos')
-      .select('id,nombre,descripcion,tutor_id')
+      .select('id,nombre,descripcion,tutor_id,drive_folder_id')
       .in('id', cursoIds)
       .eq('activo', true)
       .order('nombre');
@@ -1904,6 +1934,7 @@ async function cargarDatosEstudiante(estudianteId) {
 
   calificacionesEstudiante = calificaciones || [];
 
+  await cargarCompaneros(cursoIds);
   renderizarCursos();
   renderizarActividades();
   renderizarCalificaciones();
@@ -1977,6 +2008,10 @@ function renderizarCursos() {
           <h3>${escaparHTML(curso.nombre)}</h3>
           <p>${escaparHTML(curso.descripcion || 'Sin descripción disponible.')}</p>
           <small>${cantidad} actividad${cantidad === 1 ? '' : 'es'}</small>
+          <div class="drive-action">
+            <button class="btn btn-secondary" type="button" onclick="verCompanerosCurso('${curso.id}')"><i class="fa-solid fa-users"></i> Compañeros</button>
+            ${curso.drive_folder_id ? `<a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/drive/folders/${encodeURIComponent(curso.drive_folder_id)}"><i class="fa-brands fa-google-drive"></i> Materiales</a>` : ''}
+          </div>
         </div>
       </article>`;
   }).join('');
@@ -1987,42 +2022,128 @@ function renderizarCursos() {
 ========================================= */
 
 function renderizarActividades() {
-  const seccion = document.getElementById('actividades');
-  const tarjeta = seccion?.querySelector('.card');
-  if (!tarjeta) return;
+  const contenedor = document.getElementById('activityList');
+  if (!contenedor) return;
 
-  if (!actividadesEstudiante.length) {
-    tarjeta.innerHTML = `
-      <div class="empty">
-        <i class="fa-solid fa-calendar-check"></i>
-        <p>No hay actividades disponibles en tus cursos.</p>
-      </div>`;
+  let actividades = [...actividadesEstudiante];
+  if (filtroActividadesActual === 'pendientes') {
+    actividades = actividades.filter(a => !obtenerCalificacion(a.id));
+  } else if (filtroActividadesActual === 'calificadas') {
+    actividades = actividades.filter(a => obtenerCalificacion(a.id));
+  }
+
+  if (!actividades.length) {
+    contenedor.innerHTML = `<div class="empty"><i class="fa-solid fa-calendar-check"></i><p>${actividadesEstudiante.length ? 'No hay tareas en este filtro.' : 'No hay tareas o asignaciones publicadas en tus cursos.'}</p></div>`;
     return;
   }
 
-  tarjeta.innerHTML = actividadesEstudiante.map(actividad => {
+  contenedor.innerHTML = actividades.map(actividad => {
     const nota = obtenerCalificacion(actividad.id);
-    const curso = cursosEstudiante.find(
-      item => item.id === actividad.curso_id
-    );
+    const curso = cursosEstudiante.find(item => item.id === actividad.curso_id);
+    const vencida = actividad.fecha_entrega && new Date(actividad.fecha_entrega).getTime() < Date.now() && !nota;
+    const estado = nota ? 'Calificada' : (vencida ? 'Plazo vencido' : 'Pendiente');
+    const clase = nota ? 'done' : (vencida ? 'late' : '');
+    const cursoLink = curso?.drive_folder_id
+      ? `https://drive.google.com/drive/folders/${encodeURIComponent(curso.drive_folder_id)}`
+      : driveInstitucionalUrl;
 
     return `
-      <article class="activity">
-        <div class="activity-icon">
-          <i class="fa-solid fa-list-check"></i>
-        </div>
-        <div>
-          <h4>${escaparHTML(actividad.titulo)}</h4>
+      <article class="task-card">
+        <div class="activity-icon"><i class="fa-solid fa-file-pen"></i></div>
+        <div style="flex:1;min-width:0">
+          <span class="task-badge ${clase}">${estado}</span>
+          <h4 style="margin:9px 0 4px">${escaparHTML(actividad.titulo)}</h4>
           <small>${escaparHTML(curso?.nombre || 'Curso')}</small>
-          <p>${escaparHTML(actividad.descripcion || 'Sin descripción.')}</p>
-          <p><strong>Tipo:</strong> ${escaparHTML(actividad.tipo || 'Actividad')}</p>
-          <p><strong>Puntaje máximo:</strong> ${escaparHTML(actividad.puntaje_maximo ?? 'No especificado')}</p>
-          <p><strong>Entrega:</strong> ${escaparHTML(formatearFecha(actividad.fecha_entrega))}</p>
-          <p><strong>Estado:</strong> ${nota ? 'Calificada' : 'Pendiente de calificación'}</p>
-          ${nota ? `<p><strong>Nota:</strong> ${escaparHTML(nota.nota)}</p>` : ''}
+          <p>${escaparHTML(actividad.descripcion || 'El tutor no agregó una descripción.')}</p>
+          <div class="task-meta">
+            <span><i class="fa-solid fa-tag"></i> ${escaparHTML(actividad.tipo || 'Actividad')}</span>
+            <span><i class="fa-solid fa-star"></i> Máximo: ${escaparHTML(actividad.puntaje_maximo ?? 'No indicado')}</span>
+            <span><i class="fa-regular fa-calendar"></i> Entrega: ${escaparHTML(formatearFecha(actividad.fecha_entrega))}</span>
+          </div>
+          ${nota ? `<p><strong>Calificación:</strong> ${escaparHTML(nota.nota)}${actividad.puntaje_maximo != null ? ` / ${escaparHTML(actividad.puntaje_maximo)}` : ''}<br><small>${escaparHTML(nota.observacion || 'Sin observaciones del tutor.')}</small></p>` : ''}
+          <div class="drive-action"><a class="btn btn-secondary" href="${escaparHTML(cursoLink)}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google-drive"></i> Abrir materiales / Drive</a></div>
         </div>
       </article>`;
   }).join('');
+}
+
+function filtrarActividades(filtro, boton) {
+  filtroActividadesActual = filtro;
+  document.querySelectorAll('[data-task-filter]').forEach(el => el.classList.toggle('active', el === boton));
+  renderizarActividades();
+}
+
+async function cargarCompaneros(cursoIds) {
+  const contenedor = document.getElementById('membersContent');
+  const resumen = document.getElementById('membersSummary');
+  if (!contenedor) return;
+  if (!cursoIds.length) {
+    companerosPorCurso = [];
+    contenedor.innerHTML = '<div class="card empty"><i class="fa-solid fa-users"></i><p>Aún no estás inscrito en ningún curso.</p></div>';
+    if (resumen) resumen.textContent = 'Sin cursos asignados';
+    return;
+  }
+
+  const { data: inscripciones, error: eIns } = await supabaseClient
+    .from('curso_estudiantes')
+    .select('curso_id,estudiante_id')
+    .in('curso_id', cursoIds)
+    .eq('activo', true);
+  if (eIns) {
+    console.warn('No se pudieron cargar las inscripciones de compañeros:', eIns.message);
+    contenedor.innerHTML = '<div class="card empty"><i class="fa-solid fa-users"></i><p>No se pudo cargar la lista de compañeros. Comprueba los permisos de lectura de curso_estudiantes en Supabase.</p></div>';
+    if (resumen) resumen.textContent = 'Lista no disponible';
+    return;
+  }
+
+  const ids = [...new Set((inscripciones || []).map(x => x.estudiante_id).filter(Boolean))];
+  let usuarios = [];
+  if (ids.length) {
+    const { data, error } = await supabaseClient.from('usuarios')
+      .select('id,nombre,apellido,rol,activo').in('id', ids).eq('activo', true);
+    if (error) {
+      console.warn('No se pudieron cargar los nombres de compañeros:', error.message);
+      contenedor.innerHTML = '<div class="card empty"><i class="fa-solid fa-users"></i><p>La política de seguridad de usuarios no permite mostrar los compañeros. Ajusta la política de lectura para estudiantes del mismo curso.</p></div>';
+      if (resumen) resumen.textContent = 'Lista no disponible';
+      return;
+    }
+    usuarios = data || [];
+  }
+
+  companerosPorCurso = cursosEstudiante.map(curso => {
+    const idsCurso = (inscripciones || []).filter(x => x.curso_id === curso.id).map(x => x.estudiante_id);
+    const miembros = usuarios.filter(u => idsCurso.includes(u.id) && u.rol === 'estudiante');
+    return { curso, miembros };
+  });
+  const total = new Set(companerosPorCurso.flatMap(x => x.miembros.map(u => u.id))).size;
+  if (resumen) resumen.textContent = `${total} estudiante${total === 1 ? '' : 's'} en tus cursos`;
+
+  contenedor.innerHTML = companerosPorCurso.map(({curso, miembros}) => `
+    <article class="member-course" id="miembros-${escaparHTML(curso.id)}">
+      <h3><i class="fa-solid fa-book-open" style="color:#2563eb"></i> ${escaparHTML(curso.nombre)}</h3>
+      <small class="muted">${miembros.length} compañero${miembros.length === 1 ? '' : 's'} inscrito${miembros.length === 1 ? '' : 's'}</small>
+      ${miembros.length ? `<div class="member-list">${miembros.map(u => {
+        const nombre = `${u.nombre || ''} ${u.apellido || ''}`.trim() || 'Estudiante';
+        const iniciales = nombre.split(/\s+/).slice(0,2).map(p => p[0] || '').join('').toUpperCase();
+        return `<div class="member-row"><div class="member-initial">${escaparHTML(iniciales)}</div><div><strong>${escaparHTML(nombre)}</strong><small>Estudiante</small></div></div>`;
+      }).join('')}</div>` : '<p class="muted">Todavía no hay estudiantes inscritos en este curso.</p>'}
+    </article>`).join('');
+}
+
+function verCompanerosCurso(cursoId) {
+  document.getElementById('companeros')?.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.member-course').forEach(el => el.style.outline = 'none');
+  const el = document.getElementById('miembros-' + cursoId);
+  if (el) { el.style.outline = '2px solid #60a5fa'; el.style.outlineOffset = '3px'; }
+}
+
+async function actualizarDatos() {
+  if (!currentProfile) return;
+  const boton = document.querySelector('button[title="Actualizar información"]');
+  if (boton) { boton.disabled = true; boton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
+  try { await cargarDatosEstudiante(currentProfile.id); }
+  catch (e) { console.error(e); const aviso=document.getElementById('dataError'); if(aviso){aviso.textContent='No se pudo actualizar la información: '+(e.message||'error desconocido');aviso.classList.remove('hidden');} }
+  finally { if (boton) { boton.disabled=false; boton.innerHTML='<i class="fa-solid fa-rotate"></i>'; } }
 }
 
 /* =========================================
@@ -2212,9 +2333,47 @@ function cargarPerfil(perfil) {
     perfil.activo ? 'Activo' : 'Inactivo';
   document.getElementById('perfilId').value = perfil.id || '';
 
-  const foto = localStorage.getItem('aula_virtual_foto_' + perfil.id);
-  if (foto) aplicarFoto(foto);
+  const foto = perfil.id ? localStorage.getItem('aula_virtual_foto_' + perfil.id) : null;
+  const fotoNube = currentUser?.user_metadata?.avatar_url;
+  if (fotoNube) aplicarFoto(fotoNube);
+  else if (foto) aplicarFoto(foto);
   else quitarFoto();
+}
+
+
+async function guardarPerfil() {
+  const nombre = document.getElementById('perfilNombre').value.trim();
+  const apellido = document.getElementById('perfilApellido').value.trim();
+  const mensaje = document.getElementById('profileMessage');
+  const boton = document.getElementById('saveProfileButton');
+  if (!nombre) { mostrarMensajePerfil('El nombre no puede quedar vacío.', true); return; }
+  if (!currentProfile || !supabaseClient) { mostrarMensajePerfil('No se pudo identificar tu sesión.', true); return; }
+  boton.disabled = true;
+  try {
+    const { data, error } = await supabaseClient.from('usuarios')
+      .update({ nombre, apellido: apellido || null })
+      .eq('id', currentProfile.id)
+      .select('id,nombre,apellido,email,rol,activo,created_at')
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error('No se guardaron los cambios. Verifica las políticas RLS de la tabla usuarios.');
+    currentProfile = data;
+    document.querySelectorAll('[data-user-name]').forEach(el => el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante');
+    mostrarMensajePerfil('Perfil actualizado correctamente.', false);
+  } catch (error) {
+    console.error('Error guardando perfil:', error);
+    mostrarMensajePerfil(error.message || 'No se pudo guardar el perfil.', true);
+  } finally { boton.disabled = false; }
+}
+
+function mostrarMensajePerfil(texto, esError) {
+  const el = document.getElementById('profileMessage');
+  if (!el) return;
+  el.textContent = texto;
+  el.classList.remove('hidden');
+  el.style.background = esError ? '#fef2f2' : '#f0fdf4';
+  el.style.color = esError ? '#991b1b' : '#166534';
+  el.style.borderColor = esError ? '#fecaca' : '#bbf7d0';
 }
 
 function mostrarPerfil() {
@@ -2251,12 +2410,28 @@ function previsualizarFoto(event) {
 
   const lector = new FileReader();
 
-  lector.onload = () => {
-    localStorage.setItem(
-      'aula_virtual_foto_' + currentUser.id,
-      lector.result
-    );
+  lector.onload = async () => {
+    // La previsualización y copia local funcionan sin configurar Storage.
     aplicarFoto(lector.result);
+    try {
+      const ruta = `${currentUser.id}/${Date.now()}-${archivo.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(ruta, archivo, { upsert: true, contentType: archivo.type });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabaseClient.storage.from('avatars').getPublicUrl(ruta);
+      const fotoUrl = urlData?.publicUrl;
+      if (fotoUrl) {
+        await supabaseClient.auth.updateUser({ data: { ...(currentUser.user_metadata || {}), avatar_url: fotoUrl } });
+        localStorage.setItem('aula_virtual_foto_' + currentUser.id, fotoUrl);
+        aplicarFoto(fotoUrl);
+        mostrarMensajePerfil('Foto actualizada y guardada en la nube.', false);
+      }
+    } catch (error) {
+      // Si aún no existe el bucket/política, conserva la foto en este navegador.
+      try { localStorage.setItem('aula_virtual_foto_' + currentUser.id, lector.result); }
+      catch (_) { mostrarMensajePerfil('La imagen es muy grande para guardarse en este navegador.', true); return; }
+      mostrarMensajePerfil('Foto aplicada en este navegador. Para sincronizarla en otros dispositivos, configura el bucket público avatars y sus políticas de Storage en Supabase.', false);
+      console.info('Foto no sincronizada con Storage:', error.message);
+    }
   };
 
   lector.readAsDataURL(archivo);
