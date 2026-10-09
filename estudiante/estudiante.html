@@ -1694,152 +1694,157 @@ button,input{font:inherit}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
 
+<script>
 let supabaseClient = null;
 let currentUser = null;
 let currentProfile = null;
 
+let cursosEstudiante = [];
+let actividadesEstudiante = [];
+let calificacionesEstudiante = [];
 
 /* =========================================
-   AUTENTICACIÓN
+   AUTENTICACIÓN E INICIO DEL AULA
 ========================================= */
 
-async function initAuth(allowedRoles){
-
-  try{
-
-    const cfg = await fetch('../config.json',{
-      cache:'no-store'
-    }).then(r=>{
-
-      if(!r.ok){
-        throw new Error('No se pudo cargar config.json');
-      }
-
-      return r.json();
-
+async function initAuth(allowedRoles) {
+  try {
+    const respuesta = await fetch('../config.json', {
+      cache: 'no-store'
     });
 
+    if (!respuesta.ok) {
+      throw new Error('No se pudo cargar config.json');
+    }
+
+    const cfg = await respuesta.json();
+
+    if (!cfg.supabase?.url || !cfg.supabase?.anonKey) {
+      throw new Error('Falta la configuración de Supabase.');
+    }
 
     supabaseClient = window.supabase.createClient(
       cfg.supabase.url,
       cfg.supabase.anonKey
     );
 
+    const { data, error: sessionError } =
+      await supabaseClient.auth.getSession();
 
-    const {
-      data:{session},
-      error:sessionError
-    } = await supabaseClient.auth.getSession();
+    if (sessionError) throw sessionError;
 
-
-    if(sessionError){
-      throw sessionError;
-    }
-
-
-    if(!session){
-
-      location.href='../index.html';
+    if (!data.session) {
+      location.href = '../index.html';
       return;
-
     }
 
+    currentUser = data.session.user;
 
-    currentUser = session.user;
-
-
-    /* =========================================
-       COMPROBAR SI DEBE CAMBIAR PASSWORD
-    ========================================= */
-
-    const debeCambiarPassword =
-      currentUser.user_metadata?.debe_cambiar_password === true;
-
-
-    /* =========================================
-       BUSCAR PERFIL
-    ========================================= */
-
-    const {
-      data:perfil,
-      error
-    } = await supabaseClient
+    const { data: perfil, error } = await supabaseClient
       .from('usuarios')
       .select('id,nombre,apellido,email,rol,activo,created_at')
-      .eq('id',currentUser.id)
+      .eq('id', currentUser.id)
       .maybeSingle();
 
+    if (error) throw error;
 
-    if(
-      error ||
+    if (
       !perfil ||
       perfil.activo !== true ||
       !allowedRoles.includes(perfil.rol)
-    ){
-
+    ) {
       await supabaseClient.auth.signOut();
-
-      location.href='../index.html';
-
+      location.href = '../index.html';
       return;
-
     }
-
 
     currentProfile = perfil;
 
-
-    /* =========================================
-       SI TIENE QUE CAMBIAR PASSWORD
-    ========================================= */
-
-    if(debeCambiarPassword){
-
+    if (currentUser.user_metadata?.debe_cambiar_password === true) {
       mostrarCambioPassword();
-
       return;
-
     }
 
+    await cargarAula(currentProfile);
 
-    /* =========================================
-       CARGAR AULA NORMAL
-    ========================================= */
-
-    
-async function cargarAula(perfil) {
-  // Mantener la información del perfil
-  document.querySelectorAll('[data-user-name]').forEach(el => {
-    el.textContent = `${perfil.nombre || ''} ${perfil.apellido || ''}`.trim();
-  });
-
-  document.querySelectorAll('[data-user-email]').forEach(el => {
-    el.textContent = perfil.email || '';
-  });
-
-  const heroStatus = document.getElementById('heroStatus');
-  if (heroStatus) heroStatus.textContent = 'Estudiante activo';
-
-  try {
-    await cargarDatosEstudiante(perfil.id);
   } catch (error) {
-    console.error('Error cargando el aula:', error);
-    mostrarErrorAula('No se pudieron cargar los datos del aula. Verifica tu conexión y los permisos de Supabase.');
-  } finally {
-    document.body.classList.remove('loading');
+    console.error('Error al iniciar el aula:', error);
+
+    document.getElementById('loading')?.classList.add('hidden');
+
     const loader = document.getElementById('loading');
     if (loader) loader.style.display = 'none';
+
+    document.getElementById('aulaLayout')?.classList.add('hidden');
+
+    const errorBox = document.getElementById('errorBox');
+    if (errorBox) {
+      errorBox.classList.remove('hidden');
+      errorBox.querySelector('h2').textContent = 'No se pudo cargar el aula';
+      errorBox.querySelector('p').textContent =
+        error.message || 'Ocurrió un error. Recarga la página o revisa la conexión.';
+    }
   }
 }
 
-let cursosEstudiante = [];
-let actividadesEstudiante = [];
-let calificacionesEstudiante = [];
+/* =========================================
+   CARGAR AULA: UNA SOLA FUNCIÓN
+========================================= */
+
+async function cargarAula(perfil) {
+  const loader = document.getElementById('loading');
+
+  if (loader) {
+    loader.style.display = 'grid';
+    loader.classList.remove('hidden');
+  }
+
+  document.getElementById('passwordScreen')?.classList.add('hidden');
+  document.getElementById('errorBox')?.classList.add('hidden');
+  document.getElementById('aulaLayout')?.classList.remove('hidden');
+
+  try {
+    cargarPerfil(perfil);
+
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      el.textContent =
+        `${perfil.nombre || ''} ${perfil.apellido || ''}`.trim() ||
+        perfil.email ||
+        'Estudiante';
+    });
+
+    document.querySelectorAll('[data-user-email]').forEach(el => {
+      el.textContent = perfil.email || '';
+    });
+
+    const estado = document.getElementById('heroStatus');
+    if (estado) estado.textContent = perfil.activo ? 'Activo' : 'Inactivo';
+
+    await cargarDatosEstudiante(perfil.id);
+
+  } catch (error) {
+    console.error('Error cargando los datos del estudiante:', error);
+
+    const aviso = document.getElementById('dataError');
+    if (aviso) {
+      aviso.textContent =
+        'No se pudieron cargar todos los datos. Revisa la conexión y los permisos de las tablas en Supabase.';
+      aviso.classList.remove('hidden');
+    }
+  } finally {
+    if (loader) {
+      loader.style.display = 'none';
+      loader.classList.add('hidden');
+    }
+  }
+}
+
+/* =========================================
+   CONSULTAR DATOS EN SUPABASE
+========================================= */
 
 async function cargarDatosEstudiante(estudianteId) {
-  // 1. Obtener las inscripciones activas del estudiante
   const { data: inscripciones, error: errorInscripciones } =
     await supabaseClient
       .from('curso_estudiantes')
@@ -1850,7 +1855,7 @@ async function cargarDatosEstudiante(estudianteId) {
   if (errorInscripciones) throw errorInscripciones;
 
   const cursoIds = [...new Set(
-    (inscripciones || []).map(i => i.curso_id).filter(Boolean)
+    (inscripciones || []).map(item => item.curso_id).filter(Boolean)
   )];
 
   cursosEstudiante = [];
@@ -1858,10 +1863,9 @@ async function cargarDatosEstudiante(estudianteId) {
   calificacionesEstudiante = [];
 
   if (cursoIds.length > 0) {
-    // 2. Obtener los cursos activos
     const { data: cursos, error: errorCursos } = await supabaseClient
       .from('cursos')
-      .select('id, nombre, descripcion, tutor_id')
+      .select('id,nombre,descripcion,tutor_id')
       .in('id', cursoIds)
       .eq('activo', true)
       .order('nombre');
@@ -1870,40 +1874,45 @@ async function cargarDatosEstudiante(estudianteId) {
 
     cursosEstudiante = cursos || [];
 
-    const idsActivos = cursosEstudiante.map(c => c.id);
+    const idsActivos = cursosEstudiante.map(curso => curso.id);
 
     if (idsActivos.length > 0) {
-      // 3. Obtener las actividades activas de esos cursos
       const { data: actividades, error: errorActividades } =
         await supabaseClient
           .from('actividades')
-          .select('id, curso_id, tema_id, titulo, descripcion, tipo, puntaje_maximo, fecha_inicio, fecha_entrega')
+          .select('id,curso_id,tema_id,titulo,descripcion,tipo,puntaje_maximo,fecha_inicio,fecha_entrega')
           .in('curso_id', idsActivos)
           .eq('activo', true)
-          .order('fecha_entrega', { ascending: true, nullsFirst: false });
+          .order('fecha_entrega', {
+            ascending: true,
+            nullsFirst: false
+          });
 
       if (errorActividades) throw errorActividades;
 
       actividadesEstudiante = actividades || [];
-
-      // 4. Obtener las calificaciones del estudiante
-      const { data: calificaciones, error: errorCalificaciones } =
-        await supabaseClient
-          .from('calificaciones')
-          .select('id, actividad_id, estudiante_id, nota, observacion, fecha_calificacion')
-          .eq('estudiante_id', estudianteId);
-
-      if (errorCalificaciones) throw errorCalificaciones;
-
-      calificacionesEstudiante = calificaciones || [];
     }
   }
+
+  const { data: calificaciones, error: errorCalificaciones } =
+    await supabaseClient
+      .from('calificaciones')
+      .select('id,actividad_id,estudiante_id,nota,observacion,fecha_calificacion')
+      .eq('estudiante_id', estudianteId);
+
+  if (errorCalificaciones) throw errorCalificaciones;
+
+  calificacionesEstudiante = calificaciones || [];
 
   renderizarCursos();
   renderizarActividades();
   renderizarCalificaciones();
   actualizarResumen();
 }
+
+/* =========================================
+   UTILIDADES
+========================================= */
 
 function escaparHTML(valor) {
   return String(valor ?? '').replace(/[&<>"']/g, caracter => ({
@@ -1919,7 +1928,10 @@ function formatearFecha(fecha) {
   if (!fecha) return 'Sin fecha de entrega';
 
   const fechaObj = new Date(fecha);
-  if (Number.isNaN(fechaObj.getTime())) return 'Fecha no disponible';
+
+  if (Number.isNaN(fechaObj.getTime())) {
+    return 'Fecha no disponible';
+  }
 
   return fechaObj.toLocaleString('es-PA', {
     dateStyle: 'medium',
@@ -1929,9 +1941,13 @@ function formatearFecha(fecha) {
 
 function obtenerCalificacion(actividadId) {
   return calificacionesEstudiante.find(
-    c => c.actividad_id === actividadId
+    nota => nota.actividad_id === actividadId
   );
 }
+
+/* =========================================
+   MOSTRAR CURSOS
+========================================= */
 
 function renderizarCursos() {
   const contenedor = document.querySelector('.course-grid');
@@ -1939,850 +1955,380 @@ function renderizarCursos() {
 
   if (!cursosEstudiante.length) {
     contenedor.innerHTML = `
-      <div class="empty">
+      <div class="card empty">
+        <i class="fa-solid fa-book-open"></i>
         <p>Todavía no tienes cursos asignados.</p>
-        <span>Cuando te inscriban en un curso, aparecerá aquí.</span>
+        <small>Cuando te inscriban en un curso, aparecerá aquí.</small>
       </div>`;
     return;
   }
 
   contenedor.innerHTML = cursosEstudiante.map(curso => {
     const cantidad = actividadesEstudiante.filter(
-      a => a.curso_id === curso.id
+      actividad => actividad.curso_id === curso.id
     ).length;
 
     return `
-      <article class="course-card">
-        <div class="course-icon">📘</div>
-        <h3>${escaparHTML(curso.nombre)}</h3>
-        <p>${escaparHTML(curso.descripcion || 'Sin descripción disponible.')}</p>
-        <p>${cantidad} actividad${cantidad === 1 ? '' : 'es'}</p>
+      <article class="card course">
+        <div class="course-cover">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div class="course-body">
+          <h3>${escaparHTML(curso.nombre)}</h3>
+          <p>${escaparHTML(curso.descripcion || 'Sin descripción disponible.')}</p>
+          <small>${cantidad} actividad${cantidad === 1 ? '' : 'es'}</small>
+        </div>
       </article>`;
   }).join('');
 }
 
-function obtenerContenedorLista(seccionId, selectorVacio) {
-  const seccion = document.getElementById(seccionId);
-  if (!seccion) return null;
-
-  const vacio = seccion.querySelector(selectorVacio);
-  if (!vacio) return null;
-
-  const tarjeta = vacio.closest('.card');
-  if (!tarjeta) return null;
-
-  let lista = tarjeta.querySelector('.datos-supabase');
-  if (!lista) {
-    lista = document.createElement('div');
-    lista.className = 'datos-supabase';
-    vacio.insertAdjacentElement('afterend', lista);
-  }
-
-  return lista;
-}
+/* =========================================
+   MOSTRAR ACTIVIDADES
+========================================= */
 
 function renderizarActividades() {
-  const lista = obtenerContenedorLista('actividades', '.empty');
-  if (!lista) return;
+  const seccion = document.getElementById('actividades');
+  const tarjeta = seccion?.querySelector('.card');
+  if (!tarjeta) return;
 
   if (!actividadesEstudiante.length) {
-    lista.innerHTML = '<p>No hay actividades disponibles en tus cursos.</p>';
+    tarjeta.innerHTML = `
+      <div class="empty">
+        <i class="fa-solid fa-calendar-check"></i>
+        <p>No hay actividades disponibles en tus cursos.</p>
+      </div>`;
     return;
   }
 
-  lista.innerHTML = actividadesEstudiante.map(a => {
-    const calificacion = obtenerCalificacion(a.id);
-    const curso = cursosEstudiante.find(c => c.id === a.curso_id);
-    const estado = calificacion
-      ? 'Calificada'
-      : 'Pendiente de calificación';
+  tarjeta.innerHTML = actividadesEstudiante.map(actividad => {
+    const nota = obtenerCalificacion(actividad.id);
+    const curso = cursosEstudiante.find(
+      item => item.id === actividad.curso_id
+    );
 
     return `
-      <article class="activity-item" style="padding:14px 0;border-bottom:1px solid #e5e7eb">
-        <h3>${escaparHTML(a.titulo)}</h3>
-        <p>${escaparHTML(curso?.nombre || 'Curso')}</p>
-        <p>${escaparHTML(a.descripcion || 'Sin descripción.')}</p>
-        <p><strong>Tipo:</strong> ${escaparHTML(a.tipo || 'Actividad')}</p>
-        <p><strong>Puntaje máximo:</strong> ${a.puntaje_maximo ?? 'No especificado'}</p>
-        <p><strong>Entrega:</strong> ${escaparHTML(formatearFecha(a.fecha_entrega))}</p>
-        <p><strong>Estado:</strong> ${estado}</p>
-        ${calificacion
-          ? `<p><strong>Nota:</strong> ${escaparHTML(calificacion.nota)}</p>`
-          : ''}
+      <article class="activity">
+        <div class="activity-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+        <div>
+          <h4>${escaparHTML(actividad.titulo)}</h4>
+          <small>${escaparHTML(curso?.nombre || 'Curso')}</small>
+          <p>${escaparHTML(actividad.descripcion || 'Sin descripción.')}</p>
+          <p><strong>Tipo:</strong> ${escaparHTML(actividad.tipo || 'Actividad')}</p>
+          <p><strong>Puntaje máximo:</strong> ${escaparHTML(actividad.puntaje_maximo ?? 'No especificado')}</p>
+          <p><strong>Entrega:</strong> ${escaparHTML(formatearFecha(actividad.fecha_entrega))}</p>
+          <p><strong>Estado:</strong> ${nota ? 'Calificada' : 'Pendiente de calificación'}</p>
+          ${nota ? `<p><strong>Nota:</strong> ${escaparHTML(nota.nota)}</p>` : ''}
+        </div>
       </article>`;
   }).join('');
 }
 
+/* =========================================
+   MOSTRAR CALIFICACIONES
+========================================= */
+
 function renderizarCalificaciones() {
-  const lista = obtenerContenedorLista('calificaciones', '.empty');
-  if (!lista) return;
+  const seccion = document.getElementById('calificaciones');
+  const tarjeta = seccion?.querySelector('.card');
+  if (!tarjeta) return;
 
   const notas = actividadesEstudiante
-    .map(a => ({ actividad: a, calificacion: obtenerCalificacion(a.id) }))
+    .map(actividad => ({
+      actividad,
+      calificacion: obtenerCalificacion(actividad.id)
+    }))
     .filter(item => item.calificacion);
 
   if (!notas.length) {
-    lista.innerHTML = '<p>Todavía no tienes calificaciones registradas.</p>';
+    tarjeta.innerHTML = `
+      <div class="empty">
+        <i class="fa-solid fa-award"></i>
+        <p>Todavía no tienes calificaciones registradas.</p>
+      </div>`;
     return;
   }
 
-  lista.innerHTML = notas.map(({ actividad, calificacion }) => `
-    <article style="padding:12px 0;border-bottom:1px solid #e5e7eb">
-      <h3>${escaparHTML(actividad.titulo)}</h3>
-      <p><strong>Nota:</strong> ${escaparHTML(calificacion.nota)}
-        ${actividad.puntaje_maximo != null
-          ? ` / ${escaparHTML(actividad.puntaje_maximo)}`
-          : ''}
-      </p>
-      <p>${escaparHTML(calificacion.observacion || 'Sin observaciones.')}</p>
-      <p><small>Fecha: ${escaparHTML(formatearFecha(calificacion.fecha_calificacion))}</small></p>
+  tarjeta.innerHTML = notas.map(({ actividad, calificacion }) => `
+    <article class="activity">
+      <div class="activity-icon">
+        <i class="fa-solid fa-star"></i>
+      </div>
+      <div>
+        <h4>${escaparHTML(actividad.titulo)}</h4>
+        <p><strong>Nota:</strong> ${escaparHTML(calificacion.nota)}
+          ${actividad.puntaje_maximo != null
+            ? ` / ${escaparHTML(actividad.puntaje_maximo)}`
+            : ''}
+        </p>
+        <p>${escaparHTML(calificacion.observacion || 'Sin observaciones.')}</p>
+        <small>Fecha: ${escaparHTML(formatearFecha(calificacion.fecha_calificacion))}</small>
+      </div>
     </article>
   `).join('');
 }
 
+/* =========================================
+   RESUMEN DEL ESTUDIANTE
+========================================= */
+
 function actualizarResumen() {
   const pendientes = actividadesEstudiante.filter(
-    a => !obtenerCalificacion(a.id)
+    actividad => !obtenerCalificacion(actividad.id)
   ).length;
 
   const notas = calificacionesEstudiante
-    .filter(c => c.nota != null)
-    .map(c => Number(c.nota))
-    .filter(n => Number.isFinite(n));
+    .filter(item => item.nota !== null && item.nota !== '')
+    .map(item => Number(item.nota))
+    .filter(Number.isFinite);
 
   const promedio = notas.length
-    ? notas.reduce((suma, nota) => suma + nota, 0) / notas.length
+    ? notas.reduce((total, nota) => total + nota, 0) / notas.length
     : null;
 
-  const countCourses = document.getElementById('countCourses');
-  const countActivities = document.getElementById('countActivities');
-  const countPending = document.getElementById('countPending');
-  const average = document.getElementById('average');
+  document.getElementById('countCourses').textContent =
+    cursosEstudiante.length;
 
-  if (countCourses) countCourses.textContent = cursosEstudiante.length;
-  if (countActivities) countActivities.textContent = actividadesEstudiante.length;
-  if (countPending) countPending.textContent = pendientes;
-  if (average) average.textContent = promedio === null
-    ? '—'
-    : promedio.toFixed(2);
+  document.getElementById('countActivities').textContent =
+    actividadesEstudiante.length;
+
+  document.getElementById('countPending').textContent = pendientes;
+
+  document.getElementById('average').textContent =
+    promedio === null ? '—' : promedio.toFixed(2);
 }
-
-function mostrarErrorAula(mensaje) {
-  let aviso = document.getElementById('errorDatosAula');
-
-  if (!aviso) {
-    aviso = document.createElement('div');
-    aviso.id = 'errorDatosAula';
-    aviso.style.cssText =
-      'padding:12px;margin:12px 0;border-radius:8px;background:#fff0f0;color:#8b1e1e';
-    document.querySelector('main')?.prepend(aviso);
-  }
-
-  aviso.textContent = mensaje;
-}
-
-  }
-
-  catch(e){
-
-    console.error('Error de autenticación:',e);
-
-    document.getElementById('loading')?.remove();
-
-    document
-      .getElementById('aulaLayout')
-      ?.classList.add('hidden');
-
-    document
-      .getElementById('errorBox')
-      ?.classList.remove('hidden');
-
-  }
-
-}
-
 
 /* =========================================
-   MOSTRAR CAMBIO DE PASSWORD
+   CAMBIO OBLIGATORIO DE CONTRASEÑA
 ========================================= */
 
-function mostrarCambioPassword(){
+function mostrarCambioPassword() {
+  const loader = document.getElementById('loading');
+  if (loader) loader.style.display = 'none';
 
-  document
-    .getElementById('loading')
-    ?.remove();
+  document.getElementById('aulaLayout')?.classList.add('hidden');
+  document.getElementById('errorBox')?.classList.add('hidden');
 
+  document.getElementById('passwordUserEmail').textContent =
+    currentUser?.email || currentProfile?.email || '';
 
-  document
-    .getElementById('aulaLayout')
-    ?.classList.add('hidden');
-
-
-  document
-    .getElementById('errorBox')
-    ?.classList.add('hidden');
-
-
-  const email =
-    currentUser?.email ||
-    currentProfile?.email ||
-    '';
-
-
-  document.getElementById(
-    'passwordUserEmail'
-  ).textContent = email;
-
-
-  document
-    .getElementById('passwordScreen')
-    ?.classList.remove('hidden');
-
+  document.getElementById('passwordScreen')?.classList.remove('hidden');
 }
 
+document.getElementById('changePasswordForm')
+  .addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-/* =========================================
-   CARGAR AULA
-========================================= */
-
-function cargarAula(perfil){
-
-  document
-    .getElementById('passwordScreen')
-    ?.classList.add('hidden');
-
-
-  document
-    .getElementById('aulaLayout')
-    ?.classList.remove('hidden');
-
-
-  cargarPerfil(perfil);
-
-
-  document
-    .querySelectorAll('[data-user-name]')
-    .forEach(e=>{
-
-      e.textContent =
-        (
-          (perfil.nombre||'')+
-          ' '+
-          (perfil.apellido||'')
-        ).trim() ||
-        perfil.email;
-
-    });
-
-
-  document
-    .querySelectorAll('[data-user-email]')
-    .forEach(e=>{
-
-      e.textContent =
-        perfil.email || '';
-
-    });
-
-
-  const heroStatus =
-    document.getElementById('heroStatus');
-
-
-  if(heroStatus){
-
-    heroStatus.textContent =
-      perfil.activo
-      ? 'Activo'
-      : 'Inactivo';
-
-  }
-
-
-  document
-    .getElementById('loading')
-    ?.remove();
-
-}
-
-
-/* =========================================
-   CAMBIO DE CONTRASEÑA
-========================================= */
-
-document
-  .getElementById('changePasswordForm')
-  .addEventListener('submit',async function(e){
-
-    e.preventDefault();
-
-
-    const currentPassword =
-      document
-        .getElementById('currentPassword')
-        .value
-        .trim();
-
-
-    const newPassword =
-      document
-        .getElementById('newPassword')
-        .value;
-
-
-    const repeatPassword =
-      document
-        .getElementById('repeatPassword')
-        .value;
-
-
-    const message =
-      document.getElementById('passwordMessage');
-
-
-    const button =
-      document.getElementById('changePasswordButton');
-
+    const actual = document.getElementById('currentPassword').value;
+    const nueva = document.getElementById('newPassword').value;
+    const repetir = document.getElementById('repeatPassword').value;
+    const boton = document.getElementById('changePasswordButton');
 
     ocultarMensaje();
 
+    if (!actual) return mostrarMensaje('Escribe tu contraseña actual.', 'error');
+    if (nueva.length < 8) return mostrarMensaje('La nueva contraseña debe tener al menos 8 caracteres.', 'error');
+    if (nueva === 'AulaFAF2020') return mostrarMensaje('Elige una contraseña distinta de la contraseña temporal.', 'error');
+    if (nueva !== repetir) return mostrarMensaje('Las nuevas contraseñas no coinciden.', 'error');
+    if (!currentUser?.email) return mostrarMensaje('No se pudo identificar tu cuenta.', 'error');
 
-    /* =========================================
-       VALIDACIONES
-    ========================================= */
+    boton.disabled = true;
+    boton.textContent = 'Actualizando...';
 
-    if(!currentPassword){
+    try {
+      const { error: errorLogin } =
+        await supabaseClient.auth.signInWithPassword({
+          email: currentUser.email,
+          password: actual
+        });
 
-      mostrarMensaje(
-        'Debes escribir tu contraseña actual.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    if(!newPassword){
-
-      mostrarMensaje(
-        'Debes escribir una nueva contraseña.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    if(newPassword.length < 8){
-
-      mostrarMensaje(
-        'La nueva contraseña debe tener al menos 8 caracteres.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    if(newPassword === 'AulaFAF2020'){
-
-      mostrarMensaje(
-        'Debes elegir una contraseña diferente a la contraseña temporal.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    if(newPassword !== repeatPassword){
-
-      mostrarMensaje(
-        'Las nuevas contraseñas no coinciden.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    if(!currentUser?.email){
-
-      mostrarMensaje(
-        'No se pudo identificar tu cuenta.',
-        'error'
-      );
-
-      return;
-
-    }
-
-
-    try{
-
-      button.disabled = true;
-
-      button.innerHTML =
-        '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
-
-
-      /* =========================================
-         VERIFICAR CONTRASEÑA ACTUAL
-      ========================================= */
-
-      const {
-        error:loginError
-      } = await supabaseClient.auth.signInWithPassword({
-
-        email:currentUser.email,
-
-        password:currentPassword
-
-      });
-
-
-      if(loginError){
-
-        throw new Error(
-          'La contraseña actual es incorrecta.'
-        );
-
+      if (errorLogin) {
+        throw new Error('La contraseña actual es incorrecta.');
       }
 
-
-      button.innerHTML =
-        '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
-
-
-      /* =========================================
-         ACTUALIZAR PASSWORD
-      ========================================= */
-
-      const metadataActual =
-        currentUser.user_metadata || {};
-
-
-      const {
-        data:updateData,
-        error:updateError
-      } = await supabaseClient.auth.updateUser({
-
-        password:newPassword,
-
-        data:{
-          ...metadataActual,
-          debe_cambiar_password:false
+      const { data, error } = await supabaseClient.auth.updateUser({
+        password: nueva,
+        data: {
+          ...(currentUser.user_metadata || {}),
+          debe_cambiar_password: false
         }
-
       });
 
+      if (error) throw error;
 
-      if(updateError){
+      if (data?.user) currentUser = data.user;
 
-        throw updateError;
+      mostrarMensaje('Contraseña actualizada. Entrando al aula...', 'success');
 
-      }
+      setTimeout(async () => {
+        await cargarAula(currentProfile);
+        boton.disabled = false;
+        boton.innerHTML = '<i class="fa-solid fa-key"></i> Cambiar contraseña';
+      }, 1000);
 
-
-      /* =========================================
-         ACTUALIZAR USUARIO LOCAL
-      ========================================= */
-
-      if(updateData?.user){
-
-        currentUser =
-          updateData.user;
-
-      }
-
-
-      mostrarMensaje(
-        'Contraseña actualizada correctamente. Entrando al Aula Virtual...',
-        'success'
-      );
-
-
-      button.innerHTML =
-        '<i class="fa-solid fa-check"></i> Contraseña actualizada';
-
-
-      /* =========================================
-         ESPERAR Y ENTRAR
-      ========================================= */
-
-      setTimeout(()=>{
-
-        cargarAula(currentProfile);
-
-      },1200);
-
-
+    } catch (error) {
+      console.error('Error cambiando contraseña:', error);
+      mostrarMensaje(error.message || 'No se pudo cambiar la contraseña.', 'error');
+      boton.disabled = false;
+      boton.innerHTML = '<i class="fa-solid fa-key"></i> Cambiar contraseña';
     }
-
-    catch(error){
-
-      console.error(
-        'Error cambiando contraseña:',
-        error
-      );
-
-
-      mostrarMensaje(
-        error.message ||
-        'No se pudo cambiar la contraseña.',
-        'error'
-      );
-
-
-      button.disabled = false;
-
-      button.innerHTML =
-        '<i class="fa-solid fa-key"></i> Cambiar contraseña';
-
-    }
-
   });
 
-
-/* =========================================
-   MENSAJES
-========================================= */
-
-function mostrarMensaje(texto,tipo){
-
-  const message =
-    document.getElementById('passwordMessage');
-
-
-  message.textContent = texto;
-
-  message.className =
-    'password-message '+
-    tipo;
-
+function mostrarMensaje(texto, tipo) {
+  const mensaje = document.getElementById('passwordMessage');
+  mensaje.textContent = texto;
+  mensaje.className = 'password-message ' + tipo;
 }
 
-
-function ocultarMensaje(){
-
-  const message =
-    document.getElementById('passwordMessage');
-
-
-  message.textContent = '';
-
-  message.className =
-    'password-message';
-
+function ocultarMensaje() {
+  const mensaje = document.getElementById('passwordMessage');
+  mensaje.textContent = '';
+  mensaje.className = 'password-message';
 }
 
+function togglePassword(id, boton) {
+  const input = document.getElementById(id);
 
-/* =========================================
-   MOSTRAR / OCULTAR PASSWORD
-========================================= */
-
-function togglePassword(id,button){
-
-  const input =
-    document.getElementById(id);
-
-
-  if(input.type === 'password'){
-
+  if (input.type === 'password') {
     input.type = 'text';
-
-    button.innerHTML =
-      '<i class="fa-regular fa-eye-slash"></i>';
-
-  }
-
-  else{
-
+    boton.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+  } else {
     input.type = 'password';
-
-    button.innerHTML =
-      '<i class="fa-regular fa-eye"></i>';
-
+    boton.innerHTML = '<i class="fa-regular fa-eye"></i>';
   }
-
 }
-
 
 /* =========================================
-   PERFIL
+   PERFIL Y FOTO
 ========================================= */
 
-function cargarPerfil(p){
-
-  document.getElementById('perfilNombre').value =
-    p.nombre || '';
-
-  document.getElementById('perfilApellido').value =
-    p.apellido || '';
-
-  document.getElementById('perfilEmail').value =
-    p.email || '';
-
-  document.getElementById('perfilRol').value =
-    p.rol || '';
-
+function cargarPerfil(perfil) {
+  document.getElementById('perfilNombre').value = perfil.nombre || '';
+  document.getElementById('perfilApellido').value = perfil.apellido || '';
+  document.getElementById('perfilEmail').value = perfil.email || '';
+  document.getElementById('perfilRol').value = perfil.rol || '';
   document.getElementById('perfilActivo').value =
-    p.activo
-      ? 'Activo'
-      : 'Inactivo';
+    perfil.activo ? 'Activo' : 'Inactivo';
+  document.getElementById('perfilId').value = perfil.id || '';
 
-  document.getElementById('perfilId').value =
-    p.id || '';
+  const foto = localStorage.getItem('aula_virtual_foto_' + perfil.id);
+  if (foto) aplicarFoto(foto);
+  else quitarFoto();
+}
 
+function mostrarPerfil() {
+  document.getElementById('perfil')?.classList.add('show');
+  setTimeout(() => {
+    document.getElementById('perfil')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }, 30);
+}
 
-  const saved =
-    localStorage.getItem(
-      'aula_virtual_foto_'+p.id
-    );
+function ocultarPerfil() {
+  document.getElementById('perfil')?.classList.remove('show');
+}
 
+function seleccionarFoto() {
+  document.getElementById('photoInput')?.click();
+}
 
-  if(saved){
+function previsualizarFoto(event) {
+  const archivo = event.target.files?.[0];
+  if (!archivo || !currentUser) return;
 
-    aplicarFoto(saved);
-
+  if (!archivo.type.startsWith('image/')) {
+    alert('Selecciona un archivo de imagen.');
+    return;
   }
 
-}
-
-
-function mostrarPerfil(){
-
-  document
-    .getElementById('perfil')
-    .classList.add('show');
-
-
-  setTimeout(()=>{
-
-    document
-      .getElementById('perfil')
-      .scrollIntoView({
-        behavior:'smooth',
-        block:'start'
-      });
-
-  },30);
-
-}
-
-
-function ocultarPerfil(){
-
-  document
-    .getElementById('perfil')
-    .classList.remove('show');
-
-}
-
-
-function seleccionarFoto(){
-
-  document
-    .getElementById('photoInput')
-    .click();
-
-}
-
-
-function previsualizarFoto(e){
-
-  const f =
-    e.target.files?.[0];
-
-
-  if(!f || !currentUser)
+  if (archivo.size > 5 * 1024 * 1024) {
+    alert('La foto debe pesar menos de 5 MB.');
     return;
-
-
-  if(f.size > 5*1024*1024){
-
-    alert(
-      'La foto debe pesar menos de 5 MB.'
-    );
-
-    return;
-
   }
 
+  const lector = new FileReader();
 
-  const r =
-    new FileReader();
-
-
-  r.onload = ()=>{
-
+  lector.onload = () => {
     localStorage.setItem(
-      'aula_virtual_foto_'+currentUser.id,
-      r.result
+      'aula_virtual_foto_' + currentUser.id,
+      lector.result
     );
-
-
-    aplicarFoto(r.result);
-
-
-    alert(
-      'Foto actualizada en este dispositivo. La conexión con Google Drive permitirá guardarla en tu almacenamiento personal.'
-    );
-
+    aplicarFoto(lector.result);
   };
 
-
-  r.readAsDataURL(f);
-
+  lector.readAsDataURL(archivo);
 }
 
+function aplicarFoto(src) {
+  document.querySelectorAll('.profile-photo').forEach(img => {
+    img.src = src;
+    img.style.display = 'block';
+  });
 
-function aplicarFoto(src){
+  document.querySelectorAll('.profile-icon').forEach(icono => {
+    icono.style.display = 'none';
+  });
 
-  document
-    .querySelectorAll('.profile-photo')
-    .forEach(i=>{
+  const fotoGrande = document.getElementById('bigProfilePhoto');
+  const iconoGrande = document.getElementById('bigProfileIcon');
 
-      i.src = src;
-
-      i.style.display =
-        'block';
-
-    });
-
-
-  document
-    .querySelectorAll('.profile-icon')
-    .forEach(i=>{
-
-      i.style.display =
-        'none';
-
-    });
-
-
-  const b =
-    document.getElementById(
-      'bigProfilePhoto'
-    );
-
-
-  const bi =
-    document.getElementById(
-      'bigProfileIcon'
-    );
-
-
-  if(b){
-
-    b.src = src;
-
-    b.style.display =
-      'block';
-
+  if (fotoGrande) {
+    fotoGrande.src = src;
+    fotoGrande.style.display = 'block';
   }
 
+  if (iconoGrande) iconoGrande.style.display = 'none';
+}
 
-  if(bi){
-
-    bi.style.display =
-      'none';
-
+function quitarFoto() {
+  if (currentUser) {
+    localStorage.removeItem('aula_virtual_foto_' + currentUser.id);
   }
 
+  document.querySelectorAll('.profile-photo').forEach(img => {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+  });
+
+  document.querySelectorAll('.profile-icon').forEach(icono => {
+    icono.style.display = 'block';
+  });
+
+  const fotoGrande = document.getElementById('bigProfilePhoto');
+  const iconoGrande = document.getElementById('bigProfileIcon');
+
+  if (fotoGrande) {
+    fotoGrande.removeAttribute('src');
+    fotoGrande.style.display = 'none';
+  }
+
+  if (iconoGrande) iconoGrande.style.display = 'block';
 }
-
-
-function quitarFoto(){
-
-  if(!currentUser)
-    return;
-
-
-  localStorage.removeItem(
-    'aula_virtual_foto_'+currentUser.id
-  );
-
-
-  document
-    .querySelectorAll('.profile-photo')
-    .forEach(i=>{
-
-      i.style.display =
-        'none';
-
-    });
-
-
-  document
-    .querySelectorAll('.profile-icon')
-    .forEach(i=>{
-
-      i.style.display =
-        'block';
-
-    });
-
-
-  const b =
-    document.getElementById(
-      'bigProfilePhoto'
-    );
-
-
-  const bi =
-    document.getElementById(
-      'bigProfileIcon'
-    );
-
-
-  if(b)
-    b.style.display='none';
-
-
-  if(bi)
-    bi.style.display='block';
-
-}
-
 
 /* =========================================
    CERRAR SESIÓN
 ========================================= */
 
-async function cerrarSesion(){
-
-  try{
-
-    if(supabaseClient){
-
+async function cerrarSesion() {
+  try {
+    if (supabaseClient) {
       await supabaseClient.auth.signOut();
-
     }
-
+  } catch (error) {
+    console.error('Error cerrando sesión:', error);
+  } finally {
+    location.href = '../index.html';
   }
-
-  finally{
-
-    location.href =
-      '../index.html';
-
-  }
-
 }
 
-
 /* =========================================
-   INICIAR
+   INICIAR AULA
 ========================================= */
 
 initAuth(['estudiante']);
-
 </script>
 
 </body>
