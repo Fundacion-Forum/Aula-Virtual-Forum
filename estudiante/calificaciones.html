@@ -1076,28 +1076,28 @@ button,input{font:inherit}
 
       <a
         class="active"
-        href="inicio.html"
+        href="#inicio"
       >
         <i class="fa-solid fa-house"></i>
         <span>Inicio</span>
       </a>
 
-      <a href="mis-cursos.html">
+      <a href="#cursos">
         <i class="fa-solid fa-book-open"></i>
         <span>Mis cursos</span>
       </a>
 
-      <a href="tareas.html">
+      <a href="#actividades">
         <i class="fa-solid fa-list-check"></i>
         <span>Tareas y asignaciones</span>
       </a>
 
-      <a href="mi-curso.html">
+      <a href="#companeros">
         <i class="fa-solid fa-users"></i>
         <span>Mi curso y compañeros</span>
       </a>
 
-      <a href="calificaciones.html">
+      <a href="#calificaciones">
         <i class="fa-solid fa-chart-line"></i>
         <span>Calificaciones</span>
       </a>
@@ -1107,16 +1107,16 @@ button,input{font:inherit}
       </div>
 
       <a
-        href="perfil.html"
+        href="#perfil"
         onclick="mostrarPerfil();return true"
       >
         <i class="fa-solid fa-user"></i>
         <span>Mi perfil</span>
       </a>
 
-      <a href="drive.html">
+      <a href="#archivos">
         <i class="fa-solid fa-folder-open"></i>
-        <span>Drive institucional</span>
+        <span>Mis archivos</span>
       </a>
 
     </nav>
@@ -1671,20 +1671,6 @@ button,input{font:inherit}
 
           </div>
 
-
-          <div class="field">
-
-            <label>
-              Identificador de usuario
-            </label>
-
-            <input
-              id="perfilId"
-              readonly
-            >
-
-          </div>
-
         </div>
 
 
@@ -1936,9 +1922,25 @@ async function cargarDatosEstudiante(estudianteId) {
 
   await cargarCompaneros(cursoIds);
   renderizarCursos();
+  if ((location.pathname.split('/').pop() || '').toLowerCase() === 'mi-curso.html') mostrarEncabezadoCursoSeleccionado();
   renderizarActividades();
   renderizarCalificaciones();
   actualizarResumen();
+}
+
+function mostrarEncabezadoCursoSeleccionado() {
+  const cursoId = new URLSearchParams(location.search).get('curso');
+  const zona = document.getElementById('companeros');
+  const curso = cursosEstudiante.find(c => String(c.id) === String(cursoId));
+  if (!zona || !cursoId || !curso) return;
+  let encabezado = document.getElementById('selectedCourseHeader');
+  if (!encabezado) {
+    encabezado = document.createElement('div');
+    encabezado.id = 'selectedCourseHeader';
+    encabezado.className = 'card';
+    zona.prepend(encabezado);
+  }
+  encabezado.innerHTML = `<h2>${escaparHTML(curso.nombre)}</h2><p>${escaparHTML(curso.descripcion || 'Contenido del curso')}</p><p>Debajo encontrarás los compañeros matriculados. Las tareas y calificaciones están disponibles en el menú lateral.</p>`;
 }
 
 /* =========================================
@@ -2009,12 +2011,23 @@ function renderizarCursos() {
           <p>${escaparHTML(curso.descripcion || 'Sin descripción disponible.')}</p>
           <small>${cantidad} actividad${cantidad === 1 ? '' : 'es'}</small>
           <div class="drive-action">
+            <button class="btn btn-primary" type="button" onclick="abrirCurso('${curso.id}')"><i class="fa-solid fa-arrow-right"></i> Abrir curso</button>
             <button class="btn btn-secondary" type="button" onclick="verCompanerosCurso('${curso.id}')"><i class="fa-solid fa-users"></i> Compañeros</button>
             ${curso.drive_folder_id ? `<a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/drive/folders/${encodeURIComponent(curso.drive_folder_id)}"><i class="fa-brands fa-google-drive"></i> Materiales</a>` : ''}
           </div>
         </div>
       </article>`;
   }).join('');
+}
+
+function abrirCurso(cursoId) {
+  // Abre la pantalla de curso y conserva el curso elegido en la URL.
+  const curso = cursosEstudiante.find(item => String(item.id) === String(cursoId));
+  if (!curso) {
+    mostrarMensaje('No se encontró ese curso. Actualiza la página e inténtalo de nuevo.', 'error');
+    return;
+  }
+  location.href = 'mi-curso.html?curso=' + encodeURIComponent(curso.id);
 }
 
 /* =========================================
@@ -2026,6 +2039,10 @@ function renderizarActividades() {
   if (!contenedor) return;
 
   let actividades = [...actividadesEstudiante];
+  const cursoSolicitado = new URLSearchParams(location.search).get('curso');
+  if ((location.pathname.split('/').pop() || '').toLowerCase() === 'mi-curso.html' && cursoSolicitado) {
+    actividades = actividades.filter(a => String(a.curso_id) === String(cursoSolicitado));
+  }
   if (filtroActividadesActual === 'pendientes') {
     actividades = actividades.filter(a => !obtenerCalificacion(a.id));
   } else if (filtroActividadesActual === 'calificadas') {
@@ -2115,6 +2132,11 @@ async function cargarCompaneros(cursoIds) {
     const miembros = usuarios.filter(u => idsCurso.includes(u.id) && u.rol === 'estudiante');
     return { curso, miembros };
   });
+  const cursoSolicitado = new URLSearchParams(location.search).get('curso');
+  if (cursoSolicitado) {
+    const cursoExiste = cursosEstudiante.some(c => String(c.id) === String(cursoSolicitado));
+    if (cursoExiste) companerosPorCurso = companerosPorCurso.filter(x => String(x.curso.id) === String(cursoSolicitado));
+  }
   const total = new Set(companerosPorCurso.flatMap(x => x.miembros.map(u => u.id))).size;
   if (resumen) resumen.textContent = `${total} estudiante${total === 1 ? '' : 's'} en tus cursos`;
 
@@ -2331,7 +2353,6 @@ function cargarPerfil(perfil) {
   document.getElementById('perfilRol').value = perfil.rol || '';
   document.getElementById('perfilActivo').value =
     perfil.activo ? 'Activo' : 'Inactivo';
-  document.getElementById('perfilId').value = perfil.id || '';
 
   const foto = perfil.id ? localStorage.getItem('aula_virtual_foto_' + perfil.id) : null;
   const fotoNube = currentUser?.user_metadata?.avatar_url;
@@ -2357,8 +2378,15 @@ async function guardarPerfil() {
       .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('No se guardaron los cambios. Verifica las políticas RLS de la tabla usuarios.');
-    currentProfile = data;
-    document.querySelectorAll('[data-user-name]').forEach(el => el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante');
+    currentProfile = { ...currentProfile, ...data };
+    document.getElementById('perfilNombre').value = data.nombre || '';
+    document.getElementById('perfilApellido').value = data.apellido || '';
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante';
+    });
+    // Actualiza también los textos de bienvenida que no usen data-user-name.
+    const nombreVisible = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante';
+    document.querySelectorAll('#welcomeName, #profileDisplayName').forEach(el => el.textContent = nombreVisible);
     mostrarMensajePerfil('Perfil actualizado correctamente.', false);
   } catch (error) {
     console.error('Error guardando perfil:', error);
@@ -2503,45 +2531,6 @@ async function cerrarSesion() {
    INICIAR AULA
 ========================================= */
 
-
-function prepararPantallaEstudiante() {
-  const archivo = (location.pathname.split('/').pop() || 'estudiante.html').toLowerCase();
-  const mapa = {
-    'estudiante.html':'inicio', 'inicio.html':'inicio',
-    'mis-cursos.html':'cursos', 'mi-curso.html':'companeros',
-    'tareas.html':'actividades', 'calificaciones.html':'calificaciones',
-    'perfil.html':'perfil', 'drive.html':'archivos'
-  };
-  const objetivoId = mapa[archivo] || 'inicio';
-  const main = document.getElementById('inicio');
-  if (!main) return;
-  const objetivo = document.getElementById(objetivoId);
-  if (!objetivo) return;
-  // Mantiene la barra superior en todas las pantallas y muestra solo el bloque solicitado.
-  for (const hijo of Array.from(main.children)) {
-    if (hijo.classList.contains('topbar')) continue;
-    const contiene = hijo === objetivo || hijo.contains(objetivo);
-    hijo.style.display = contiene ? '' : 'none';
-    if (hijo.classList.contains('two-col') && contiene) {
-      for (const nieto of Array.from(hijo.children)) {
-        nieto.style.display = (nieto === objetivo || nieto.contains(objetivo)) ? '' : 'none';
-      }
-    }
-  }
-  document.querySelectorAll('.nav a').forEach(a => {
-    a.classList.remove('active');
-    const href = (a.getAttribute('href') || '').split('#')[0];
-    if (href === archivo || (archivo === 'estudiante.html' && href === 'inicio.html')) a.classList.add('active');
-  });
-  const labels = {
-    inicio:'Área personal', cursos:'Mis cursos', companeros:'Mi curso y compañeros',
-    actividades:'Tareas y asignaciones', calificaciones:'Calificaciones',
-    perfil:'Mi perfil', archivos:'Drive institucional'
-  };
-  document.title = 'Aula Virtual | ' + (labels[objetivoId] || 'Estudiante');
-}
-
-prepararPantallaEstudiante();
 initAuth(['estudiante']);
 </script>
 
