@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aula Virtual | Panel del tutor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{--p:#2563eb;--bg:#f4f7fb;--text:#172033;--muted:#64748b;--border:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+aside{position:fixed;inset:0 auto 0 0;width:245px;background:#0f172a;color:white;padding:24px 16px}
+.brand{font-weight:800;font-size:20px;padding:8px 10px 26px}.brand i{color:#60a5fa;margin-right:8px}
+nav a{display:flex;gap:12px;padding:12px 14px;margin:5px 0;border-radius:10px;color:#cbd5e1;text-decoration:none}nav a:hover{background:#1e293b;color:white}
+main{margin-left:245px;padding:28px 32px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}
+h1{font-size:28px;margin:0 0 5px}h2{font-size:19px;margin:0 0 14px}.muted,small{color:var(--muted)}
+.profile,.card{background:white;border:1px solid var(--border);border-radius:15px;padding:18px}.profile{display:flex;gap:10px;align-items:center}.avatar{width:38px;height:38px;display:grid;place-items:center;background:#dbeafe;color:#1d4ed8;border-radius:50%}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.section{margin-top:18px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:9px;font:inherit;background:white}textarea{min-height:75px;resize:vertical}
+button,.btn{border:0;border-radius:9px;padding:10px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none}button:disabled{opacity:.6;cursor:wait}.primary{background:var(--p);color:white}.secondary{background:#e2e8f0;color:#172033}
+.note{margin:12px 0;padding:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;color:#1e40af}.msg{margin-top:10px}.ok,.err{padding:12px;border-radius:10px;overflow-wrap:anywhere}.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#166534}.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.list{display:grid;gap:9px;margin-top:15px}.item{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:13px;border:1px solid var(--border);border-radius:10px}.item strong{display:block;margin-bottom:4px}.item a{color:#1d4ed8;font-weight:700}.badge{display:inline-block;background:#dbeafe;color:#1d4ed8;border-radius:99px;padding:4px 8px;font-size:12px;font-weight:700}.empty{text-align:center;color:var(--muted);padding:24px}
+#loading{position:fixed;inset:0;z-index:5;background:var(--bg);display:grid;place-items:center}.spinner{width:38px;height:38px;border:4px solid #dbeafe;border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.hidden{display:none!important}
+@media(max-width:850px){aside{width:68px;padding:20px 8px}.brand span,nav span{display:none}nav a{justify-content:center;padding:12px 6px}main{margin-left:68px;padding:20px}}
+@media(max-width:600px){aside{display:none}main{margin:0;padding:14px}.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.item{flex-direction:column}}
+</style></head><body>
+<div id="loading"><div><div class="spinner"></div><p>Verificando acceso...</p></div></div>
+<div id="denied" class="card hidden" style="max-width:500px;margin:70px auto;text-align:center"><h2>Acceso denegado</h2><p id="deniedText">Esta pantalla requiere una cuenta de tutor activa.</p><a class="btn primary" href="../index.html">Volver al inicio</a></div>
+<div id="app" class="hidden">
+<aside><div class="brand"><i class="fa-solid fa-chalkboard-user"></i><span>Panel del tutor</span></div><nav>
+<a href="#curso"><i class="fa-solid fa-book-open"></i><span>Mis cursos</span></a><a href="#temas"><i class="fa-solid fa-list"></i><span>Temas</span></a><a href="#materiales"><i class="fa-solid fa-file-lines"></i><span>Materiales</span></a><a href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar sesión</span></a>
+</nav></aside>
+<main><div class="top"><div><h1>Panel del tutor</h1><div class="muted">Administra temas y materiales de tus cursos asignados.</div></div><div class="profile"><div class="avatar"><i class="fa-solid fa-user-tie"></i></div><div><strong id="userName">Tutor</strong><small style="display:block">Tutor</small></div></div></div>
+<section id="curso" class="card"><div class="row"><h2>Mis cursos</h2><button class="secondary" onclick="loadCourses()"><i class="fa-solid fa-rotate"></i>Actualizar</button></div><label for="course">Curso asignado</label><select id="course"><option value="">Cargando...</option></select><div id="courseInfo" class="note">Selecciona un curso.</div></section>
+<div class="grid section">
+<section id="temas" class="card"><h2><i class="fa-solid fa-list"></i> Temas</h2><form id="topicForm"><label for="topicName">Nombre del tema</label><input id="topicName" maxlength="160" required placeholder="Ej. Unidad 1: Introducción"><label for="topicDesc">Descripción (opcional)</label><textarea id="topicDesc" maxlength="1000"></textarea><p><button id="topicBtn" class="primary"><i class="fa-solid fa-plus"></i>Crear tema</button></p><div id="topicMsg" class="msg" aria-live="polite"></div></form><div id="topics" class="list"><div class="empty">Selecciona un curso.</div></div></section>
+<section class="card"><h2><i class="fa-solid fa-file-circle-plus"></i> Crear material</h2><div class="note">Se guardará en la carpeta de Drive configurada para el curso y en el catálogo del Aula Virtual.</div><form id="materialForm"><label for="matName">Título</label><input id="matName" maxlength="180" required placeholder="Ej. Guía de la unidad 1"><label for="matType">Tipo</label><select id="matType"><option value="document">Documento de Google</option><option value="spreadsheet">Hoja de cálculo</option><option value="presentation">Presentación</option></select><label for="matTopic">Tema (opcional)</label><select id="matTopic"><option value="">Sin tema específico</option></select><label for="matDesc">Descripción (opcional)</label><textarea id="matDesc" maxlength="1000"></textarea><p><button id="matBtn" class="primary"><i class="fa-solid fa-plus"></i>Crear material</button></p><div id="matMsg" class="msg" aria-live="polite"></div></form></section></div>
+<section id="materiales" class="card section"><div class="row"><h2><i class="fa-solid fa-folder-open"></i> Materiales del curso</h2><button class="secondary" onclick="loadMaterials()"><i class="fa-solid fa-rotate"></i>Actualizar</button></div><div id="materials" class="list"><div class="empty">Selecciona un curso.</div></div></section>
+</main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+let sb=null,user=null,courses=[],topics=[];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const course=()=>courses.find(c=>c.id===$('course').value)||null;
+function msg(id,s,ok=false){$(id).innerHTML=`<div class="${ok?'ok':'err'}">${esc(s)}</div>`;}
+async function init(){
+ try{
+  const r=await fetch('../config.json',{cache:'no-store'});if(!r.ok)throw Error('No se pudo cargar config.json.');
+  const cfg=await r.json();if(!cfg?.supabase?.url||!cfg?.supabase?.anonKey)throw Error('La configuración de Supabase está incompleta.');
+  sb=window.supabase.createClient(cfg.supabase.url,cfg.supabase.anonKey);
+  const {data,error}=await sb.auth.getSession();if(error)throw error;
+  if(!data?.session){location.href='../index.html';return;}user=data.session.user;
+  const {data:p,error:pe}=await sb.from('usuarios').select('id,nombre,apellido,email,rol,activo').eq('id',user.id).maybeSingle();
+  if(pe||!p||p.activo!==true||p.rol!=='tutor'){$('loading').classList.add('hidden');$('denied').classList.remove('hidden');return;}
+  $('userName').textContent=(`${p.nombre||''} ${p.apellido||''}`).trim()||p.email||'Tutor';
+  $('loading').classList.add('hidden');$('app').classList.remove('hidden');await loadCourses();
+ }catch(e){console.error(e);$('loading').classList.add('hidden');$('denied').classList.remove('hidden');$('deniedText').textContent=e.message||'No se pudo verificar el acceso.';}
+}
+async function logout(){if(sb)await sb.auth.signOut();location.href='../index.html';}
+async function loadCourses(){
+ $('course').innerHTML='<option value="">Cargando cursos...</option>';
+ try{
+  const {data,error}=await sb.from('cursos').select('id,nombre,descripcion,drive_folder_id,activo').eq('tutor_id',user.id).eq('activo',true).order('nombre');
+  if(error)throw error;courses=data||[];
+  $('course').innerHTML='<option value="">Selecciona un curso</option>'+courses.map(c=>`<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join('');
+  if(!courses.length){$('courseInfo').textContent='No tienes cursos activos asignados. Contacta al administrador.';$('topics').innerHTML='<div class="empty">No hay cursos asignados.</div>';$('materials').innerHTML='<div class="empty">No hay cursos asignados.</div>';return;}
+  $('course').value=courses[0].id;await loadCourseData();
+ }catch(e){console.error(e);$('course').innerHTML='<option value="">Error al cargar cursos</option>';msg('topicMsg',e.message||'No se pudieron cargar los cursos.');}
+}
+async function loadCourseData(){
+ const c=course();$('topicMsg').innerHTML='';$('matMsg').innerHTML='';
+ if(!c){$('courseInfo').textContent='Selecciona un curso.';return;}
+ $('courseInfo').innerHTML=`<strong>${esc(c.nombre)}</strong><br>${esc(c.descripcion||'Sin descripción')}${c.drive_folder_id?'':'<br><strong>Falta configurar la carpeta de Drive.</strong> Contacta al administrador.'}`;
+ await Promise.all([loadTopics(),loadMaterials()]);
+}
+async function loadTopics(){
+ const c=course();if(!c)return;$('topics').innerHTML='<div class="empty">Cargando temas...</div>';
+ try{
+  const {data,error}=await sb.from('temas').select('id,nombre,descripcion,orden,activo').eq('curso_id',c.id).eq('activo',true).order('orden');
+  if(error)throw error;topics=data||[];
+  $('topics').innerHTML=topics.length?topics.map(t=>`<div class="item"><div><strong>${esc(t.nombre)}</strong><small>${esc(t.descripcion||'Sin descripción')}</small></div><span class="badge">Orden ${Number(t.orden)||'—'}</span></div>`).join(''):'<div class="empty">Aún no hay temas.</div>';
+  $('matTopic').innerHTML='<option value="">Sin tema específico</option>'+topics.map(t=>`<option value="${esc(t.id)}">${esc(t.nombre)}</option>`).join('');
+ }catch(e){console.error(e);$('topics').innerHTML=`<div class="err">${esc(e.message||'No se pudieron cargar los temas.')}</div>`;}
+}
+async function createTopic(e){
+ e.preventDefault();const c=course(),name=$('topicName').value.trim(),desc=$('topicDesc').value.trim(),btn=$('topicBtn');
+ if(!c){msg('topicMsg','Selecciona un curso.');return;}if(!name){msg('topicMsg','Escribe el nombre del tema.');return;}
+ btn.disabled=true;
+ try{
+  const order=topics.reduce((m,t)=>Math.max(m,Number(t.orden)||0),0)+1;
+  const {error}=await sb.from('temas').insert({curso_id:c.id,nombre:name,descripcion:desc||null,orden:order,activo:true});
+  if(error)throw error;$('topicForm').reset();msg('topicMsg','Tema creado correctamente.',true);await loadTopics();
+ }catch(e){console.error(e);msg('topicMsg',e.message||'No se pudo crear el tema.');}
+ finally{btn.disabled=false;}
+}
+async function createMaterial(e){
+ e.preventDefault();const c=course(),name=$('matName').value.trim(),type=$('matType').value,topicId=$('matTopic').value,desc=$('matDesc').value.trim(),btn=$('matBtn');
+ if(!c){msg('matMsg','Selecciona un curso.');return;}if(!c.drive_folder_id){msg('matMsg','El curso no tiene carpeta de Drive configurada. Contacta al administrador.');return;}
+ btn.disabled=true;
+ try{
+  const {data:s,error:se}=await sb.auth.getSession();if(se)throw se;const session=s?.session;
+  if(!session?.access_token)throw Error('La sesión expiró. Inicia sesión nuevamente.');
+  const r=await fetch(`${sb.supabaseUrl}/functions/v1/drive-create-material`,{method:'POST',
+   headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`,'apikey':sb.supabaseKey},
+   body:JSON.stringify({name,type,description:desc,cursoId:c.id,temaId:topicId})});
+  const d=await r.json().catch(()=>({}));if(!r.ok||d.success!==true)throw Error(d.error||`No se pudo crear el material (HTTP ${r.status}).`);
+  $('materialForm').reset();msg('matMsg',d.message||'Material creado y registrado.',true);
+  await Promise.all([loadMaterials(),loadTopics()]);
+  if(d.file?.webViewLink)$('matMsg').innerHTML=`<div class="ok">Material creado y registrado correctamente.<br><a href="${esc(d.file.webViewLink)}" target="_blank" rel="noopener noreferrer">Abrir en Google Drive</a></div>`;
+ }catch(e){console.error(e);msg('matMsg',e.message||'No se pudo crear el material.');}
+ finally{btn.disabled=false;}
+}
+async function loadMaterials(){
+ const c=course();if(!c)return;$('materials').innerHTML='<div class="empty">Cargando materiales...</div>';
+ try{
+  const {data,error}=await sb.from('contenidos').select('id,titulo,descripcion,tipo,drive_url,tema_id,orden,activo').eq('curso_id',c.id).eq('activo',true).order('orden');
+  if(error)throw error;const items=data||[];
+  $('materials').innerHTML=items.length?items.map(m=>{const t=topics.find(x=>x.id===m.tema_id);return `<div class="item"><div><strong>${esc(m.titulo||'Material sin título')}</strong><small>${esc(m.tipo||'Material')}${t?' · '+esc(t.nombre):''}${m.descripcion?' · '+esc(m.descripcion):''}</small></div>${m.drive_url?`<a href="${esc(m.drive_url)}" target="_blank" rel="noopener noreferrer">Abrir <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`:''}</div>`}).join(''):'<div class="empty">Este curso aún no tiene materiales registrados.</div>';
+ }catch(e){console.error(e);$('materials').innerHTML=`<div class="err">${esc(e.message||'No se pudieron cargar los materiales.')}</div>`;}
+}
+$('course').addEventListener('change',loadCourseData);$('topicForm').addEventListener('submit',createTopic);$('materialForm').addEventListener('submit',createMaterial);
+init();
+</script></body></html>
