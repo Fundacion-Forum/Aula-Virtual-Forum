@@ -857,10 +857,22 @@ button,input{font:inherit}
     padding:25px 20px;
   }
 }
+
+/* Pantalla independiente: Inicio */
+body[data-student-page="inicio"] #inicio { display: block !important; }
+body[data-student-page="inicio"] #cursos { display: none !important; }
+body[data-student-page="inicio"] #actividades { display: none !important; }
+body[data-student-page="inicio"] #calificaciones { display: none !important; }
+body[data-student-page="inicio"] #archivos { display: none !important; }
+body[data-student-page="inicio"] #companeros { display: none !important; }
+body[data-student-page="inicio"] #perfil { display: none !important; }
+body[data-student-page="inicio"] .two-col { display: contents; }
+body[data-student-page="inicio"] .profile-panel { position: static !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
+
 </style>
 </head>
 
-<body>
+<body data-student-page="inicio">
 
 <!-- =========================================
      PANTALLA OBLIGATORIA DE CAMBIO DE PASSWORD
@@ -1076,18 +1088,18 @@ button,input{font:inherit}
 
       <a
         class="active"
-        href="#inicio"
+        href="inicio.html"
       >
         <i class="fa-solid fa-house"></i>
         <span>Inicio</span>
       </a>
 
-      <a href="#cursos">
+      <a href="mis-cursos.html">
         <i class="fa-solid fa-book-open"></i>
         <span>Mis cursos</span>
       </a>
 
-      <a href="#actividades">
+      <a href="tareas.html">
         <i class="fa-solid fa-list-check"></i>
         <span>Tareas y asignaciones</span>
       </a>
@@ -1097,7 +1109,7 @@ button,input{font:inherit}
         <span>Mi curso y compañeros</span>
       </a>
 
-      <a href="#calificaciones">
+      <a href="calificaciones.html">
         <i class="fa-solid fa-chart-line"></i>
         <span>Calificaciones</span>
       </a>
@@ -1107,14 +1119,14 @@ button,input{font:inherit}
       </div>
 
       <a
-        href="#perfil"
-        onclick="mostrarPerfil();return true"
+        href="perfil.html"
+        
       >
         <i class="fa-solid fa-user"></i>
         <span>Mi perfil</span>
       </a>
 
-      <a href="#archivos">
+      <a href="drive.html">
         <i class="fa-solid fa-folder-open"></i>
         <span>Mis archivos</span>
       </a>
@@ -2379,6 +2391,7 @@ async function guardarPerfil() {
     if (error) throw error;
     if (!data) throw new Error('No se guardaron los cambios. Verifica las políticas RLS de la tabla usuarios.');
     currentProfile = { ...currentProfile, ...data };
+    document.querySelectorAll('[data-user-name]').forEach(el => { el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante'; });
     document.getElementById('perfilNombre').value = data.nombre || '';
     document.getElementById('perfilApellido').value = data.apellido || '';
     document.querySelectorAll('[data-user-name]').forEach(el => {
