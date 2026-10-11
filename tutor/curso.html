@@ -286,19 +286,44 @@
         </div>
 
         <div class="box">
-          <h3><i class="fa-solid fa-cloud"></i> Archivos de Google Drive</h3>
-
-          <p class="muted">
-            Los archivos grandes continúan guardándose en el Drive institucional.
-            Utiliza el flujo de Drive existente para subirlos. Aquí puedes
-            organizar los temas del curso.
-          </p>
+          <h3><i class="fa-solid fa-file-circle-plus"></i> Crear material en Google Drive</h3>
+          <p class="muted">Crea documentos, hojas de cálculo o presentaciones dentro de la carpeta de Drive de este curso.</p>
+          <form id="materialForm">
+            <div class="field">
+              <label for="matName">Título del material</label>
+              <input id="matName" maxlength="180" required placeholder="Ej. Guía de la unidad 1">
+            </div>
+            <div class="field">
+              <label for="matType">Tipo de material</label>
+              <select id="matType">
+                <option value="document">Documento de Google</option>
+                <option value="spreadsheet">Hoja de cálculo</option>
+                <option value="presentation">Presentación</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="matTopic">Asociar a tema (opcional)</label>
+              <select id="matTopic"><option value="">Sin tema específico</option></select>
+            </div>
+            <div class="field">
+              <label for="matDesc">Descripción (opcional)</label>
+              <textarea id="matDesc" maxlength="1000" placeholder="Descripción del material"></textarea>
+            </div>
+            <button class="btn" id="matBtn" type="submit"><i class="fa-solid fa-plus"></i> Crear material</button>
+            <div id="matStatus" aria-live="polite"></div>
+          </form>
         </div>
       </div>
 
-      <div class="box">
-        <h3>Temario del curso</h3>
-        <div id="topics" class="list">Cargando temas…</div>
+      <div>
+        <div class="box">
+          <h3>Temario del curso</h3>
+          <div id="topics" class="list">Cargando temas…</div>
+        </div>
+        <div class="box">
+          <h3><i class="fa-solid fa-folder-open"></i> Materiales creados</h3>
+          <div id="materials" class="list">Cargando materiales…</div>
+        </div>
       </div>
     </div>
   </section>
@@ -577,6 +602,7 @@ async function cargarTodo() {
   try {
     await Promise.all([
       cargarTemas(),
+      cargarMateriales(),
       cargarInscritos(),
       cargarActividades()
     ]);
@@ -617,7 +643,16 @@ async function cargarTemas() {
   activitySelect.innerHTML =
     '<option value="">Sin tema</option>';
 
+  const materialTopicSelect = document.getElementById("matTopic");
+  const previousMaterialTopic = materialTopicSelect.value;
+  materialTopicSelect.innerHTML = '<option value="">Sin tema específico</option>';
+
   topics.forEach(topic => {
+    const materialOption = document.createElement("option");
+    materialOption.value = topic.id;
+    materialOption.textContent = topic.nombre;
+    materialTopicSelect.appendChild(materialOption);
+
     const option1 = document.createElement("option");
     option1.value = topic.id;
     option1.textContent = topic.nombre;
@@ -628,6 +663,10 @@ async function cargarTemas() {
     option2.textContent = topic.nombre;
     activitySelect.appendChild(option2);
   });
+
+  if (topics.some(topic => topic.id === previousMaterialTopic)) {
+    materialTopicSelect.value = previousMaterialTopic;
+  }
 
   renderTopics();
 }
@@ -772,6 +811,111 @@ async function borrarTema(id) {
   await cargarTemas();
   show("Tema eliminado correctamente.");
 }
+
+/* =========================================================
+   MATERIALES DE GOOGLE DRIVE
+========================================================= */
+
+async function cargarMateriales() {
+  const container = document.getElementById("materials");
+  if (!container || !sb || !courseId) return;
+
+  const { data, error } = await sb
+    .from("contenidos")
+    .select("id,titulo,descripcion,tipo,drive_url,tema_id,orden,activo")
+    .eq("curso_id", courseId)
+    .eq("activo", true)
+    .order("orden")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.innerHTML = `<p class="muted">${esc(error.message)}</p>`;
+    return;
+  }
+
+  const items = data || [];
+  if (!items.length) {
+    container.innerHTML = '<p class="muted">Todavía no hay materiales en este curso.</p>';
+    return;
+  }
+
+  container.innerHTML = items.map(item => {
+    const topic = topics.find(t => t.id === item.tema_id);
+    return `<div class="item">
+      <div>
+        <strong><i class="fa-solid fa-file-lines"></i> ${esc(item.titulo || "Material sin título")}</strong>
+        <p>${esc(item.tipo || "Material")}${topic ? " · " + esc(topic.nombre) : ""}</p>
+        ${item.descripcion ? `<p>${esc(item.descripcion)}</p>` : ""}
+      </div>
+      ${item.drive_url ? `<a href="${esc(item.drive_url)}" target="_blank" rel="noopener noreferrer">Abrir en Drive <i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ""}
+    </div>`;
+  }).join("");
+}
+
+document.getElementById("materialForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const button = document.getElementById("matBtn");
+  const status = document.getElementById("matStatus");
+  const name = document.getElementById("matName").value.trim();
+  const type = document.getElementById("matType").value;
+  const temaId = document.getElementById("matTopic").value || null;
+  const description = document.getElementById("matDesc").value.trim();
+
+  if (!course || !course.drive_folder_id) {
+    show("Este curso no tiene una carpeta de Google Drive configurada. Pide al administrador que la revise.", true);
+    return;
+  }
+  if (!name) {
+    show("Escribe el título del material.", true);
+    return;
+  }
+
+  button.disabled = true;
+  status.innerHTML = '<p class="muted">Creando material en Google Drive…</p>';
+
+  try {
+    const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+    if (sessionError) throw sessionError;
+    const currentSession = sessionData.session;
+    if (!currentSession?.access_token) throw new Error("La sesión expiró. Inicia sesión nuevamente.");
+
+    const response = await fetch(`${sb.supabaseUrl}/functions/v1/drive-create-material`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${currentSession.access_token}`,
+        "apikey": anonKey
+      },
+      body: JSON.stringify({
+        name,
+        type,
+        description,
+        cursoId: courseId,
+        temaId
+      })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.success !== true) {
+      throw new Error(result.error || result.message || `No se pudo crear el material (HTTP ${response.status}).`);
+    }
+
+    document.getElementById("materialForm").reset();
+    status.innerHTML = '<div class="notice">Material creado y registrado correctamente.</div>';
+    await cargarMateriales();
+
+    const link = result.file?.webViewLink || result.file?.webContentLink || result.webViewLink;
+    if (link) {
+      status.innerHTML = `<div class="notice">Material creado correctamente. <a href="${esc(link)}" target="_blank" rel="noopener noreferrer">Abrir en Google Drive</a></div>`;
+    }
+  } catch (error) {
+    console.error("Error creando material:", error);
+    status.innerHTML = `<div class="notice error">${esc(error.message || "No se pudo crear el material.")}</div>`;
+  } finally {
+    button.disabled = false;
+  }
+});
 
 /* =========================================================
    ESTUDIANTES: EDGE FUNCTION CORREGIDA
