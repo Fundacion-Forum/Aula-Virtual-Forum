@@ -857,6 +857,20 @@ button,input{font:inherit}
     padding:25px 20px;
   }
 }
+
+.course-detail{display:none;margin:20px 0}
+.course-detail .detail-head{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
+.detail-section{margin:18px 0}
+.detail-topic{border:1px solid var(--border);border-radius:14px;background:#fff;margin:12px 0;overflow:hidden}
+.detail-topic-head{padding:15px 18px;background:#f8fafc;display:flex;gap:10px;align-items:center;font-weight:800}
+.detail-topic-body{padding:14px 18px}
+.detail-subtopic{margin:12px 0 12px 18px;padding-left:14px;border-left:3px solid #bfdbfe}
+.material-row,.activity-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--border)}
+.material-row:last-child,.activity-row:last-child{border-bottom:0}
+.material-meta{color:var(--muted);font-size:13px;margin-top:4px}
+.detail-empty{padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);background:#fff}
+.detail-back{border:0;border-radius:10px;padding:10px 14px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}
+
 </style>
 </head>
 
@@ -1250,6 +1264,29 @@ button,input{font:inherit}
      background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;">
 </div>
 
+
+
+    <section id="courseDetail" class="course-detail">
+      <div class="detail-head">
+        <div>
+          <h1 id="detailCourseName" style="margin:0 0 6px">Mi curso</h1>
+          <p id="detailCourseDescription" class="muted" style="margin:0"></p>
+        </div>
+        <button type="button" class="detail-back" onclick="location.href='mis-cursos.html'"><i class="fa-solid fa-arrow-left"></i> Volver a Mis cursos</button>
+      </div>
+      <section class="detail-section">
+        <h2><i class="fa-solid fa-folder-tree"></i> Temas y subtemas</h2>
+        <div id="courseTopics"><div class="detail-empty">Cargando temas…</div></div>
+      </section>
+      <section class="detail-section">
+        <h2><i class="fa-solid fa-file-lines"></i> Materiales del curso</h2>
+        <div id="courseMaterials" class="card"><div class="detail-empty">Cargando materiales…</div></div>
+      </section>
+      <section class="detail-section">
+        <h2><i class="fa-solid fa-list-check"></i> Actividades</h2>
+        <div id="courseActivities" class="card"><div class="detail-empty">Cargando actividades…</div></div>
+      </section>
+    </section>
 
     <div class="grid">
 
@@ -1922,10 +1959,85 @@ async function cargarDatosEstudiante(estudianteId) {
 
   await cargarCompaneros(cursoIds);
   renderizarCursos();
+  if ((location.pathname.split('/').pop() || '').toLowerCase() === 'mi-curso.html') {
+    await cargarDetalleCursoSeleccionado();
+  }
   if ((location.pathname.split('/').pop() || '').toLowerCase() === 'mi-curso.html') mostrarEncabezadoCursoSeleccionado();
   renderizarActividades();
   renderizarCalificaciones();
   actualizarResumen();
+}
+
+
+async function cargarDetalleCursoSeleccionado() {
+  const cursoId = new URLSearchParams(location.search).get('curso');
+  const detalle = document.getElementById('courseDetail');
+  if (!cursoId || !detalle) return;
+
+  const curso = cursosEstudiante.find(c => String(c.id) === String(cursoId));
+  if (!curso) {
+    document.getElementById('dataError')?.classList.remove('hidden');
+    const err = document.getElementById('dataError');
+    if (err) err.textContent = 'No se encontró este curso entre tus cursos activos. Vuelve a Mis cursos y selecciónalo nuevamente.';
+    return;
+  }
+
+  // Solo mostrar el detalle real del curso seleccionado en esta pantalla.
+  detalle.style.display = 'block';
+  ['.hero', '.grid', '#cursos', '#companeros', '.two-col', '#gradesSection', '#filesSection'].forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => { if (!detalle.contains(el)) el.style.display = 'none'; });
+  });
+  document.getElementById('detailCourseName').textContent = curso.nombre || 'Mi curso';
+  document.getElementById('detailCourseDescription').textContent = curso.descripcion || 'Materiales, temas y actividades publicados por tu tutor.';
+
+  const temasBox = document.getElementById('courseTopics');
+  const materialesBox = document.getElementById('courseMaterials');
+  const actividadesBox = document.getElementById('courseActivities');
+
+  const [temasRes, contenidosRes] = await Promise.all([
+    supabaseClient.from('temas').select('id,curso_id,nombre,descripcion,tema_padre_id,orden,activo').eq('curso_id',cursoId).eq('activo',true).order('orden',{ascending:true}),
+    supabaseClient.from('contenidos').select('id,curso_id,tema_id,titulo,descripcion,tipo,drive_url,orden,activo,created_at').eq('curso_id',cursoId).eq('activo',true).order('orden',{ascending:true})
+  ]);
+
+  if (temasRes.error) {
+    console.error('Error cargando temas:', temasRes.error);
+    temasBox.innerHTML = '<div class="detail-empty">No se pudieron cargar los temas. Revisa los permisos de lectura de la tabla temas.</div>';
+  } else {
+    const temas = temasRes.data || [];
+    const padres = temas.filter(t => !t.tema_padre_id);
+    const hijos = temas.filter(t => t.tema_padre_id);
+    const renderTema = (tema, nivel=0) => {
+      const subt = hijos.filter(h => String(h.tema_padre_id) === String(tema.id));
+      const mats = (contenidosRes.data || []).filter(m => String(m.tema_id || '') === String(tema.id));
+      return `<article class="detail-topic">
+        <div class="detail-topic-head"><i class="fa-solid fa-book-open"></i><div>${escaparHTML(tema.nombre || 'Tema')}${tema.descripcion ? `<div class="material-meta">${escaparHTML(tema.descripcion)}</div>` : ''}</div></div>
+        <div class="detail-topic-body">
+          ${mats.length ? mats.map(renderMaterialRow).join('') : '<div class="material-meta">No hay materiales asignados directamente a este tema.</div>'}
+          ${subt.map(st => `<div class="detail-subtopic"><strong><i class="fa-regular fa-folder-open"></i> ${escaparHTML(st.nombre || 'Subtema')}</strong>${st.descripcion ? `<p class="material-meta">${escaparHTML(st.descripcion)}</p>` : ''}${(contenidosRes.data || []).filter(m => String(m.tema_id || '') === String(st.id)).map(renderMaterialRow).join('') || '<p class="material-meta">Todavía no hay archivos en este subtema.</p>'}</div>`).join('')}
+        </div></article>`;
+    };
+    temasBox.innerHTML = padres.length ? padres.map(t=>renderTema(t)).join('') : '<div class="detail-empty">El tutor todavía no ha creado temas para este curso.</div>';
+  }
+
+  function renderMaterialRow(m) {
+    const href = m.drive_url || '';
+    const link = href ? `<a class="btn btn-primary" href="${escaparHTML(href)}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir archivo</a>` : '<span class="material-meta">Enlace no disponible</span>';
+    return `<div class="material-row"><div><strong><i class="fa-solid fa-file"></i> ${escaparHTML(m.titulo || 'Material')}</strong><div class="material-meta">${escaparHTML(m.descripcion || m.tipo || 'Material del curso')}</div></div>${link}</div>`;
+  }
+
+  if (contenidosRes.error) {
+    console.error('Error cargando materiales:', contenidosRes.error);
+    materialesBox.innerHTML = '<div class="detail-empty">No se pudieron cargar los materiales. Revisa los permisos de lectura de la tabla contenidos.</div>';
+  } else {
+    const mats = contenidosRes.data || [];
+    materialesBox.innerHTML = mats.length ? mats.map(renderMaterialRow).join('') : '<div class="detail-empty">El tutor todavía no ha publicado materiales para este curso.</div>';
+  }
+
+  const acts = actividadesEstudiante.filter(a => String(a.curso_id) === String(cursoId));
+  actividadesBox.innerHTML = acts.length ? acts.map(a => {
+    const nota = obtenerCalificacion(a.id);
+    return `<div class="activity-row"><div><strong>${escaparHTML(a.titulo || 'Actividad')}</strong><div class="material-meta">${escaparHTML(a.descripcion || a.tipo || 'Actividad del curso')} · Entrega: ${escaparHTML(formatearFecha(a.fecha_entrega))}</div></div><div>${nota ? `<strong>Nota: ${escaparHTML(nota.nota)}</strong>` : '<span class="material-meta">Pendiente</span>'}</div></div>`;
+  }).join('') : '<div class="detail-empty">El tutor todavía no ha publicado actividades para este curso.</div>';
 }
 
 function mostrarEncabezadoCursoSeleccionado() {
