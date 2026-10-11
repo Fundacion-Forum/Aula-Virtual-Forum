@@ -313,6 +313,27 @@
             <div id="matStatus" aria-live="polite"></div>
           </form>
         </div>
+
+        <div class="box">
+          <h3><i class="fa-solid fa-cloud-arrow-up"></i> Subir archivo desde mi computadora</h3>
+          <p class="muted">Sube PDF, Word, PowerPoint, Excel, imágenes u otros archivos a la carpeta de Google Drive del curso. Tamaño máximo: 15 MB por archivo.</p>
+          <form id="uploadMaterialForm">
+            <div class="field">
+              <label for="uploadFile">Seleccionar archivo</label>
+              <input id="uploadFile" type="file" required>
+            </div>
+            <div class="field">
+              <label for="uploadTopic">Asociar a tema (opcional)</label>
+              <select id="uploadTopic"><option value="">Sin tema específico</option></select>
+            </div>
+            <div class="field">
+              <label for="uploadDesc">Descripción (opcional)</label>
+              <textarea id="uploadDesc" maxlength="1000" placeholder="Descripción del archivo"></textarea>
+            </div>
+            <button class="btn" id="uploadMaterialBtn" type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Subir archivo</button>
+            <div id="uploadMaterialStatus" aria-live="polite"></div>
+          </form>
+        </div>
       </div>
 
       <div>
@@ -852,6 +873,20 @@ async function cargarMateriales() {
   }).join("");
 }
 
+// Mantener sincronizados los selectores de tema de crear y subir materiales.
+function sincronizarTemasSubida() {
+  const source = document.getElementById("matTopic");
+  const target = document.getElementById("uploadTopic");
+  if (!source || !target) return;
+  const selected = target.value;
+  if (target.innerHTML === source.innerHTML) return;
+  target.innerHTML = source.innerHTML;
+  if ([...target.options].some(o => o.value === selected)) target.value = selected;
+}
+document.getElementById("matTopic")?.addEventListener("change", sincronizarTemasSubida);
+const topicSelectObserver = new MutationObserver(sincronizarTemasSubida);
+if (document.getElementById("matTopic")) topicSelectObserver.observe(document.getElementById("matTopic"), { childList: true, subtree: true });
+
 document.getElementById("materialForm").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -912,6 +947,57 @@ document.getElementById("materialForm").addEventListener("submit", async event =
   } catch (error) {
     console.error("Error creando material:", error);
     status.innerHTML = `<div class="notice error">${esc(error.message || "No se pudo crear el material.")}</div>`;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("uploadMaterialForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = document.getElementById("uploadMaterialBtn");
+  const status = document.getElementById("uploadMaterialStatus");
+  const file = document.getElementById("uploadFile").files[0];
+  const temaId = document.getElementById("uploadTopic").value;
+  const description = document.getElementById("uploadDesc").value.trim();
+  if (!course || !course.drive_folder_id) {
+    status.innerHTML = '<div class="notice error">Este curso no tiene una carpeta de Google Drive configurada.</div>';
+    return;
+  }
+  if (!file) {
+    status.innerHTML = '<div class="notice error">Selecciona un archivo.</div>';
+    return;
+  }
+  if (file.size > 15 * 1024 * 1024) {
+    status.innerHTML = '<div class="notice error">El archivo supera el límite de 15 MB.</div>';
+    return;
+  }
+  button.disabled = true;
+  status.innerHTML = '<p class="muted">Subiendo archivo a Google Drive…</p>';
+  try {
+    const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+    if (sessionError) throw sessionError;
+    const token = sessionData.session?.access_token;
+    if (!token) throw new Error("La sesión expiró. Inicia sesión nuevamente.");
+    const form = new FormData();
+    form.append("file", file, file.name);
+    form.append("cursoId", courseId);
+    form.append("temaId", temaId);
+    form.append("description", description);
+    const response = await fetch(`${sb.supabaseUrl}/functions/v1/drive-upload-material`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}`, "apikey": anonKey },
+      body: form
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.success !== true) throw new Error(result.error || result.message || `No se pudo subir el archivo (HTTP ${response.status}).`);
+    document.getElementById("uploadMaterialForm").reset();
+    status.innerHTML = '<div class="notice">Archivo subido y registrado en los materiales del curso.</div>';
+    await cargarMateriales();
+    const link = result.file?.webViewLink;
+    if (link) status.innerHTML = `<div class="notice">Archivo subido correctamente. <a href="${esc(link)}" target="_blank" rel="noopener noreferrer">Abrir en Google Drive</a></div>`;
+  } catch (error) {
+    console.error("Error subiendo material:", error);
+    status.innerHTML = `<div class="notice error">${esc(error.message || "No se pudo subir el archivo.")}</div>`;
   } finally {
     button.disabled = false;
   }
