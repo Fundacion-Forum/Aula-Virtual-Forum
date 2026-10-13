@@ -2465,6 +2465,14 @@ function previsualizarFoto(event) {
       const nombreSeguro = archivo.name.replace(/[^a-zA-Z0-9._-]/g, '_');
       const ruta = `${currentUser.id}/${Date.now()}-${nombreSeguro}`;
 
+      const { data: sesionData, error: sesionError } =
+  await supabaseClient.auth.getUser();
+
+console.log('ID de currentUser:', currentUser.id);
+console.log('ID autenticado:', sesionData?.user?.id);
+console.log('Ruta de la foto:', ruta);
+console.log('Error de sesión:', sesionError?.message);
+
       const { error: uploadError } = await supabaseClient.storage
         .from('avatars')
         .upload(ruta, archivo, {
