@@ -2461,18 +2461,59 @@ function previsualizarFoto(event) {
         throw new Error('No se pudo identificar la sesión de Supabase.');
       }
 
-      // Ruta propia por usuario; el nombre único evita necesitar UPDATE en Storage.
-      const nombreSeguro = archivo.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const ruta = `${currentUser.id}/${Date.now()}-${nombreSeguro}`;
+      
+async function previsualizarFoto(event) {
+  const archivo = event.target.files?.[0];
 
-      const { data: sesionData, error: sesionError } =
-  await supabaseClient.auth.getUser();
+  if (!archivo || !currentUser) return;
 
-console.log('ID de currentUser:', currentUser.id);
-console.log('ID autenticado:', sesionData?.user?.id);
-console.log('Ruta de la foto:', ruta);
-console.log('Error de sesión:', sesionError?.message);
+  if (!archivo.type.startsWith('image/')) {
+    alert('Selecciona un archivo de imagen.');
+    return;
+  }
 
+  if (archivo.size > 5 * 1024 * 1024) {
+    alert('La foto debe pesar menos de 5 MB.');
+    return;
+  }
+
+  const lector = new FileReader();
+
+  lector.onload = async () => {
+    try {
+      // 1. Verificar la sesión real de Supabase
+      const {
+        data: sesionData,
+        error: sesionError
+      } = await supabaseClient.auth.getUser();
+
+      if (sesionError) throw sesionError;
+
+      const usuarioAutenticado = sesionData?.user;
+
+      if (!usuarioAutenticado) {
+        throw new Error(
+          'No hay una sesión autenticada. Cierra sesión e inicia nuevamente.'
+        );
+      }
+
+      // 2. Mostrar los datos para diagnosticar el problema
+      console.log('ID de currentUser:', currentUser.id);
+      console.log('ID autenticado:', usuarioAutenticado.id);
+      console.log('ID coinciden:', currentUser.id === usuarioAutenticado.id);
+
+      // 3. Crear la ruta usando el ID autenticado
+      const nombreSeguro = archivo.name.replace(
+        /[^a-zA-Z0-9._-]/g,
+        '_'
+      );
+
+      const ruta =
+        `${usuarioAutenticado.id}/${Date.now()}-${nombreSeguro}`;
+
+      console.log('Ruta de la foto:', ruta);
+
+      // 4. Subir la foto al bucket avatars
       const { error: uploadError } = await supabaseClient.storage
         .from('avatars')
         .upload(ruta, archivo, {
@@ -2483,43 +2524,67 @@ console.log('Error de sesión:', sesionError?.message);
 
       if (uploadError) throw uploadError;
 
+      // 5. Obtener la URL pública
       const { data: urlData } = supabaseClient.storage
         .from('avatars')
         .getPublicUrl(ruta);
 
       const fotoUrl = urlData?.publicUrl;
+
       if (!fotoUrl) {
-        throw new Error('La imagen se subió, pero no se pudo obtener su URL pública.');
+        throw new Error(
+          'La imagen se subió, pero no se pudo obtener su URL pública.'
+        );
       }
 
-      // Guardar la URL en los metadatos de la cuenta para recuperarla al iniciar sesión.
+      // 6. Guardar la URL en los metadatos del usuario
       const { data: authData, error: metadataError } =
         await supabaseClient.auth.updateUser({
           data: {
-            ...(currentUser.user_metadata || {}),
+            ...(usuarioAutenticado.user_metadata || {}),
             avatar_url: fotoUrl
           }
         });
 
       if (metadataError) throw metadataError;
-      if (authData?.user) currentUser = authData.user;
 
-      localStorage.setItem('aula_virtual_foto_' + currentUser.id, fotoUrl);
+      // 7. Actualizar el usuario y mostrar la foto
+      if (authData?.user) {
+        currentUser = authData.user;
+      }
+
+      localStorage.setItem(
+        'aula_virtual_foto_' + usuarioAutenticado.id,
+        fotoUrl
+      );
+
       aplicarFoto(fotoUrl);
-      mostrarMensajePerfil('Foto actualizada y guardada en la nube.', false);
-    } catch (error) {
-      // No presentar una vista previa local como si se hubiera guardado en la nube.
+
       mostrarMensajePerfil(
-        'No se pudo sincronizar la foto: ' + (error?.message || 'Error desconocido') +
-        '. Revisa que exista el bucket avatars y sus políticas de Storage.',
+        'Foto actualizada y guardada en la nube.',
+        false
+      );
+
+    } catch (error) {
+      mostrarMensajePerfil(
+        'No se pudo sincronizar la foto: ' +
+        (error?.message || 'Error desconocido') +
+        '. Revisa la sesión y las políticas de Storage.',
         true
       );
-      console.error('Error sincronizando foto con Supabase Storage:', error);
+
+      console.error(
+        'Error sincronizando foto con Supabase Storage:',
+        error
+      );
     }
   };
 
   lector.onerror = () => {
-    mostrarMensajePerfil('No se pudo leer el archivo de imagen.', true);
+    mostrarMensajePerfil(
+      'No se pudo leer el archivo de imagen.',
+      true
+    );
   };
 
   lector.readAsDataURL(archivo);
@@ -2543,12 +2608,16 @@ function aplicarFoto(src) {
     fotoGrande.style.display = 'block';
   }
 
-  if (iconoGrande) iconoGrande.style.display = 'none';
+  if (iconoGrande) {
+    iconoGrande.style.display = 'none';
+  }
 }
 
 function quitarFoto() {
   if (currentUser) {
-    localStorage.removeItem('aula_virtual_foto_' + currentUser.id);
+    localStorage.removeItem(
+      'aula_virtual_foto_' + currentUser.id
+    );
   }
 
   document.querySelectorAll('.profile-photo').forEach(img => {
@@ -2568,7 +2637,9 @@ function quitarFoto() {
     fotoGrande.style.display = 'none';
   }
 
-  if (iconoGrande) iconoGrande.style.display = 'block';
+  if (iconoGrande) {
+    iconoGrande.style.display = 'block';
+  }
 }
 
 /* =========================================
@@ -2586,6 +2657,7 @@ async function cerrarSesion() {
     location.href = '../index.html';
   }
 }
+
 
 /* =========================================
    INICIAR AULA
