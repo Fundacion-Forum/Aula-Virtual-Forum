@@ -870,9 +870,108 @@ body[data-student-page="actividades"] .two-col { display: contents; }
 body[data-student-page="actividades"] .profile-panel { position: static !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
 
 </style>
+<style id="independent-screen-styles">
+/* Navegación por pantallas independientes: solo cambia la presentación, no la lógica ni las consultas. */
+body.page-inicio #companeros,
+body.page-inicio #actividades,
+body.page-inicio #calificaciones,
+body.page-inicio #archivos,
+body.page-inicio #perfil { display:none !important; }
+body.page-inicio #cursos { display:block; }
+
+body.page-cursos .hero,
+body.page-cursos .grid,
+body.page-cursos #companeros,
+body.page-cursos #actividades,
+body.page-cursos #calificaciones,
+body.page-cursos #archivos,
+body.page-cursos #perfil,
+body.page-cursos #courseDetail { display:none !important; }
+body.page-cursos #cursos { display:block !important; }
+body.page-cursos #cursos .course-grid { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+
+body.page-tareas .hero,
+body.page-tareas .grid,
+body.page-tareas #cursos,
+body.page-tareas #companeros,
+body.page-tareas #calificaciones,
+body.page-tareas #archivos,
+body.page-tareas #perfil,
+body.page-tareas #courseDetail { display:none !important; }
+body.page-tareas .two-col { display:block !important; }
+body.page-tareas #actividades { display:block !important; }
+body.page-tareas #actividades .card { min-height:180px; }
+
+body.page-companeros .hero,
+body.page-companeros .grid,
+body.page-companeros #cursos,
+body.page-companeros #actividades,
+body.page-companeros #calificaciones,
+body.page-companeros #archivos,
+body.page-companeros #perfil,
+body.page-companeros #courseDetail,
+body.page-companeros .two-col { display:none !important; }
+body.page-companeros #companeros { display:block !important; }
+
+body.page-calificaciones .hero,
+body.page-calificaciones .grid,
+body.page-calificaciones #cursos,
+body.page-calificaciones #companeros,
+body.page-calificaciones #actividades,
+body.page-calificaciones #archivos,
+body.page-calificaciones #perfil,
+body.page-calificaciones #courseDetail { display:none !important; }
+body.page-calificaciones .two-col { display:block !important; }
+body.page-calificaciones #calificaciones { display:block !important; }
+
+body.page-perfil .hero,
+body.page-perfil .grid,
+body.page-perfil #cursos,
+body.page-perfil #companeros,
+body.page-perfil #actividades,
+body.page-perfil #calificaciones,
+body.page-perfil #archivos,
+body.page-perfil #courseDetail,
+body.page-perfil .two-col { display:none !important; }
+body.page-perfil #perfil { display:block !important; }
+body.page-perfil .profile-panel { display:block !important; }
+
+body.page-archivos .hero,
+body.page-archivos .grid,
+body.page-archivos #cursos,
+body.page-archivos #companeros,
+body.page-archivos #actividades,
+body.page-archivos #calificaciones,
+body.page-archivos #perfil,
+body.page-archivos #courseDetail,
+body.page-archivos .two-col { display:none !important; }
+body.page-archivos #archivos { display:block !important; }
+
+body.page-detalle .hero,
+body.page-detalle .grid,
+body.page-detalle #cursos,
+body.page-detalle #companeros,
+body.page-detalle #actividades,
+body.page-detalle #calificaciones,
+body.page-detalle #archivos,
+body.page-detalle #perfil,
+body.page-detalle .two-col { display:none !important; }
+body.page-detalle #courseDetail { display:block !important; }
+
+body[class*="page-"] .main > .topbar { margin-bottom:24px; }
+body[class*="page-"]:not(.page-inicio) .main > .topbar .welcome h1 { font-size:clamp(24px,2.3vw,32px); }
+body[class*="page-"]:not(.page-inicio) .section { margin-top:8px; }
+body[class*="page-"] .nav a { transition:background .18s ease, transform .18s ease; }
+body[class*="page-"] .nav a:hover { transform:translateX(2px); }
+body[class*="page-"] .card { box-shadow:0 8px 24px rgba(15,35,70,.045); }
+@media(max-width:760px) {
+  body[class*="page-"] .main { padding:20px 16px !important; }
+  body[class*="page-"] .main > .topbar { gap:14px; align-items:flex-start; flex-direction:column; }
+}
+</style>
 </head>
 
-<body data-student-page="actividades">
+<body data-student-page="actividades" class="page-tareas">
 
 <!-- =========================================
      PANTALLA OBLIGATORIA DE CAMBIO DE PASSWORD
@@ -1031,9 +1130,7 @@ body[data-student-page="actividades"] .profile-panel { position: static !importa
   <h2>Acceso denegado</h2>
   <p>No tienes permisos para esta pantalla.</p>
 
-  <a
-    class="btn btn-primary"
-    href="../index.html"
+  <a href="drive.html"
   >
     Volver al inicio
   </a>
@@ -1087,30 +1184,30 @@ body[data-student-page="actividades"] .profile-panel { position: static !importa
       </div>
 
       <a
-        class="active"
+       
         href="inicio.html"
       >
-        <i class="fa-solid fa-house"></i>
+        <i></i>
         <span>Inicio</span>
       </a>
 
       <a href="mis-cursos.html">
-        <i class="fa-solid fa-book-open"></i>
+        <i></i>
         <span>Mis cursos</span>
       </a>
 
-      <a href="tareas.html" class="active">
-        <i class="fa-solid fa-list-check"></i>
+      <a class="active" href="tareas.html">
+        <i></i>
         <span>Tareas y asignaciones</span>
       </a>
 
-      <a href="#companeros">
-        <i class="fa-solid fa-users"></i>
+      <a href="companeros.html">
+        <i></i>
         <span>Mi curso y compañeros</span>
       </a>
 
       <a href="calificaciones.html">
-        <i class="fa-solid fa-chart-line"></i>
+        <i></i>
         <span>Calificaciones</span>
       </a>
 
@@ -1122,12 +1219,12 @@ body[data-student-page="actividades"] .profile-panel { position: static !importa
         href="perfil.html"
         
       >
-        <i class="fa-solid fa-user"></i>
+        <i></i>
         <span>Mi perfil</span>
       </a>
 
       <a href="drive.html">
-        <i class="fa-solid fa-folder-open"></i>
+        <i></i>
         <span>Mis archivos</span>
       </a>
 
@@ -1158,16 +1255,9 @@ body[data-student-page="actividades"] .profile-panel { position: static !importa
 
       <div class="welcome">
 
-        <h1>
-          ¡Bienvenido/a,
-          <span data-user-name>
-            estudiante
-          </span>!
-        </h1>
+        <h1>Tareas y asignaciones</h1>
 
-        <div class="muted">
-          Aquí encontrarás tus cursos, actividades, calificaciones y materiales.
-        </div>
+        <div class="muted">Revisa tus actividades, estados y fechas de entrega.</div>
 
       </div>
 

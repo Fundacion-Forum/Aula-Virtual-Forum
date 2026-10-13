@@ -1,0 +1,2641 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aula Virtual | Estudiante</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --primary:#1d4ed8;
+  --primary2:#2563eb;
+  --navy:#0f172a;
+  --bg:#f5f7fb;
+  --card:#fff;
+  --text:#172033;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --success:#15803d;
+  --warning:#b45309;
+  --danger:#dc2626;
+  --shadow:0 10px 30px rgba(15,23,42,.07)
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text)
+}
+
+button,input{font:inherit}
+
+.hidden{
+  display:none!important
+}
+
+/* =========================
+   CAMBIO DE CONTRASEÑA
+========================= */
+
+.password-screen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:
+    radial-gradient(circle at top right,rgba(37,99,235,.15),transparent 35%),
+    linear-gradient(135deg,#eff6ff,#f8fafc);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.password-card{
+  width:100%;
+  max-width:470px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:34px;
+  box-shadow:0 20px 60px rgba(15,23,42,.12);
+}
+
+.password-logo{
+  width:64px;
+  height:64px;
+  margin:0 auto 18px;
+  border-radius:18px;
+  background:#eff6ff;
+  color:var(--primary2);
+  display:grid;
+  place-items:center;
+  font-size:28px;
+}
+
+.password-card h1{
+  text-align:center;
+  margin:0 0 8px;
+  font-size:25px;
+}
+
+.password-card .subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+  margin:0 0 25px;
+}
+
+.password-user{
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  margin-bottom:20px;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.password-user strong{
+  display:block;
+  color:var(--text);
+  font-size:14px;
+  margin-top:3px;
+}
+
+.password-field{
+  margin-bottom:16px;
+}
+
+.password-field label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.password-input{
+  position:relative;
+}
+
+.password-input input{
+  width:100%;
+  padding:13px 45px 13px 13px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:#f8fafc;
+  outline:none;
+  transition:.2s;
+}
+
+.password-input input:focus{
+  border-color:var(--primary2);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.toggle-password{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  border:0;
+  background:none;
+  color:#64748b;
+  cursor:pointer;
+}
+
+.password-requirements{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  padding:13px 15px;
+  margin:18px 0;
+  font-size:12px;
+  color:#1e40af;
+}
+
+.password-requirements div{
+  margin:4px 0;
+}
+
+.password-message{
+  display:none;
+  padding:12px 14px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.password-message.error{
+  display:block;
+  background:#fef2f2;
+  color:#991b1b;
+  border:1px solid #fecaca;
+}
+
+.password-message.success{
+  display:block;
+  background:#f0fdf4;
+  color:#166534;
+  border:1px solid #bbf7d0;
+}
+
+.password-submit{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:13px 16px;
+  background:var(--primary2);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.password-submit:hover{
+  background:#1d4ed8;
+}
+
+.password-submit:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.password-logout{
+  width:100%;
+  border:0;
+  background:none;
+  color:#64748b;
+  padding:12px;
+  margin-top:8px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.password-logout:hover{
+  color:#1d4ed8;
+}
+
+/* =========================
+   AULA VIRTUAL
+========================= */
+
+.layout{
+  min-height:100vh;
+  display:flex
+}
+
+.sidebar{
+  width:270px;
+  background:linear-gradient(180deg,#0b1730,#111827);
+  color:#fff;
+  padding:20px 14px;
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:10
+}
+
+.brand{
+  padding:5px 10px 25px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  margin-bottom:18px
+}
+
+.brand-logo{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  color:#1746a2;
+  font-size:23px;
+  overflow:hidden
+}
+
+.brand-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:none
+}
+
+.brand-row{
+  display:flex;
+  gap:12px;
+  align-items:center
+}
+
+.brand-name{
+  font-weight:800;
+  font-size:16px;
+  line-height:1.15
+}
+
+.brand-sub{
+  font-size:11px;
+  color:#94a3b8;
+  margin-top:4px
+}
+
+.nav a{
+  display:flex;
+  gap:13px;
+  align-items:center;
+  padding:12px 14px;
+  margin:5px 0;
+  border-radius:11px;
+  color:#cbd5e1;
+  text-decoration:none;
+  transition:.2s
+}
+
+.nav a:hover,
+.nav a.active{
+  background:#1e3a66;
+  color:#fff
+}
+
+.nav i{
+  width:20px;
+  text-align:center
+}
+
+.nav-title{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:#64748b;
+  padding:16px 14px 7px
+}
+
+.sidebar-footer{
+  position:absolute;
+  bottom:18px;
+  left:14px;
+  right:14px
+}
+
+.logout{
+  width:100%;
+  background:rgba(255,255,255,.07);
+  color:#cbd5e1;
+  border:0
+}
+
+.logout:hover{
+  background:rgba(255,255,255,.13)
+}
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  padding:24px 32px
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:26px
+}
+
+.welcome h1{
+  margin:0 0 6px;
+  font-size:28px
+}
+
+.muted{
+  color:var(--muted)
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:12px;
+  color:#475569;
+  cursor:pointer;
+  position:relative
+}
+
+.dot{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#ef4444;
+  right:8px;
+  top:7px
+}
+
+.profile-mini{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:6px 10px 6px 7px;
+  border-radius:14px;
+  cursor:pointer
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-weight:800;
+  overflow:hidden
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none
+}
+
+.mini-name{
+  font-weight:750;
+  font-size:14px
+}
+
+.mini-role{
+  font-size:11px;
+  color:var(--muted)
+}
+
+.hero{
+  background:linear-gradient(120deg,#123b83,#2563eb 65%,#60a5fa);
+  color:#fff;
+  border-radius:20px;
+  padding:25px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  right:-80px;
+  top:-100px;
+  background:rgba(255,255,255,.09)
+}
+
+.hero h2{
+  margin:0 0 7px;
+  font-size:24px
+}
+
+.hero p{
+  margin:0;
+  color:#dbeafe
+}
+
+.hero-badge{
+  position:relative;
+  z-index:1;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);
+  padding:12px 16px;
+  border-radius:14px;
+  text-align:center
+}
+
+.hero-badge strong{
+  font-size:22px;
+  display:block
+}
+
+.hero-badge span{
+  font-size:11px;
+  color:#dbeafe
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-top:20px
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:19px;
+  box-shadow:0 5px 18px rgba(15,23,42,.035)
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+
+.stat strong{
+  font-size:27px;
+  display:block;
+  margin-top:6px
+}
+
+.stat-icon{
+  width:45px;
+  height:45px;
+  border-radius:12px;
+  background:#eff6ff;
+  color:var(--primary2);
+  display:grid;
+  place-items:center;
+  font-size:18px
+}
+
+.section{
+  margin-top:24px
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:13px
+}
+
+.section h2{
+  margin:0;
+  font-size:19px
+}
+
+.link-btn{
+  border:0;
+  background:none;
+  color:var(--primary2);
+  font-weight:700;
+  cursor:pointer
+}
+
+.two-col{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:18px
+}
+
+.course-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px
+}
+
+.course{
+  padding:0;
+  overflow:hidden
+}
+
+.course-cover{
+  height:92px;
+  background:linear-gradient(120deg,#1e3a8a,#60a5fa);
+  padding:16px;
+  color:#fff
+}
+
+.course-body{
+  padding:16px
+}
+
+.course h3{
+  margin:0 0 7px;
+  font-size:16px
+}
+
+.course small{
+  color:var(--muted)
+}
+
+.empty{
+  text-align:center;
+  padding:30px 18px;
+  color:var(--muted)
+}
+
+.empty i{
+  font-size:29px;
+  color:#94a3b8;
+  margin-bottom:8px
+}
+
+.activity{
+  display:flex;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid var(--border)
+}
+
+.activity:last-child{
+  border-bottom:0
+}
+
+.activity-icon{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:#eff6ff;
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  flex:none
+}
+
+.activity h4{
+  margin:0 0 4px;
+  font-size:14px
+}
+
+.activity small{
+  color:var(--muted)
+}
+
+.storage{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+
+.drive-card{
+  display:flex;
+  gap:13px;
+  align-items:center;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff
+}
+
+.drive-icon{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:#eef2ff;
+  color:#4338ca;
+  display:grid;
+  place-items:center
+}
+
+.drive-card h4{
+  margin:0 0 4px
+}
+
+.drive-card p{
+  margin:0;
+  font-size:12px;
+  color:var(--muted)
+}
+
+.profile-panel{
+  display:none
+}
+
+.profile-panel.show{
+  display:block
+}
+
+.profile-head{
+  display:flex;
+  align-items:center;
+  gap:18px
+}
+
+.big-avatar{
+  width:94px;
+  height:94px;
+  border-radius:50%;
+  background:#dbeafe;
+  color:#1d4ed8;
+  display:grid;
+  place-items:center;
+  font-size:34px;
+  overflow:hidden;
+  border:4px solid #fff;
+  box-shadow:0 4px 18px rgba(15,23,42,.12)
+}
+
+.big-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none
+}
+
+.photo-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px
+}
+
+.btn-primary{
+  background:var(--primary2);
+  color:#fff
+}
+
+.btn-secondary{
+  background:#e2e8f0;
+  color:#172033
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-top:20px
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:750;
+  margin-bottom:6px
+}
+
+.field input{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#f8fafc
+}
+
+.field input[readonly]{
+  color:#64748b
+}
+
+.info{
+  padding:13px 15px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:12px;
+  color:#1e40af;
+  font-size:13px;
+  margin-top:18px
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:var(--bg);
+  z-index:50
+}
+
+.spinner{
+  width:42px;
+  height:42px;
+  border:4px solid #dbeafe;
+  border-top-color:var(--primary2);
+  border-radius:50%;
+  animation:spin .8s linear infinite
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.error{
+  max-width:500px;
+  margin:80px auto;
+  background:#fff;
+  padding:28px;
+  border-radius:16px;
+  border:1px solid #fecaca;
+  text-align:center
+}
+
+@media(max-width:1100px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+}
+
+@media(max-width:800px){
+  .sidebar{width:74px}
+  .brand-name,.brand-sub,.nav span,.nav-title{display:none}
+  .brand{padding:5px 0 25px}
+  .brand-row{justify-content:center}
+  .main{
+    margin-left:74px;
+    width:calc(100% - 74px);
+    padding:20px
+  }
+  .course-grid,.storage{grid-template-columns:1fr}
+}
+
+/* Pantallas ampliadas del estudiante */
+.member-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.member-course{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px}
+.member-course h3{margin:0 0 5px;font-size:16px}
+.member-list{display:grid;gap:10px;margin-top:14px}
+.member-row{display:flex;align-items:center;gap:11px;padding:10px;border-radius:12px;background:#f8fafc}
+.member-initial{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;background:#dbeafe;color:#1d4ed8;font-weight:800}
+.member-row strong{display:block;font-size:13px}
+.member-row small{color:var(--muted)}
+.task-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.task-filter{border:1px solid var(--border);border-radius:999px;background:#fff;padding:8px 13px;cursor:pointer;color:#475569;font-weight:700}
+.task-filter.active{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+.task-card{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border)}
+.task-card:last-child{border-bottom:0}
+.task-badge{font-size:11px;font-weight:800;border-radius:999px;padding:6px 9px;display:inline-block;background:#fef3c7;color:#92400e}
+.task-badge.done{background:#dcfce7;color:#166534}
+.task-badge.late{background:#fee2e2;color:#991b1b}
+.task-meta{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0}
+.profile-edit-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.notice{padding:12px 14px;border-radius:12px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-size:13px;margin:12px 0}
+.drive-action{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+@media(max-width:800px){.member-groups{grid-template-columns:1fr}}
+}
+
+@media(max-width:600px){
+  .sidebar{display:none}
+  .main{
+    margin:0;
+    width:100%;
+    padding:16px
+  }
+  .topbar{
+    align-items:flex-start;
+    gap:12px;
+    flex-direction:column
+  }
+  .grid,.form-grid{grid-template-columns:1fr}
+  .hero{
+    align-items:flex-start;
+    gap:18px;
+    flex-direction:column
+  }
+  .top-actions{
+    width:100%;
+    justify-content:flex-end
+  }
+  .mini-name{display:none}
+
+  .password-card{
+    padding:25px 20px;
+  }
+}
+
+/* Pantalla independiente: Inicio */
+body[data-student-page="inicio"] #inicio { display: block !important; }
+body[data-student-page="inicio"] #cursos { display: none !important; }
+body[data-student-page="inicio"] #actividades { display: none !important; }
+body[data-student-page="inicio"] #calificaciones { display: none !important; }
+body[data-student-page="inicio"] #archivos { display: none !important; }
+body[data-student-page="inicio"] #companeros { display: none !important; }
+body[data-student-page="inicio"] #perfil { display: none !important; }
+body[data-student-page="inicio"] .two-col { display: contents; }
+body[data-student-page="inicio"] .profile-panel { position: static !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
+
+</style>
+<style id="independent-screen-styles">
+/* Navegación por pantallas independientes: solo cambia la presentación, no la lógica ni las consultas. */
+body.page-inicio #companeros,
+body.page-inicio #actividades,
+body.page-inicio #calificaciones,
+body.page-inicio #archivos,
+body.page-inicio #perfil { display:none !important; }
+body.page-inicio #cursos { display:block; }
+
+body.page-cursos .hero,
+body.page-cursos .grid,
+body.page-cursos #companeros,
+body.page-cursos #actividades,
+body.page-cursos #calificaciones,
+body.page-cursos #archivos,
+body.page-cursos #perfil,
+body.page-cursos #courseDetail { display:none !important; }
+body.page-cursos #cursos { display:block !important; }
+body.page-cursos #cursos .course-grid { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+
+body.page-tareas .hero,
+body.page-tareas .grid,
+body.page-tareas #cursos,
+body.page-tareas #companeros,
+body.page-tareas #calificaciones,
+body.page-tareas #archivos,
+body.page-tareas #perfil,
+body.page-tareas #courseDetail { display:none !important; }
+body.page-tareas .two-col { display:block !important; }
+body.page-tareas #actividades { display:block !important; }
+body.page-tareas #actividades .card { min-height:180px; }
+
+body.page-companeros .hero,
+body.page-companeros .grid,
+body.page-companeros #cursos,
+body.page-companeros #actividades,
+body.page-companeros #calificaciones,
+body.page-companeros #archivos,
+body.page-companeros #perfil,
+body.page-companeros #courseDetail,
+body.page-companeros .two-col { display:none !important; }
+body.page-companeros #companeros { display:block !important; }
+
+body.page-calificaciones .hero,
+body.page-calificaciones .grid,
+body.page-calificaciones #cursos,
+body.page-calificaciones #companeros,
+body.page-calificaciones #actividades,
+body.page-calificaciones #archivos,
+body.page-calificaciones #perfil,
+body.page-calificaciones #courseDetail { display:none !important; }
+body.page-calificaciones .two-col { display:block !important; }
+body.page-calificaciones #calificaciones { display:block !important; }
+
+body.page-perfil .hero,
+body.page-perfil .grid,
+body.page-perfil #cursos,
+body.page-perfil #companeros,
+body.page-perfil #actividades,
+body.page-perfil #calificaciones,
+body.page-perfil #archivos,
+body.page-perfil #courseDetail,
+body.page-perfil .two-col { display:none !important; }
+body.page-perfil #perfil { display:block !important; }
+body.page-perfil .profile-panel { display:block !important; }
+
+body.page-archivos .hero,
+body.page-archivos .grid,
+body.page-archivos #cursos,
+body.page-archivos #companeros,
+body.page-archivos #actividades,
+body.page-archivos #calificaciones,
+body.page-archivos #perfil,
+body.page-archivos #courseDetail,
+body.page-archivos .two-col { display:none !important; }
+body.page-archivos #archivos { display:block !important; }
+
+body.page-detalle .hero,
+body.page-detalle .grid,
+body.page-detalle #cursos,
+body.page-detalle #companeros,
+body.page-detalle #actividades,
+body.page-detalle #calificaciones,
+body.page-detalle #archivos,
+body.page-detalle #perfil,
+body.page-detalle .two-col { display:none !important; }
+body.page-detalle #courseDetail { display:block !important; }
+
+body[class*="page-"] .main > .topbar { margin-bottom:24px; }
+body[class*="page-"]:not(.page-inicio) .main > .topbar .welcome h1 { font-size:clamp(24px,2.3vw,32px); }
+body[class*="page-"]:not(.page-inicio) .section { margin-top:8px; }
+body[class*="page-"] .nav a { transition:background .18s ease, transform .18s ease; }
+body[class*="page-"] .nav a:hover { transform:translateX(2px); }
+body[class*="page-"] .card { box-shadow:0 8px 24px rgba(15,35,70,.045); }
+@media(max-width:760px) {
+  body[class*="page-"] .main { padding:20px 16px !important; }
+  body[class*="page-"] .main > .topbar { gap:14px; align-items:flex-start; flex-direction:column; }
+}
+</style>
+</head>
+
+<body data-student-page="companeros" class="page-companeros">
+
+<!-- =========================================
+     PANTALLA OBLIGATORIA DE CAMBIO DE PASSWORD
+========================================= -->
+
+<div id="passwordScreen" class="password-screen hidden">
+
+  <div class="password-card">
+
+    <div class="password-logo">
+      <i class="fa-solid fa-lock"></i>
+    </div>
+
+    <h1>Actualiza tu contraseña</h1>
+
+    <p class="subtitle">
+      Por seguridad, debes cambiar tu contraseña temporal antes de ingresar al Aula Virtual.
+    </p>
+
+    <div class="password-user">
+      Cuenta
+      <strong id="passwordUserEmail">Cargando...</strong>
+    </div>
+
+    <div id="passwordMessage" class="password-message"></div>
+
+    <form id="changePasswordForm">
+
+      <div class="password-field">
+        <label for="currentPassword">
+          Contraseña actual
+        </label>
+
+        <div class="password-input">
+          <input
+            id="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Escribe tu contraseña actual"
+            required
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            onclick="togglePassword('currentPassword',this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="password-field">
+        <label for="newPassword">
+          Nueva contraseña
+        </label>
+
+        <div class="password-input">
+          <input
+            id="newPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Escribe tu nueva contraseña"
+            required
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            onclick="togglePassword('newPassword',this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="password-field">
+        <label for="repeatPassword">
+          Repetir nueva contraseña
+        </label>
+
+        <div class="password-input">
+          <input
+            id="repeatPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Repite tu nueva contraseña"
+            required
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            onclick="togglePassword('repeatPassword',this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="password-requirements">
+        <div>
+          <i class="fa-solid fa-circle-check"></i>
+          La nueva contraseña debe tener al menos 8 caracteres.
+        </div>
+
+        <div>
+          <i class="fa-solid fa-circle-check"></i>
+          Las dos nuevas contraseñas deben coincidir.
+        </div>
+
+        <div>
+          <i class="fa-solid fa-circle-check"></i>
+          No utilices nuevamente la contraseña temporal.
+        </div>
+      </div>
+
+      <button
+        id="changePasswordButton"
+        type="submit"
+        class="password-submit"
+      >
+        <i class="fa-solid fa-key"></i>
+        Cambiar contraseña
+      </button>
+
+    </form>
+
+    <button
+      type="button"
+      class="password-logout"
+      onclick="cerrarSesion()"
+    >
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Cerrar sesión
+    </button>
+
+  </div>
+</div>
+
+
+<!-- =========================================
+     CARGANDO
+========================================= -->
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+</div>
+
+
+<!-- =========================================
+     ERROR
+========================================= -->
+
+<div id="errorBox" class="error hidden">
+  <h2>Acceso denegado</h2>
+  <p>No tienes permisos para esta pantalla.</p>
+
+  <a href="drive.html"
+  >
+    Volver al inicio
+  </a>
+</div>
+
+
+<!-- =========================================
+     AULA VIRTUAL
+========================================= -->
+
+<div id="aulaLayout" class="layout">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-row">
+
+        <div class="brand-logo">
+
+          <img
+            id="fundacionLogo"
+            alt="Fundación Academia Forum"
+          >
+
+          <i class="fa-solid fa-graduation-cap"></i>
+
+        </div>
+
+        <div>
+
+          <div class="brand-name">
+            Fundación Academia Forum
+          </div>
+
+          <div class="brand-sub">
+            AULA VIRTUAL
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <nav class="nav">
+
+      <div class="nav-title">
+        Principal
+      </div>
+
+      <a
+       
+        href="inicio.html"
+      >
+        <i></i>
+        <span>Inicio</span>
+      </a>
+
+      <a href="mis-cursos.html">
+        <i></i>
+        <span>Mis cursos</span>
+      </a>
+
+      <a href="tareas.html">
+        <i></i>
+        <span>Tareas y asignaciones</span>
+      </a>
+
+      <a class="active" href="companeros.html">
+        <i></i>
+        <span>Mi curso y compañeros</span>
+      </a>
+
+      <a href="calificaciones.html">
+        <i></i>
+        <span>Calificaciones</span>
+      </a>
+
+      <div class="nav-title">
+        Mi cuenta
+      </div>
+
+      <a
+        href="perfil.html"
+        
+      >
+        <i></i>
+        <span>Mi perfil</span>
+      </a>
+
+      <a href="drive.html">
+        <i></i>
+        <span>Mis archivos</span>
+      </a>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+      <button
+        class="btn logout"
+        onclick="cerrarSesion()"
+      >
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Cerrar sesión</span>
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <main
+    class="main"
+    id="studentMain"
+  >
+
+    <div class="topbar">
+
+      <div class="welcome">
+
+        <h1>Mi curso y compañeros</h1>
+
+        <div class="muted">Consulta los cursos y las personas que comparten contigo el espacio de aprendizaje.</div>
+
+      </div>
+
+
+      <div class="top-actions">
+
+        <button class="icon-btn" type="button" title="Actualizar información" onclick="actualizarDatos()">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+
+        <button
+          class="icon-btn"
+          title="Notificaciones"
+        >
+          <i class="fa-regular fa-bell"></i>
+          <span class="dot"></span>
+        </button>
+
+
+        <div
+          class="profile-mini"
+          onclick="mostrarPerfil()"
+        >
+
+          <div class="avatar">
+
+            <img
+              class="profile-photo"
+              alt="Foto de perfil"
+            >
+
+            <i class="fa-solid fa-user profile-icon"></i>
+
+          </div>
+
+
+          <div>
+
+            <div
+              class="mini-name"
+              data-user-name
+            ></div>
+
+            <div class="mini-role">
+              Estudiante
+            </div>
+
+          </div>
+
+          <i
+            class="fa-solid fa-chevron-down muted"
+            style="font-size:11px"
+          ></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <section class="hero">
+
+      <div>
+
+        <h2>
+          Tu espacio de aprendizaje
+        </h2>
+
+        <p>
+          Todo lo que necesitas para continuar aprendiendo está aquí.
+        </p>
+
+      </div>
+
+
+      <div class="hero-badge">
+
+        <strong id="heroStatus">
+          Activo
+        </strong>
+
+        <span>
+          Estado de cuenta
+        </span>
+
+      </div>
+
+    </section>
+    <div id="dataError" class="hidden"
+     style="margin-top:14px;padding:12px 15px;border-radius:10px;
+     background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;">
+</div>
+
+
+    <div class="grid">
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Mis cursos
+          </span>
+
+          <strong id="countCourses">
+            0
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-book"></i>
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Actividades
+          </span>
+
+          <strong id="countActivities">
+            0
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Pendientes
+          </span>
+
+          <strong id="countPending">
+            0
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+
+      </div>
+
+
+      <div class="card stat">
+
+        <div>
+
+          <span class="muted">
+            Promedio
+          </span>
+
+          <strong id="average">
+            —
+          </strong>
+
+        </div>
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-star"></i>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <section
+      id="cursos"
+      class="section"
+    >
+
+      <div class="section-head">
+
+        <h2>
+          Mis cursos
+        </h2>
+
+        <button class="link-btn" type="button" onclick="document.getElementById('cursos').scrollIntoView({behavior:'smooth'})">
+          Ver cursos <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+      </div>
+
+
+      <div class="course-grid">
+
+        <div class="card course">
+
+          <div class="course-cover">
+
+            <i class="fa-solid fa-book-open"></i>
+
+          </div>
+
+          <div class="course-body">
+
+            <h3>
+              Todavía no tienes cursos
+            </h3>
+
+            <small>
+              Cuando un tutor te inscriba, aparecerán aquí.
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="card empty">
+
+          <i class="fa-solid fa-chalkboard-user"></i>
+
+          <div>
+            Los cursos asignados aparecerán en este espacio.
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section id="companeros" class="section">
+      <div class="section-head">
+        <h2>Mi curso y compañeros</h2>
+        <span class="muted" id="membersSummary">Personas inscritas en tus cursos</span>
+      </div>
+      <div id="membersContent" class="member-groups">
+        <div class="card empty"><i class="fa-solid fa-users"></i><p>Cargando compañeros…</p></div>
+      </div>
+    </section>
+
+    <div class="two-col">
+
+      <section
+        id="actividades"
+        class="section"
+      >
+
+        <div class="section-head">
+
+          <h2>
+            Próximas actividades
+          </h2>
+
+        </div>
+
+
+        <div class="card">
+          <div class="task-filters" aria-label="Filtrar tareas">
+            <button class="task-filter active" type="button" data-task-filter="todas" onclick="filtrarActividades('todas',this)">Todas</button>
+            <button class="task-filter" type="button" data-task-filter="pendientes" onclick="filtrarActividades('pendientes',this)">Pendientes</button>
+            <button class="task-filter" type="button" data-task-filter="calificadas" onclick="filtrarActividades('calificadas',this)">Calificadas</button>
+          </div>
+          <div id="activityList">
+            <div class="empty"><i class="fa-solid fa-calendar-check"></i><p>Las tareas publicadas por tus tutores aparecerán aquí.</p></div>
+          </div>
+        </div>
+
+      </section>
+
+
+      <section
+        id="calificaciones"
+        class="section"
+      >
+
+        <div class="section-head">
+
+          <h2>
+            Últimas calificaciones
+          </h2>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="empty">
+
+            <i class="fa-solid fa-award"></i>
+
+            <div>
+              Aún no hay calificaciones.
+            </div>
+
+            <small>
+              Tus resultados aparecerán aquí.
+            </small>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <section
+      id="archivos"
+      class="section"
+    >
+
+      <div class="section-head">
+
+        <h2>
+          Mis archivos
+        </h2>
+
+      </div>
+
+
+      <div class="storage">
+        <div class="drive-card">
+          <div class="drive-icon"><i class="fa-solid fa-building-columns"></i></div>
+          <div>
+            <h4>Drive institucional</h4>
+            <p>Accede a los materiales y carpetas compartidas por Fundación Academia Forum.</p>
+            <div class="drive-action">
+              <a class="btn btn-primary" id="institutionalDriveLink" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google-drive"></i> Abrir Drive institucional</a>
+            </div>
+          </div>
+        </div>
+        <div class="drive-card">
+          <div class="drive-icon"><i class="fa-brands fa-google-drive"></i></div>
+          <div>
+            <h4>Mi espacio personal</h4>
+            <p>Abre Google Drive para organizar tus archivos y trabajos personales.</p>
+            <div class="drive-action">
+              <a class="btn btn-secondary" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir mi Drive</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notice"><i class="fa-solid fa-circle-info"></i> Para que el acceso institucional abra directamente la carpeta de la Fundación, configura <code>driveInstitutionalUrl</code> en <code>config.json</code> con el enlace de Drive compartido por el administrador. Google puede solicitar que inicies sesión con tu correo institucional.</div>
+
+    </section>
+
+
+    <section
+      id="perfil"
+      class="section profile-panel"
+    >
+
+      <div class="section-head">
+
+        <h2>
+          Mi perfil
+        </h2>
+
+        <button
+          class="link-btn"
+          onclick="ocultarPerfil()"
+        >
+          Cerrar
+        </button>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="profile-head">
+
+          <div class="big-avatar">
+
+            <img
+              id="bigProfilePhoto"
+              alt="Foto de perfil"
+            >
+
+            <i
+              id="bigProfileIcon"
+              class="fa-solid fa-user"
+            ></i>
+
+          </div>
+
+
+          <div>
+
+            <h2
+              style="margin:0 0 5px"
+              data-user-name
+            ></h2>
+
+            <div
+              class="muted"
+              data-user-email
+            ></div>
+
+
+            <div class="photo-actions">
+
+              <button
+                class="btn btn-primary"
+                onclick="seleccionarFoto()"
+              >
+                <i class="fa-solid fa-camera"></i>
+                Cambiar foto
+              </button>
+
+              <button
+                class="btn btn-secondary"
+                onclick="quitarFoto()"
+              >
+                Quitar foto
+              </button>
+
+              <input
+                id="photoInput"
+                type="file"
+                accept="image/*"
+                hidden
+                onchange="previsualizarFoto(event)"
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+          <div class="field">
+
+            <label>
+              Nombre
+            </label>
+
+            <input
+              id="perfilNombre"
+              maxlength="100"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Apellido
+            </label>
+
+            <input
+              id="perfilApellido"
+              maxlength="100"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Correo electrónico
+            </label>
+
+            <input
+              id="perfilEmail"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Rol
+            </label>
+
+            <input
+              id="perfilRol"
+              readonly
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Estado
+            </label>
+
+            <input
+              id="perfilActivo"
+              readonly
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="profile-edit-actions">
+          <button class="btn btn-primary" type="button" id="saveProfileButton" onclick="guardarPerfil()"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios</button>
+          <button class="btn btn-secondary" type="button" onclick="cargarPerfil(currentProfile)"><i class="fa-solid fa-rotate-left"></i> Deshacer cambios</button>
+        </div>
+        <div id="profileMessage" class="notice hidden" role="status"></div>
+
+        <div class="info">
+
+          <i class="fa-solid fa-circle-info"></i>
+
+          Tus datos de acceso y rol son administrados por la plataforma.
+          Los archivos grandes no se guardarán en la base de datos;
+          se manejarán mediante Google Drive.
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+let cursosEstudiante = [];
+let actividadesEstudiante = [];
+let calificacionesEstudiante = [];
+let inscripcionesEstudiante = [];
+let companerosPorCurso = [];
+let driveInstitucionalUrl = 'https://drive.google.com/drive/my-drive';
+let filtroActividadesActual = 'todas';
+
+/* =========================================
+   AUTENTICACIÓN E INICIO DEL AULA
+========================================= */
+
+async function initAuth(allowedRoles) {
+  try {
+    const respuesta = await fetch('../config.json', {
+      cache: 'no-store'
+    });
+
+    if (!respuesta.ok) {
+      throw new Error('No se pudo cargar config.json');
+    }
+
+    const cfg = await respuesta.json();
+
+    if (!cfg.supabase?.url || !cfg.supabase?.anonKey) {
+      throw new Error('Falta la configuración de Supabase.');
+    }
+
+    driveInstitucionalUrl = cfg.driveInstitutionalUrl || 'https://drive.google.com/drive/my-drive';
+    const driveLink = document.getElementById('institutionalDriveLink');
+    if (driveLink) driveLink.href = driveInstitucionalUrl;
+
+    supabaseClient = window.supabase.createClient(
+      cfg.supabase.url,
+      cfg.supabase.anonKey
+    );
+
+    const { data, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    if (!data.session) {
+      location.href = '../index.html';
+      return;
+    }
+
+    currentUser = data.session.user;
+
+    const { data: perfil, error } = await supabaseClient
+      .from('usuarios')
+      .select('id,nombre,apellido,email,rol,activo,created_at')
+      .eq('id', currentUser.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (
+      !perfil ||
+      perfil.activo !== true ||
+      !allowedRoles.includes(perfil.rol)
+    ) {
+      await supabaseClient.auth.signOut();
+      location.href = '../index.html';
+      return;
+    }
+
+    currentProfile = perfil;
+
+    if (currentUser.user_metadata?.debe_cambiar_password === true) {
+      mostrarCambioPassword();
+      return;
+    }
+
+    await cargarAula(currentProfile);
+
+  } catch (error) {
+    console.error('Error al iniciar el aula:', error);
+
+    document.getElementById('loading')?.classList.add('hidden');
+
+    const loader = document.getElementById('loading');
+    if (loader) loader.style.display = 'none';
+
+    document.getElementById('aulaLayout')?.classList.add('hidden');
+
+    const errorBox = document.getElementById('errorBox');
+    if (errorBox) {
+      errorBox.classList.remove('hidden');
+      errorBox.querySelector('h2').textContent = 'No se pudo cargar el aula';
+      errorBox.querySelector('p').textContent =
+        error.message || 'Ocurrió un error. Recarga la página o revisa la conexión.';
+    }
+  }
+}
+
+/* =========================================
+   CARGAR AULA: UNA SOLA FUNCIÓN
+========================================= */
+
+async function cargarAula(perfil) {
+  const loader = document.getElementById('loading');
+
+  if (loader) {
+    loader.style.display = 'grid';
+    loader.classList.remove('hidden');
+  }
+
+  document.getElementById('passwordScreen')?.classList.add('hidden');
+  document.getElementById('errorBox')?.classList.add('hidden');
+  document.getElementById('aulaLayout')?.classList.remove('hidden');
+
+  try {
+    cargarPerfil(perfil);
+
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      el.textContent =
+        `${perfil.nombre || ''} ${perfil.apellido || ''}`.trim() ||
+        perfil.email ||
+        'Estudiante';
+    });
+
+    document.querySelectorAll('[data-user-email]').forEach(el => {
+      el.textContent = perfil.email || '';
+    });
+
+    const estado = document.getElementById('heroStatus');
+    if (estado) estado.textContent = perfil.activo ? 'Activo' : 'Inactivo';
+
+    await cargarDatosEstudiante(perfil.id);
+
+  } catch (error) {
+    console.error('Error cargando los datos del estudiante:', error);
+
+    const aviso = document.getElementById('dataError');
+    if (aviso) {
+      aviso.textContent =
+        'No se pudieron cargar todos los datos. Revisa la conexión y los permisos de las tablas en Supabase.';
+      aviso.classList.remove('hidden');
+    }
+  } finally {
+    if (loader) {
+      loader.style.display = 'none';
+      loader.classList.add('hidden');
+    }
+  }
+}
+
+/* =========================================
+   CONSULTAR DATOS EN SUPABASE
+========================================= */
+
+async function cargarDatosEstudiante(estudianteId) {
+  const { data: inscripciones, error: errorInscripciones } =
+    await supabaseClient
+      .from('curso_estudiantes')
+      .select('curso_id')
+      .eq('estudiante_id', estudianteId)
+      .eq('activo', true);
+
+  if (errorInscripciones) throw errorInscripciones;
+
+  inscripcionesEstudiante = inscripciones || [];
+  const cursoIds = [...new Set(
+    inscripcionesEstudiante.map(item => item.curso_id).filter(Boolean)
+  )];
+
+  cursosEstudiante = [];
+  actividadesEstudiante = [];
+  calificacionesEstudiante = [];
+
+  if (cursoIds.length > 0) {
+    const { data: cursos, error: errorCursos } = await supabaseClient
+      .from('cursos')
+      .select('id,nombre,descripcion,tutor_id,drive_folder_id')
+      .in('id', cursoIds)
+      .eq('activo', true)
+      .order('nombre');
+
+    if (errorCursos) throw errorCursos;
+
+    cursosEstudiante = cursos || [];
+
+    const idsActivos = cursosEstudiante.map(curso => curso.id);
+
+    if (idsActivos.length > 0) {
+      const { data: actividades, error: errorActividades } =
+        await supabaseClient
+          .from('actividades')
+          .select('id,curso_id,tema_id,titulo,descripcion,tipo,puntaje_maximo,fecha_inicio,fecha_entrega')
+          .in('curso_id', idsActivos)
+          .eq('activo', true)
+          .order('fecha_entrega', {
+            ascending: true,
+            nullsFirst: false
+          });
+
+      if (errorActividades) throw errorActividades;
+
+      actividadesEstudiante = actividades || [];
+    }
+  }
+
+  const { data: calificaciones, error: errorCalificaciones } =
+    await supabaseClient
+      .from('calificaciones')
+      .select('id,actividad_id,estudiante_id,nota,observacion,fecha_calificacion')
+      .eq('estudiante_id', estudianteId);
+
+  if (errorCalificaciones) throw errorCalificaciones;
+
+  calificacionesEstudiante = calificaciones || [];
+
+  await cargarCompaneros(cursoIds);
+  renderizarCursos();
+  if ((location.pathname.split('/').pop() || '').toLowerCase() === 'mi-curso.html') mostrarEncabezadoCursoSeleccionado();
+  renderizarActividades();
+  renderizarCalificaciones();
+  actualizarResumen();
+}
+
+function mostrarEncabezadoCursoSeleccionado() {
+  const cursoId = new URLSearchParams(location.search).get('curso');
+  const zona = document.getElementById('companeros');
+  const curso = cursosEstudiante.find(c => String(c.id) === String(cursoId));
+  if (!zona || !cursoId || !curso) return;
+  let encabezado = document.getElementById('selectedCourseHeader');
+  if (!encabezado) {
+    encabezado = document.createElement('div');
+    encabezado.id = 'selectedCourseHeader';
+    encabezado.className = 'card';
+    zona.prepend(encabezado);
+  }
+  encabezado.innerHTML = `<h2>${escaparHTML(curso.nombre)}</h2><p>${escaparHTML(curso.descripcion || 'Contenido del curso')}</p><p>Debajo encontrarás los compañeros matriculados. Las tareas y calificaciones están disponibles en el menú lateral.</p>`;
+}
+
+/* =========================================
+   UTILIDADES
+========================================= */
+
+function escaparHTML(valor) {
+  return String(valor ?? '').replace(/[&<>"']/g, caracter => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[caracter]);
+}
+
+function formatearFecha(fecha) {
+  if (!fecha) return 'Sin fecha de entrega';
+
+  const fechaObj = new Date(fecha);
+
+  if (Number.isNaN(fechaObj.getTime())) {
+    return 'Fecha no disponible';
+  }
+
+  return fechaObj.toLocaleString('es-PA', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+}
+
+function obtenerCalificacion(actividadId) {
+  return calificacionesEstudiante.find(
+    nota => nota.actividad_id === actividadId
+  );
+}
+
+/* =========================================
+   MOSTRAR CURSOS
+========================================= */
+
+function renderizarCursos() {
+  const contenedor = document.querySelector('.course-grid');
+  if (!contenedor) return;
+
+  if (!cursosEstudiante.length) {
+    contenedor.innerHTML = `
+      <div class="card empty">
+        <i class="fa-solid fa-book-open"></i>
+        <p>Todavía no tienes cursos asignados.</p>
+        <small>Cuando te inscriban en un curso, aparecerá aquí.</small>
+      </div>`;
+    return;
+  }
+
+  contenedor.innerHTML = cursosEstudiante.map(curso => {
+    const cantidad = actividadesEstudiante.filter(
+      actividad => actividad.curso_id === curso.id
+    ).length;
+
+    return `
+      <article class="card course">
+        <div class="course-cover">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div class="course-body">
+          <h3>${escaparHTML(curso.nombre)}</h3>
+          <p>${escaparHTML(curso.descripcion || 'Sin descripción disponible.')}</p>
+          <small>${cantidad} actividad${cantidad === 1 ? '' : 'es'}</small>
+          <div class="drive-action">
+            <button class="btn btn-primary" type="button" onclick="abrirCurso('${curso.id}')"><i class="fa-solid fa-arrow-right"></i> Abrir curso</button>
+            <button class="btn btn-secondary" type="button" onclick="verCompanerosCurso('${curso.id}')"><i class="fa-solid fa-users"></i> Compañeros</button>
+            ${curso.drive_folder_id ? `<a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/drive/folders/${encodeURIComponent(curso.drive_folder_id)}"><i class="fa-brands fa-google-drive"></i> Materiales</a>` : ''}
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function abrirCurso(cursoId) {
+  // Abre la pantalla de curso y conserva el curso elegido en la URL.
+  const curso = cursosEstudiante.find(item => String(item.id) === String(cursoId));
+  if (!curso) {
+    mostrarMensaje('No se encontró ese curso. Actualiza la página e inténtalo de nuevo.', 'error');
+    return;
+  }
+  location.href = 'mi-curso.html?curso=' + encodeURIComponent(curso.id);
+}
+
+/* =========================================
+   MOSTRAR ACTIVIDADES
+========================================= */
+
+function renderizarActividades() {
+  const contenedor = document.getElementById('activityList');
+  if (!contenedor) return;
+
+  let actividades = [...actividadesEstudiante];
+  const cursoSolicitado = new URLSearchParams(location.search).get('curso');
+  if ((location.pathname.split('/').pop() || '').toLowerCase() === 'mi-curso.html' && cursoSolicitado) {
+    actividades = actividades.filter(a => String(a.curso_id) === String(cursoSolicitado));
+  }
+  if (filtroActividadesActual === 'pendientes') {
+    actividades = actividades.filter(a => !obtenerCalificacion(a.id));
+  } else if (filtroActividadesActual === 'calificadas') {
+    actividades = actividades.filter(a => obtenerCalificacion(a.id));
+  }
+
+  if (!actividades.length) {
+    contenedor.innerHTML = `<div class="empty"><i class="fa-solid fa-calendar-check"></i><p>${actividadesEstudiante.length ? 'No hay tareas en este filtro.' : 'No hay tareas o asignaciones publicadas en tus cursos.'}</p></div>`;
+    return;
+  }
+
+  contenedor.innerHTML = actividades.map(actividad => {
+    const nota = obtenerCalificacion(actividad.id);
+    const curso = cursosEstudiante.find(item => item.id === actividad.curso_id);
+    const vencida = actividad.fecha_entrega && new Date(actividad.fecha_entrega).getTime() < Date.now() && !nota;
+    const estado = nota ? 'Calificada' : (vencida ? 'Plazo vencido' : 'Pendiente');
+    const clase = nota ? 'done' : (vencida ? 'late' : '');
+    const cursoLink = curso?.drive_folder_id
+      ? `https://drive.google.com/drive/folders/${encodeURIComponent(curso.drive_folder_id)}`
+      : driveInstitucionalUrl;
+
+    return `
+      <article class="task-card">
+        <div class="activity-icon"><i class="fa-solid fa-file-pen"></i></div>
+        <div style="flex:1;min-width:0">
+          <span class="task-badge ${clase}">${estado}</span>
+          <h4 style="margin:9px 0 4px">${escaparHTML(actividad.titulo)}</h4>
+          <small>${escaparHTML(curso?.nombre || 'Curso')}</small>
+          <p>${escaparHTML(actividad.descripcion || 'El tutor no agregó una descripción.')}</p>
+          <div class="task-meta">
+            <span><i class="fa-solid fa-tag"></i> ${escaparHTML(actividad.tipo || 'Actividad')}</span>
+            <span><i class="fa-solid fa-star"></i> Máximo: ${escaparHTML(actividad.puntaje_maximo ?? 'No indicado')}</span>
+            <span><i class="fa-regular fa-calendar"></i> Entrega: ${escaparHTML(formatearFecha(actividad.fecha_entrega))}</span>
+          </div>
+          ${nota ? `<p><strong>Calificación:</strong> ${escaparHTML(nota.nota)}${actividad.puntaje_maximo != null ? ` / ${escaparHTML(actividad.puntaje_maximo)}` : ''}<br><small>${escaparHTML(nota.observacion || 'Sin observaciones del tutor.')}</small></p>` : ''}
+          <div class="drive-action"><a class="btn btn-secondary" href="${escaparHTML(cursoLink)}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google-drive"></i> Abrir materiales / Drive</a></div>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function filtrarActividades(filtro, boton) {
+  filtroActividadesActual = filtro;
+  document.querySelectorAll('[data-task-filter]').forEach(el => el.classList.toggle('active', el === boton));
+  renderizarActividades();
+}
+
+async function cargarCompaneros(cursoIds) {
+  const contenedor = document.getElementById('membersContent');
+  const resumen = document.getElementById('membersSummary');
+  if (!contenedor) return;
+  if (!cursoIds.length) {
+    companerosPorCurso = [];
+    contenedor.innerHTML = '<div class="card empty"><i class="fa-solid fa-users"></i><p>Aún no estás inscrito en ningún curso.</p></div>';
+    if (resumen) resumen.textContent = 'Sin cursos asignados';
+    return;
+  }
+
+  const { data: inscripciones, error: eIns } = await supabaseClient
+    .from('curso_estudiantes')
+    .select('curso_id,estudiante_id')
+    .in('curso_id', cursoIds)
+    .eq('activo', true);
+  if (eIns) {
+    console.warn('No se pudieron cargar las inscripciones de compañeros:', eIns.message);
+    contenedor.innerHTML = '<div class="card empty"><i class="fa-solid fa-users"></i><p>No se pudo cargar la lista de compañeros. Comprueba los permisos de lectura de curso_estudiantes en Supabase.</p></div>';
+    if (resumen) resumen.textContent = 'Lista no disponible';
+    return;
+  }
+
+  const ids = [...new Set((inscripciones || []).map(x => x.estudiante_id).filter(Boolean))];
+  let usuarios = [];
+  if (ids.length) {
+    const { data, error } = await supabaseClient.from('usuarios')
+      .select('id,nombre,apellido,rol,activo').in('id', ids).eq('activo', true);
+    if (error) {
+      console.warn('No se pudieron cargar los nombres de compañeros:', error.message);
+      contenedor.innerHTML = '<div class="card empty"><i class="fa-solid fa-users"></i><p>La política de seguridad de usuarios no permite mostrar los compañeros. Ajusta la política de lectura para estudiantes del mismo curso.</p></div>';
+      if (resumen) resumen.textContent = 'Lista no disponible';
+      return;
+    }
+    usuarios = data || [];
+  }
+
+  companerosPorCurso = cursosEstudiante.map(curso => {
+    const idsCurso = (inscripciones || []).filter(x => x.curso_id === curso.id).map(x => x.estudiante_id);
+    const miembros = usuarios.filter(u => idsCurso.includes(u.id) && u.rol === 'estudiante');
+    return { curso, miembros };
+  });
+  const cursoSolicitado = new URLSearchParams(location.search).get('curso');
+  if (cursoSolicitado) {
+    const cursoExiste = cursosEstudiante.some(c => String(c.id) === String(cursoSolicitado));
+    if (cursoExiste) companerosPorCurso = companerosPorCurso.filter(x => String(x.curso.id) === String(cursoSolicitado));
+  }
+  const total = new Set(companerosPorCurso.flatMap(x => x.miembros.map(u => u.id))).size;
+  if (resumen) resumen.textContent = `${total} estudiante${total === 1 ? '' : 's'} en tus cursos`;
+
+  contenedor.innerHTML = companerosPorCurso.map(({curso, miembros}) => `
+    <article class="member-course" id="miembros-${escaparHTML(curso.id)}">
+      <h3><i class="fa-solid fa-book-open" style="color:#2563eb"></i> ${escaparHTML(curso.nombre)}</h3>
+      <small class="muted">${miembros.length} compañero${miembros.length === 1 ? '' : 's'} inscrito${miembros.length === 1 ? '' : 's'}</small>
+      ${miembros.length ? `<div class="member-list">${miembros.map(u => {
+        const nombre = `${u.nombre || ''} ${u.apellido || ''}`.trim() || 'Estudiante';
+        const iniciales = nombre.split(/\s+/).slice(0,2).map(p => p[0] || '').join('').toUpperCase();
+        return `<div class="member-row"><div class="member-initial">${escaparHTML(iniciales)}</div><div><strong>${escaparHTML(nombre)}</strong><small>Estudiante</small></div></div>`;
+      }).join('')}</div>` : '<p class="muted">Todavía no hay estudiantes inscritos en este curso.</p>'}
+    </article>`).join('');
+}
+
+function verCompanerosCurso(cursoId) {
+  document.getElementById('companeros')?.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.member-course').forEach(el => el.style.outline = 'none');
+  const el = document.getElementById('miembros-' + cursoId);
+  if (el) { el.style.outline = '2px solid #60a5fa'; el.style.outlineOffset = '3px'; }
+}
+
+async function actualizarDatos() {
+  if (!currentProfile) return;
+  const boton = document.querySelector('button[title="Actualizar información"]');
+  if (boton) { boton.disabled = true; boton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; }
+  try { await cargarDatosEstudiante(currentProfile.id); }
+  catch (e) { console.error(e); const aviso=document.getElementById('dataError'); if(aviso){aviso.textContent='No se pudo actualizar la información: '+(e.message||'error desconocido');aviso.classList.remove('hidden');} }
+  finally { if (boton) { boton.disabled=false; boton.innerHTML='<i class="fa-solid fa-rotate"></i>'; } }
+}
+
+/* =========================================
+   MOSTRAR CALIFICACIONES
+========================================= */
+
+function renderizarCalificaciones() {
+  const seccion = document.getElementById('calificaciones');
+  const tarjeta = seccion?.querySelector('.card');
+  if (!tarjeta) return;
+
+  const notas = actividadesEstudiante
+    .map(actividad => ({
+      actividad,
+      calificacion: obtenerCalificacion(actividad.id)
+    }))
+    .filter(item => item.calificacion);
+
+  if (!notas.length) {
+    tarjeta.innerHTML = `
+      <div class="empty">
+        <i class="fa-solid fa-award"></i>
+        <p>Todavía no tienes calificaciones registradas.</p>
+      </div>`;
+    return;
+  }
+
+  tarjeta.innerHTML = notas.map(({ actividad, calificacion }) => `
+    <article class="activity">
+      <div class="activity-icon">
+        <i class="fa-solid fa-star"></i>
+      </div>
+      <div>
+        <h4>${escaparHTML(actividad.titulo)}</h4>
+        <p><strong>Nota:</strong> ${escaparHTML(calificacion.nota)}
+          ${actividad.puntaje_maximo != null
+            ? ` / ${escaparHTML(actividad.puntaje_maximo)}`
+            : ''}
+        </p>
+        <p>${escaparHTML(calificacion.observacion || 'Sin observaciones.')}</p>
+        <small>Fecha: ${escaparHTML(formatearFecha(calificacion.fecha_calificacion))}</small>
+      </div>
+    </article>
+  `).join('');
+}
+
+/* =========================================
+   RESUMEN DEL ESTUDIANTE
+========================================= */
+
+function actualizarResumen() {
+  const pendientes = actividadesEstudiante.filter(
+    actividad => !obtenerCalificacion(actividad.id)
+  ).length;
+
+  const notas = calificacionesEstudiante
+    .filter(item => item.nota !== null && item.nota !== '')
+    .map(item => Number(item.nota))
+    .filter(Number.isFinite);
+
+  const promedio = notas.length
+    ? notas.reduce((total, nota) => total + nota, 0) / notas.length
+    : null;
+
+  document.getElementById('countCourses').textContent =
+    cursosEstudiante.length;
+
+  document.getElementById('countActivities').textContent =
+    actividadesEstudiante.length;
+
+  document.getElementById('countPending').textContent = pendientes;
+
+  document.getElementById('average').textContent =
+    promedio === null ? '—' : promedio.toFixed(2);
+}
+
+/* =========================================
+   CAMBIO OBLIGATORIO DE CONTRASEÑA
+========================================= */
+
+function mostrarCambioPassword() {
+  const loader = document.getElementById('loading');
+  if (loader) loader.style.display = 'none';
+
+  document.getElementById('aulaLayout')?.classList.add('hidden');
+  document.getElementById('errorBox')?.classList.add('hidden');
+
+  document.getElementById('passwordUserEmail').textContent =
+    currentUser?.email || currentProfile?.email || '';
+
+  document.getElementById('passwordScreen')?.classList.remove('hidden');
+}
+
+document.getElementById('changePasswordForm')
+  .addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const actual = document.getElementById('currentPassword').value;
+    const nueva = document.getElementById('newPassword').value;
+    const repetir = document.getElementById('repeatPassword').value;
+    const boton = document.getElementById('changePasswordButton');
+
+    ocultarMensaje();
+
+    if (!actual) return mostrarMensaje('Escribe tu contraseña actual.', 'error');
+    if (nueva.length < 8) return mostrarMensaje('La nueva contraseña debe tener al menos 8 caracteres.', 'error');
+    if (nueva === 'AulaFAF2020') return mostrarMensaje('Elige una contraseña distinta de la contraseña temporal.', 'error');
+    if (nueva !== repetir) return mostrarMensaje('Las nuevas contraseñas no coinciden.', 'error');
+    if (!currentUser?.email) return mostrarMensaje('No se pudo identificar tu cuenta.', 'error');
+
+    boton.disabled = true;
+    boton.textContent = 'Actualizando...';
+
+    try {
+      const { error: errorLogin } =
+        await supabaseClient.auth.signInWithPassword({
+          email: currentUser.email,
+          password: actual
+        });
+
+      if (errorLogin) {
+        throw new Error('La contraseña actual es incorrecta.');
+      }
+
+      const { data, error } = await supabaseClient.auth.updateUser({
+        password: nueva,
+        data: {
+          ...(currentUser.user_metadata || {}),
+          debe_cambiar_password: false
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.user) currentUser = data.user;
+
+      mostrarMensaje('Contraseña actualizada. Entrando al aula...', 'success');
+
+      setTimeout(async () => {
+        await cargarAula(currentProfile);
+        boton.disabled = false;
+        boton.innerHTML = '<i class="fa-solid fa-key"></i> Cambiar contraseña';
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error cambiando contraseña:', error);
+      mostrarMensaje(error.message || 'No se pudo cambiar la contraseña.', 'error');
+      boton.disabled = false;
+      boton.innerHTML = '<i class="fa-solid fa-key"></i> Cambiar contraseña';
+    }
+  });
+
+function mostrarMensaje(texto, tipo) {
+  const mensaje = document.getElementById('passwordMessage');
+  mensaje.textContent = texto;
+  mensaje.className = 'password-message ' + tipo;
+}
+
+function ocultarMensaje() {
+  const mensaje = document.getElementById('passwordMessage');
+  mensaje.textContent = '';
+  mensaje.className = 'password-message';
+}
+
+function togglePassword(id, boton) {
+  const input = document.getElementById(id);
+
+  if (input.type === 'password') {
+    input.type = 'text';
+    boton.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+  } else {
+    input.type = 'password';
+    boton.innerHTML = '<i class="fa-regular fa-eye"></i>';
+  }
+}
+
+/* =========================================
+   PERFIL Y FOTO
+========================================= */
+
+function cargarPerfil(perfil) {
+  document.getElementById('perfilNombre').value = perfil.nombre || '';
+  document.getElementById('perfilApellido').value = perfil.apellido || '';
+  document.getElementById('perfilEmail').value = perfil.email || '';
+  document.getElementById('perfilRol').value = perfil.rol || '';
+  document.getElementById('perfilActivo').value =
+    perfil.activo ? 'Activo' : 'Inactivo';
+
+  const foto = perfil.id ? localStorage.getItem('aula_virtual_foto_' + perfil.id) : null;
+  const fotoNube = currentUser?.user_metadata?.avatar_url;
+  if (fotoNube) aplicarFoto(fotoNube);
+  else if (foto) aplicarFoto(foto);
+  else quitarFoto();
+}
+
+
+async function guardarPerfil() {
+  const nombre = document.getElementById('perfilNombre').value.trim();
+  const apellido = document.getElementById('perfilApellido').value.trim();
+  const mensaje = document.getElementById('profileMessage');
+  const boton = document.getElementById('saveProfileButton');
+  if (!nombre) { mostrarMensajePerfil('El nombre no puede quedar vacío.', true); return; }
+  if (!currentProfile || !supabaseClient) { mostrarMensajePerfil('No se pudo identificar tu sesión.', true); return; }
+  boton.disabled = true;
+  try {
+    const { data, error } = await supabaseClient.from('usuarios')
+      .update({ nombre, apellido: apellido || null })
+      .eq('id', currentProfile.id)
+      .select('id,nombre,apellido,email,rol,activo,created_at')
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error('No se guardaron los cambios. Verifica las políticas RLS de la tabla usuarios.');
+    currentProfile = { ...currentProfile, ...data };
+    document.querySelectorAll('[data-user-name]').forEach(el => { el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante'; });
+    document.getElementById('perfilNombre').value = data.nombre || '';
+    document.getElementById('perfilApellido').value = data.apellido || '';
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante';
+    });
+    // Actualiza también los textos de bienvenida que no usen data-user-name.
+    const nombreVisible = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante';
+    document.querySelectorAll('#welcomeName, #profileDisplayName').forEach(el => el.textContent = nombreVisible);
+    mostrarMensajePerfil('Perfil actualizado correctamente.', false);
+  } catch (error) {
+    console.error('Error guardando perfil:', error);
+    mostrarMensajePerfil(error.message || 'No se pudo guardar el perfil.', true);
+  } finally { boton.disabled = false; }
+}
+
+function mostrarMensajePerfil(texto, esError) {
+  const el = document.getElementById('profileMessage');
+  if (!el) return;
+  el.textContent = texto;
+  el.classList.remove('hidden');
+  el.style.background = esError ? '#fef2f2' : '#f0fdf4';
+  el.style.color = esError ? '#991b1b' : '#166534';
+  el.style.borderColor = esError ? '#fecaca' : '#bbf7d0';
+}
+
+function mostrarPerfil() {
+  document.getElementById('perfil')?.classList.add('show');
+  setTimeout(() => {
+    document.getElementById('perfil')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }, 30);
+}
+
+function ocultarPerfil() {
+  document.getElementById('perfil')?.classList.remove('show');
+}
+
+function seleccionarFoto() {
+  document.getElementById('photoInput')?.click();
+}
+
+function previsualizarFoto(event) {
+  const archivo = event.target.files?.[0];
+  if (!archivo || !currentUser) return;
+
+  if (!archivo.type.startsWith('image/')) {
+    alert('Selecciona un archivo de imagen.');
+    return;
+  }
+
+  if (archivo.size > 5 * 1024 * 1024) {
+    alert('La foto debe pesar menos de 5 MB.');
+    return;
+  }
+
+  const lector = new FileReader();
+
+  lector.onload = async () => {
+    // La previsualización y copia local funcionan sin configurar Storage.
+    aplicarFoto(lector.result);
+    try {
+      const ruta = `${currentUser.id}/${Date.now()}-${archivo.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(ruta, archivo, { upsert: true, contentType: archivo.type });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabaseClient.storage.from('avatars').getPublicUrl(ruta);
+      const fotoUrl = urlData?.publicUrl;
+      if (fotoUrl) {
+        await supabaseClient.auth.updateUser({ data: { ...(currentUser.user_metadata || {}), avatar_url: fotoUrl } });
+        localStorage.setItem('aula_virtual_foto_' + currentUser.id, fotoUrl);
+        aplicarFoto(fotoUrl);
+        mostrarMensajePerfil('Foto actualizada y guardada en la nube.', false);
+      }
+    } catch (error) {
+      // Si aún no existe el bucket/política, conserva la foto en este navegador.
+      try { localStorage.setItem('aula_virtual_foto_' + currentUser.id, lector.result); }
+      catch (_) { mostrarMensajePerfil('La imagen es muy grande para guardarse en este navegador.', true); return; }
+      mostrarMensajePerfil('Foto aplicada en este navegador. Para sincronizarla en otros dispositivos, configura el bucket público avatars y sus políticas de Storage en Supabase.', false);
+      console.info('Foto no sincronizada con Storage:', error.message);
+    }
+  };
+
+  lector.readAsDataURL(archivo);
+}
+
+function aplicarFoto(src) {
+  document.querySelectorAll('.profile-photo').forEach(img => {
+    img.src = src;
+    img.style.display = 'block';
+  });
+
+  document.querySelectorAll('.profile-icon').forEach(icono => {
+    icono.style.display = 'none';
+  });
+
+  const fotoGrande = document.getElementById('bigProfilePhoto');
+  const iconoGrande = document.getElementById('bigProfileIcon');
+
+  if (fotoGrande) {
+    fotoGrande.src = src;
+    fotoGrande.style.display = 'block';
+  }
+
+  if (iconoGrande) iconoGrande.style.display = 'none';
+}
+
+function quitarFoto() {
+  if (currentUser) {
+    localStorage.removeItem('aula_virtual_foto_' + currentUser.id);
+  }
+
+  document.querySelectorAll('.profile-photo').forEach(img => {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+  });
+
+  document.querySelectorAll('.profile-icon').forEach(icono => {
+    icono.style.display = 'block';
+  });
+
+  const fotoGrande = document.getElementById('bigProfilePhoto');
+  const iconoGrande = document.getElementById('bigProfileIcon');
+
+  if (fotoGrande) {
+    fotoGrande.removeAttribute('src');
+    fotoGrande.style.display = 'none';
+  }
+
+  if (iconoGrande) iconoGrande.style.display = 'block';
+}
+
+/* =========================================
+   CERRAR SESIÓN
+========================================= */
+
+async function cerrarSesion() {
+  try {
+    if (supabaseClient) {
+      await supabaseClient.auth.signOut();
+    }
+  } catch (error) {
+    console.error('Error cerrando sesión:', error);
+  } finally {
+    location.href = '../index.html';
+  }
+}
+
+/* =========================================
+   INICIAR AULA
+========================================= */
+
+initAuth(['estudiante']);
+</script>
+
+</body>
+</html>
