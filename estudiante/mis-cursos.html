@@ -869,6 +869,52 @@ body[data-student-page="cursos"] #perfil { display: none !important; }
 body[data-student-page="cursos"] .two-col { display: contents; }
 body[data-student-page="cursos"] .profile-panel { position: static !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
 
+
+/* ===== Renovación visual Academia Forum ===== */
+:root{--primary:#1647a5;--primary2:#2463d3;--navy:#101d36;--bg:#f3f6fb;--card:#fff;--text:#17243b;--muted:#697991;--border:#e5eaf2;--shadow:0 12px 34px rgba(22,42,78,.065);--accent:#f39a24}
+body{background:radial-gradient(ellipse at 88% 0%,rgba(42,104,211,.055),transparent 33%),#f4f7fc;color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-.01em}
+.sidebar{width:264px;background:linear-gradient(165deg,#101d36 0%,#14294b 56%,#10203a 100%);padding:23px 15px;box-shadow:8px 0 32px rgba(17,36,69,.08)}
+.brand{padding:5px 10px 23px;margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand-logo{border-radius:15px;box-shadow:0 5px 16px rgba(0,0,0,.12)}
+.brand-name{letter-spacing:-.025em;font-size:15px}
+.nav-title{padding:8px 13px;color:#93a7c5;font-weight:800;letter-spacing:1.5px}
+.nav a{padding:12px 14px;margin:4px 0;border:1px solid transparent;border-radius:12px;color:#c3cee0;font-weight:550;transition:background .18s,transform .18s,border-color .18s}
+.nav a:hover{background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.05);transform:translateX(2px)}
+.nav a.active{background:linear-gradient(100deg,#2458a9,#1b477f);color:#fff;box-shadow:0 7px 18px rgba(5,16,36,.2);border-color:rgba(255,255,255,.08)}
+.main{margin-left:264px;width:calc(100% - 264px);padding:28px clamp(20px,3vw,42px) 42px;max-width:none}
+.topbar{gap:22px;margin-bottom:27px;align-items:center}
+.welcome h1{font-size:clamp(24px,2vw,31px);letter-spacing:-.045em;font-weight:800;color:#152642;margin:0 0 7px}
+.welcome .muted{font-size:14px;line-height:1.6;color:#738198}
+.top-actions{gap:11px}
+.icon-btn{width:42px;height:42px;border:1px solid #e4eaf3;background:#fff;color:#4b5d79;border-radius:13px;box-shadow:0 4px 12px rgba(22,42,78,.035);transition:.2s}
+.icon-btn:hover{color:var(--primary2);border-color:#bfd0ed;transform:translateY(-1px)}
+.profile-mini{background:#fff;border:1px solid #e4eaf3;padding:7px 12px 7px 8px;border-radius:15px;box-shadow:0 4px 12px rgba(22,42,78,.035);gap:10px}
+.avatar{border-radius:12px;overflow:hidden}
+.hero{position:relative;overflow:hidden;border:0;border-radius:23px;padding:clamp(25px,3vw,38px);background:linear-gradient(115deg,#153d80 0%,#1c56a8 54%,#2e73d3 100%);box-shadow:0 16px 34px rgba(24,76,151,.19);margin-bottom:26px}
+.hero:after{content:"";position:absolute;width:310px;height:310px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-90px;top:-155px;box-shadow:0 0 0 32px rgba(255,255,255,.035),0 0 0 68px rgba(255,255,255,.025);pointer-events:none}
+.hero h2{font-size:clamp(23px,2.2vw,31px);line-height:1.2;letter-spacing:-.04em;margin:0 0 11px;font-weight:800;color:#fff}
+.hero p{font-size:14px;line-height:1.7;color:rgba(255,255,255,.82);max-width:590px;margin:0}
+.hero-badge{border-radius:15px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px)}
+.grid{gap:18px}
+.card{border:1px solid #e7ecf4;border-radius:19px;background:#fff;box-shadow:0 5px 20px rgba(23,48,88,.035);transition:box-shadow .2s,border-color .2s,transform .2s}
+.card:hover{box-shadow:0 12px 28px rgba(23,48,88,.075);border-color:#d8e2f1}
+.card.stat{padding:22px;border-radius:19px;min-height:135px}
+.stat-icon{border-radius:15px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+.card h3,.section-title{letter-spacing:-.025em}
+.section-title{font-size:19px;font-weight:800;color:#172943}
+button,.btn,a{transition:all .18s ease}
+button:focus-visible,a:focus-visible{outline:3px solid rgba(48,111,218,.28);outline-offset:3px}
+input,select,textarea{border-radius:12px!important;border-color:#dfe6f0!important}
+input:focus,select:focus,textarea:focus{border-color:#7da5e6!important;box-shadow:0 0 0 3px rgba(36,99,211,.1)!important;outline:none}
+table{border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px}
+th{background:#f5f8fd;color:#536681;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td,th{padding:13px 15px;border-bottom:1px solid #edf1f7}
+.empty{border:1px dashed #d5dfed!important;background:linear-gradient(145deg,#fff,#f9fbff)!important;border-radius:18px!important;padding:30px!important}
+/* Pantallas independientes conservan su propio contenido y funciones */
+@media(max-width:1050px){.sidebar{width:235px}.main{margin-left:235px;width:calc(100% - 235px);padding:24px 22px 35px}}
+@media(max-width:760px){.sidebar{width:76px;padding:18px 9px}.brand{padding:4px 4px 18px}.brand-name,.brand-sub,.nav a span,.nav-title{display:none}.brand-row{justify-content:center}.brand-logo{width:44px;height:44px}.nav a{justify-content:center;padding:13px 8px}.nav i{width:auto;font-size:17px}.main{margin-left:76px;width:calc(100% - 76px);padding:20px 14px 30px}.topbar{align-items:flex-start;flex-direction:column}.top-actions{width:100%;justify-content:flex-end;flex-wrap:wrap}.hero{border-radius:19px;padding:24px 21px}.grid{gap:13px}}
+@media(max-width:480px){.main{padding:17px 10px 25px}.welcome h1{font-size:23px}.profile-mini{max-width:100%}.hero h2{font-size:23px}.card.stat{padding:16px;min-height:120px}}
+
 </style>
 <style id="independent-screen-styles">
 /* Navegación por pantallas independientes: solo cambia la presentación, no la lógica ni las consultas. */
