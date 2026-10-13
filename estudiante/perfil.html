@@ -857,22 +857,10 @@ button,input{font:inherit}
     padding:25px 20px;
   }
 }
-
-/* Pantalla independiente: Mi perfil */
-body[data-student-page="perfil"] #inicio { display: none !important; }
-body[data-student-page="perfil"] #cursos { display: none !important; }
-body[data-student-page="perfil"] #actividades { display: none !important; }
-body[data-student-page="perfil"] #calificaciones { display: none !important; }
-body[data-student-page="perfil"] #archivos { display: none !important; }
-body[data-student-page="perfil"] #companeros { display: none !important; }
-body[data-student-page="perfil"] #perfil { display: block !important; }
-body[data-student-page="perfil"] .two-col { display: contents; }
-body[data-student-page="perfil"] .profile-panel { position: static !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
-
 </style>
 </head>
 
-<body data-student-page="perfil">
+<body>
 
 <!-- =========================================
      PANTALLA OBLIGATORIA DE CAMBIO DE PASSWORD
@@ -1088,18 +1076,18 @@ body[data-student-page="perfil"] .profile-panel { position: static !important; v
 
       <a
         class="active"
-        href="inicio.html"
+        href="#inicio"
       >
         <i class="fa-solid fa-house"></i>
         <span>Inicio</span>
       </a>
 
-      <a href="mis-cursos.html">
+      <a href="#cursos">
         <i class="fa-solid fa-book-open"></i>
         <span>Mis cursos</span>
       </a>
 
-      <a href="tareas.html">
+      <a href="#actividades">
         <i class="fa-solid fa-list-check"></i>
         <span>Tareas y asignaciones</span>
       </a>
@@ -1109,7 +1097,7 @@ body[data-student-page="perfil"] .profile-panel { position: static !important; v
         <span>Mi curso y compañeros</span>
       </a>
 
-      <a href="calificaciones.html">
+      <a href="#calificaciones">
         <i class="fa-solid fa-chart-line"></i>
         <span>Calificaciones</span>
       </a>
@@ -1119,14 +1107,14 @@ body[data-student-page="perfil"] .profile-panel { position: static !important; v
       </div>
 
       <a
-        href="perfil.html"
-        
+        href="#perfil"
+        onclick="mostrarPerfil();return true"
       >
         <i class="fa-solid fa-user"></i>
         <span>Mi perfil</span>
       </a>
 
-      <a href="drive.html">
+      <a href="#archivos">
         <i class="fa-solid fa-folder-open"></i>
         <span>Mis archivos</span>
       </a>
@@ -1151,7 +1139,7 @@ body[data-student-page="perfil"] .profile-panel { position: static !important; v
 
   <main
     class="main"
-    id="studentMain"
+    id="inicio"
   >
 
     <div class="topbar">
@@ -2391,7 +2379,6 @@ async function guardarPerfil() {
     if (error) throw error;
     if (!data) throw new Error('No se guardaron los cambios. Verifica las políticas RLS de la tabla usuarios.');
     currentProfile = { ...currentProfile, ...data };
-    document.querySelectorAll('[data-user-name]').forEach(el => { el.textContent = `${data.nombre || ''} ${data.apellido || ''}`.trim() || data.email || 'Estudiante'; });
     document.getElementById('perfilNombre').value = data.nombre || '';
     document.getElementById('perfilApellido').value = data.apellido || '';
     document.querySelectorAll('[data-user-name]').forEach(el => {
@@ -2441,79 +2428,40 @@ function previsualizarFoto(event) {
 
   if (!archivo.type.startsWith('image/')) {
     alert('Selecciona un archivo de imagen.');
+    event.target.value = '';
     return;
   }
-
   if (archivo.size > 5 * 1024 * 1024) {
     alert('La foto debe pesar menos de 5 MB.');
+    event.target.value = '';
+    return;
+  }
+  if (!supabaseClient) {
+    mostrarMensajePerfil('No se pudo conectar con Supabase.', true);
     return;
   }
 
   const lector = new FileReader();
-
-  lector.onload = async () => {
-    // Mostrar la vista previa mientras se sube la imagen.
-    aplicarFoto(lector.result);
-    mostrarMensajePerfil('Subiendo fotografía…', false);
-
-    try {
-      if (!supabaseClient || !currentUser) {
-        throw new Error('No se pudo identificar la sesión de Supabase.');
-      }
-
-      
-async function previsualizarFoto(event) {
-  const archivo = event.target.files?.[0];
-
-  if (!archivo || !currentUser) return;
-
-  if (!archivo.type.startsWith('image/')) {
-    alert('Selecciona un archivo de imagen.');
-    return;
-  }
-
-  if (archivo.size > 5 * 1024 * 1024) {
-    alert('La foto debe pesar menos de 5 MB.');
-    return;
-  }
-
-  const lector = new FileReader();
-
   lector.onload = async () => {
     try {
-      // 1. Verificar la sesión real de Supabase
-      const {
-        data: sesionData,
-        error: sesionError
-      } = await supabaseClient.auth.getUser();
-
+      const { data: sesionData, error: sesionError } =
+        await supabaseClient.auth.getUser();
       if (sesionError) throw sesionError;
 
-      const usuarioAutenticado = sesionData?.user;
-
-      if (!usuarioAutenticado) {
-        throw new Error(
-          'No hay una sesión autenticada. Cierra sesión e inicia nuevamente.'
-        );
+      const usuario = sesionData?.user;
+      if (!usuario) {
+        throw new Error('La sesión ha caducado. Inicia sesión nuevamente.');
       }
 
-      // 2. Mostrar los datos para diagnosticar el problema
       console.log('ID de currentUser:', currentUser.id);
-      console.log('ID autenticado:', usuarioAutenticado.id);
-      console.log('ID coinciden:', currentUser.id === usuarioAutenticado.id);
+      console.log('ID autenticado:', usuario.id);
+      console.log('ID coinciden:', currentUser.id === usuario.id);
 
-      // 3. Crear la ruta usando el ID autenticado
-      const nombreSeguro = archivo.name.replace(
-        /[^a-zA-Z0-9._-]/g,
-        '_'
-      );
-
-      const ruta =
-        `${usuarioAutenticado.id}/${Date.now()}-${nombreSeguro}`;
-
+      const nombreSeguro = archivo.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const ruta = `${usuario.id}/${Date.now()}-${nombreSeguro}`;
       console.log('Ruta de la foto:', ruta);
+      mostrarMensajePerfil('Subiendo fotografía...', false);
 
-      // 4. Subir la foto al bucket avatars
       const { error: uploadError } = await supabaseClient.storage
         .from('avatars')
         .upload(ruta, archivo, {
@@ -2521,72 +2469,39 @@ async function previsualizarFoto(event) {
           cacheControl: '3600',
           upsert: false
         });
-
       if (uploadError) throw uploadError;
 
-      // 5. Obtener la URL pública
       const { data: urlData } = supabaseClient.storage
         .from('avatars')
         .getPublicUrl(ruta);
-
       const fotoUrl = urlData?.publicUrl;
+      if (!fotoUrl) throw new Error('No se pudo obtener la URL de la fotografía.');
 
-      if (!fotoUrl) {
-        throw new Error(
-          'La imagen se subió, pero no se pudo obtener su URL pública.'
-        );
-      }
-
-      // 6. Guardar la URL en los metadatos del usuario
       const { data: authData, error: metadataError } =
         await supabaseClient.auth.updateUser({
           data: {
-            ...(usuarioAutenticado.user_metadata || {}),
+            ...(usuario.user_metadata || {}),
             avatar_url: fotoUrl
           }
         });
-
       if (metadataError) throw metadataError;
 
-      // 7. Actualizar el usuario y mostrar la foto
-      if (authData?.user) {
-        currentUser = authData.user;
-      }
-
-      localStorage.setItem(
-        'aula_virtual_foto_' + usuarioAutenticado.id,
-        fotoUrl
-      );
-
+      if (authData?.user) currentUser = authData.user;
+      localStorage.setItem('aula_virtual_foto_' + usuario.id, fotoUrl);
       aplicarFoto(fotoUrl);
-
-      mostrarMensajePerfil(
-        'Foto actualizada y guardada en la nube.',
-        false
-      );
-
+      mostrarMensajePerfil('Foto actualizada y guardada en la nube.', false);
     } catch (error) {
+      console.error('Error sincronizando foto con Supabase Storage:', error);
       mostrarMensajePerfil(
-        'No se pudo sincronizar la foto: ' +
-        (error?.message || 'Error desconocido') +
-        '. Revisa la sesión y las políticas de Storage.',
+        'No se pudo guardar la foto: ' + (error?.message || 'Error desconocido') + '.',
         true
-      );
-
-      console.error(
-        'Error sincronizando foto con Supabase Storage:',
-        error
       );
     }
   };
 
   lector.onerror = () => {
-    mostrarMensajePerfil(
-      'No se pudo leer el archivo de imagen.',
-      true
-    );
+    mostrarMensajePerfil('No se pudo leer el archivo de imagen.', true);
   };
-
   lector.readAsDataURL(archivo);
 }
 
@@ -2608,16 +2523,12 @@ function aplicarFoto(src) {
     fotoGrande.style.display = 'block';
   }
 
-  if (iconoGrande) {
-    iconoGrande.style.display = 'none';
-  }
+  if (iconoGrande) iconoGrande.style.display = 'none';
 }
 
 function quitarFoto() {
   if (currentUser) {
-    localStorage.removeItem(
-      'aula_virtual_foto_' + currentUser.id
-    );
+    localStorage.removeItem('aula_virtual_foto_' + currentUser.id);
   }
 
   document.querySelectorAll('.profile-photo').forEach(img => {
@@ -2637,9 +2548,7 @@ function quitarFoto() {
     fotoGrande.style.display = 'none';
   }
 
-  if (iconoGrande) {
-    iconoGrande.style.display = 'block';
-  }
+  if (iconoGrande) iconoGrande.style.display = 'block';
 }
 
 /* =========================================
@@ -2657,7 +2566,6 @@ async function cerrarSesion() {
     location.href = '../index.html';
   }
 }
-
 
 /* =========================================
    INICIAR AULA
