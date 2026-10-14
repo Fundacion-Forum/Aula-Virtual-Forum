@@ -869,25 +869,178 @@ body[data-student-page="calificaciones"] #perfil { display: none !important; }
 body[data-student-page="calificaciones"] .two-col { display: contents; }
 body[data-student-page="calificaciones"] .profile-panel { position: static !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
 
-\n/* ===== Academia Forum · referencia visual estudiante ===== */
-:root{--primary:#0878e8;--primary2:#0d8af0;--navy:#06284f;--bg:#edf6ff;--card:#fff;--text:#092b59;--muted:#6684a9;--border:#dcecff;--success:#0bb783;--warning:#ff9c32;--danger:#e64b65;--shadow:0 7px 24px rgba(27,95,160,.09)}
-html{background:#edf6ff} body{background:linear-gradient(135deg,#f4faff,#eaf5ff);font-family:Inter,"Segoe UI",Arial,sans-serif;color:#092b59;letter-spacing:-.01em}
-.sidebar{width:224px;background:linear-gradient(180deg,#05294f 0%,#031d3d 100%);padding:18px 12px;box-shadow:8px 0 24px rgba(4,37,75,.08)}
-.brand{padding:7px 7px 23px;margin-bottom:13px;border-bottom:1px solid rgba(255,255,255,.12)}.brand-logo{width:44px;height:44px;border-radius:9px;background:#fff;color:#0878e8}.brand-name{font-size:12px;font-weight:850;line-height:1.25;color:#fff}.brand-sub{font-size:9px;letter-spacing:1.5px;color:#9ecbff}
-.nav-title{color:#6da5df;font-size:9px;padding:15px 12px 6px;letter-spacing:1.4px}.nav a{padding:10px 12px;margin:3px 0;border-radius:7px;gap:10px;color:#d6e8ff;font-size:12px;font-weight:550}.nav a:hover,.nav a.active{background:linear-gradient(90deg,#0878e8,#0566c7);color:#fff;box-shadow:0 4px 12px #001d3e55}.nav i{font-size:12px;width:17px}
-.main{margin-left:224px;width:calc(100% - 224px);padding:20px 24px 30px;max-width:none}.topbar{min-height:46px;margin-bottom:20px;padding:0 2px;gap:16px}.welcome h1{font-size:21px;font-weight:800;color:#092b59;margin-bottom:4px}.muted{font-size:12px;color:#7590b1}.top-actions{gap:8px}.icon-btn{width:34px;height:34px;border-radius:50%;background:#fff;border-color:#e0edfb;color:#54789f}.profile-mini{border:0;background:transparent;padding:3px 7px}.avatar{width:33px;height:33px}.mini-name{font-size:10px;color:#17416d}.mini-role{font-size:9px}.hero{border-radius:12px;padding:20px 24px;min-height:94px;background:linear-gradient(105deg,#073f9e 0%,#0879e8 65%,#20a4f5 100%);box-shadow:0 7px 20px #1674cf30}.hero h2{font-size:19px;margin-bottom:5px}.hero p{font-size:11px}.hero-badge{border:0;background:transparent;text-align:right;padding:4px 8px}.hero-badge strong{font-size:16px}.hero-badge span{font-size:10px}
-.grid{gap:12px;margin-top:14px}.card{border:1px solid #e2effc;border-radius:11px;padding:15px;box-shadow:0 4px 14px rgba(37,100,160,.045)}.section{margin-top:16px}.section h2,.section h3{color:#103a70}.section-title{font-size:14px}.btn,button{border-radius:8px}.btn-primary,.primary-btn{background:#0878e8}
-/* course cards / tables / files */
-.course-card,.course,.assignment-card{border-radius:11px;box-shadow:0 4px 16px rgba(37,100,160,.06)}.progress,.progress-bar{border-radius:999px;overflow:hidden}.table-wrap,table{border-radius:10px;overflow:hidden}table{border-collapse:separate;border-spacing:0;background:white}th{background:#f3f8ff;color:#57799f;font-size:10px;font-weight:700}td{font-size:11px;color:#355c86}th,td{padding:12px 13px;border-bottom:1px solid #e8f1fc}tr:last-child td{border-bottom:0}input,select,textarea{border:1px solid #d9e9fa!important;border-radius:8px!important;background:#fff!important;padding:10px 12px!important;color:#143b68}input:focus,select:focus,textarea:focus{outline:2px solid #b9dcff!important;border-color:#70b8ff!important}
-/* clean spacing and consistent controls */
-button,.btn,a{transition:all .18s ease}button:hover,.btn:hover{filter:brightness(.98);transform:translateY(-1px)}.section h2{font-size:14px}.badge,.status,.pill{border-radius:999px}.main .card h3{font-size:12px}.main .card p{font-size:11px}
-@media(max-width:1050px){.sidebar{width:200px}.main{margin-left:200px;width:calc(100% - 200px);padding:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:720px){.sidebar{width:74px;padding:14px 8px}.brand-name,.brand-sub,.nav span,.nav-title{display:none}.brand{padding:5px 4px 18px}.brand-row{justify-content:center}.nav a{justify-content:center;padding:12px 5px}.main{margin-left:74px;width:calc(100% - 74px);padding:14px}.welcome h1{font-size:18px}.topbar{align-items:flex-start}.grid{grid-template-columns:1fr}.hero{padding:18px}.hero-badge{display:none}}
 
+/* ===== Renovación visual Academia Forum ===== */
+:root{--primary:#1647a5;--primary2:#2463d3;--navy:#101d36;--bg:#f3f6fb;--card:#fff;--text:#17243b;--muted:#697991;--border:#e5eaf2;--shadow:0 12px 34px rgba(22,42,78,.065);--accent:#f39a24}
+body{background:radial-gradient(ellipse at 88% 0%,rgba(42,104,211,.055),transparent 33%),#f4f7fc;color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-.01em}
+.sidebar{width:264px;background:linear-gradient(165deg,#101d36 0%,#14294b 56%,#10203a 100%);padding:23px 15px;box-shadow:8px 0 32px rgba(17,36,69,.08)}
+.brand{padding:5px 10px 23px;margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand-logo{border-radius:15px;box-shadow:0 5px 16px rgba(0,0,0,.12)}
+.brand-name{letter-spacing:-.025em;font-size:15px}
+.nav-title{padding:8px 13px;color:#93a7c5;font-weight:800;letter-spacing:1.5px}
+.nav a{padding:12px 14px;margin:4px 0;border:1px solid transparent;border-radius:12px;color:#c3cee0;font-weight:550;transition:background .18s,transform .18s,border-color .18s}
+.nav a:hover{background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.05);transform:translateX(2px)}
+.nav a.active{background:linear-gradient(100deg,#2458a9,#1b477f);color:#fff;box-shadow:0 7px 18px rgba(5,16,36,.2);border-color:rgba(255,255,255,.08)}
+.main{margin-left:264px;width:calc(100% - 264px);padding:28px clamp(20px,3vw,42px) 42px;max-width:none}
+.topbar{gap:22px;margin-bottom:27px;align-items:center}
+.welcome h1{font-size:clamp(24px,2vw,31px);letter-spacing:-.045em;font-weight:800;color:#152642;margin:0 0 7px}
+.welcome .muted{font-size:14px;line-height:1.6;color:#738198}
+.top-actions{gap:11px}
+.icon-btn{width:42px;height:42px;border:1px solid #e4eaf3;background:#fff;color:#4b5d79;border-radius:13px;box-shadow:0 4px 12px rgba(22,42,78,.035);transition:.2s}
+.icon-btn:hover{color:var(--primary2);border-color:#bfd0ed;transform:translateY(-1px)}
+.profile-mini{background:#fff;border:1px solid #e4eaf3;padding:7px 12px 7px 8px;border-radius:15px;box-shadow:0 4px 12px rgba(22,42,78,.035);gap:10px}
+.avatar{border-radius:12px;overflow:hidden}
+.hero{position:relative;overflow:hidden;border:0;border-radius:23px;padding:clamp(25px,3vw,38px);background:linear-gradient(115deg,#153d80 0%,#1c56a8 54%,#2e73d3 100%);box-shadow:0 16px 34px rgba(24,76,151,.19);margin-bottom:26px}
+.hero:after{content:"";position:absolute;width:310px;height:310px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-90px;top:-155px;box-shadow:0 0 0 32px rgba(255,255,255,.035),0 0 0 68px rgba(255,255,255,.025);pointer-events:none}
+.hero h2{font-size:clamp(23px,2.2vw,31px);line-height:1.2;letter-spacing:-.04em;margin:0 0 11px;font-weight:800;color:#fff}
+.hero p{font-size:14px;line-height:1.7;color:rgba(255,255,255,.82);max-width:590px;margin:0}
+.hero-badge{border-radius:15px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px)}
+.grid{gap:18px}
+.card{border:1px solid #e7ecf4;border-radius:19px;background:#fff;box-shadow:0 5px 20px rgba(23,48,88,.035);transition:box-shadow .2s,border-color .2s,transform .2s}
+.card:hover{box-shadow:0 12px 28px rgba(23,48,88,.075);border-color:#d8e2f1}
+.card.stat{padding:22px;border-radius:19px;min-height:135px}
+.stat-icon{border-radius:15px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+.card h3,.section-title{letter-spacing:-.025em}
+.section-title{font-size:19px;font-weight:800;color:#172943}
+button,.btn,a{transition:all .18s ease}
+button:focus-visible,a:focus-visible{outline:3px solid rgba(48,111,218,.28);outline-offset:3px}
+input,select,textarea{border-radius:12px!important;border-color:#dfe6f0!important}
+input:focus,select:focus,textarea:focus{border-color:#7da5e6!important;box-shadow:0 0 0 3px rgba(36,99,211,.1)!important;outline:none}
+table{border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px}
+th{background:#f5f8fd;color:#536681;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td,th{padding:13px 15px;border-bottom:1px solid #edf1f7}
+.empty{border:1px dashed #d5dfed!important;background:linear-gradient(145deg,#fff,#f9fbff)!important;border-radius:18px!important;padding:30px!important}
+/* Pantallas independientes conservan su propio contenido y funciones */
+@media(max-width:1050px){.sidebar{width:235px}.main{margin-left:235px;width:calc(100% - 235px);padding:24px 22px 35px}}
+@media(max-width:760px){.sidebar{width:76px;padding:18px 9px}.brand{padding:4px 4px 18px}.brand-name,.brand-sub,.nav a span,.nav-title{display:none}.brand-row{justify-content:center}.brand-logo{width:44px;height:44px}.nav a{justify-content:center;padding:13px 8px}.nav i{width:auto;font-size:17px}.main{margin-left:76px;width:calc(100% - 76px);padding:20px 14px 30px}.topbar{align-items:flex-start;flex-direction:column}.top-actions{width:100%;justify-content:flex-end;flex-wrap:wrap}.hero{border-radius:19px;padding:24px 21px}.grid{gap:13px}}
+@media(max-width:480px){.main{padding:17px 10px 25px}.welcome h1{font-size:23px}.profile-mini{max-width:100%}.hero h2{font-size:23px}.card.stat{padding:16px;min-height:120px}}
+
+
+/* ===== Rediseño visual Aula Virtual: estilo Fundación Academia Forum ===== */
+:root{--primary:#075fbd;--primary2:#0878df;--navy:#071d3b;--bg:#eef5fc;--card:#fff;--text:#102b50;--muted:#6680a4;--border:#e5edf7;--shadow:0 8px 26px rgba(24,70,120,.07)}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(135deg,#f4f8fd 0%,#edf5fc 100%);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px}
+.layout{min-height:100vh}
+.sidebar{width:302px;padding:16px 18px 20px;background:radial-gradient(ellipse at 15% 80%,rgba(20,92,161,.2),transparent 42%),linear-gradient(165deg,#061a35 0%,#08264a 55%,#04162e 100%);box-shadow:4px 0 22px rgba(6,30,59,.08);overflow-y:auto}
+.brand{padding:2px 8px 24px;margin-bottom:22px;border-bottom:1px solid rgba(255,255,255,.09)}
+.brand-row{gap:12px;align-items:center}.brand-logo{width:58px;height:58px;flex:0 0 58px;border-radius:13px;background:#fff;color:#0789d8;box-shadow:0 4px 14px rgba(0,0,0,.08)}.brand-name{font-size:14px;line-height:1.18;letter-spacing:.15px}.brand-sub{font-size:10px;letter-spacing:1.1px;color:#8fb5df}
+.nav-title{padding:10px 14px 7px;color:#83a8d0;font-size:10px;letter-spacing:1.3px}.nav a{padding:14px 15px;margin:5px 0;border-radius:12px;gap:14px;color:#dbe8f7;font-size:14px;transition:background .2s,transform .2s}.nav a:hover{background:rgba(35,125,211,.25);transform:translateX(2px)}.nav a.active{background:linear-gradient(105deg,#0874ce,#1760a8);box-shadow:0 6px 16px rgba(0,70,145,.22);color:#fff}.nav i{font-size:17px}
+.sidebar-footer{padding-top:24px}.logout{border-radius:12px;background:rgba(35,104,171,.32);padding:14px;color:#f4f8ff}.logout:hover{background:rgba(45,131,207,.42)}
+.main{margin-left:302px;width:calc(100% - 302px);padding:0 26px 30px;min-width:0}
+.topbar{min-height:78px;margin:0 -26px 24px;padding:14px 28px;background:rgba(255,255,255,.94);border-bottom:1px solid #e8eff8;box-shadow:0 5px 18px rgba(28,68,110,.035);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.welcome h1{font-size:20px;font-weight:800;letter-spacing:-.3px;margin:0 0 5px;color:#102e55}.welcome .muted{font-size:13px;color:#6c83a1}.top-actions{gap:10px}.icon-btn{width:43px;height:43px;border-radius:14px;background:#fff;border:1px solid #e7eef8;color:#1769b9;box-shadow:0 2px 8px rgba(15,60,110,.035)}.icon-btn:hover{background:#f0f7ff;border-color:#cfe3fa}.profile-mini{padding:4px 8px;border-radius:14px;gap:10px}.profile-mini:hover{background:#f3f8fe}.avatar{width:42px;height:42px;background:#e8f3ff;color:#0875cf}.mini-name{color:#15365f;font-weight:750}.mini-role{color:#7b91ad}
+.hero{position:relative;overflow:hidden;border:0;border-radius:22px;padding:30px 34px;min-height:150px;background:linear-gradient(110deg,#123e91 0%,#1264c6 48%,#1596d1 100%);box-shadow:0 10px 26px rgba(20,90,170,.14);color:white;display:flex;align-items:center;justify-content:space-between;gap:22px}.hero:after{width:300px;height:300px;right:-65px;top:-105px;border-radius:50%;background:rgba(255,255,255,.07);box-shadow:-80px 120px 0 rgba(255,255,255,.045)}.hero h2{position:relative;z-index:1;color:#fff;font-size:25px;font-weight:800;margin:0 0 9px;letter-spacing:-.45px}.hero p{position:relative;z-index:1;color:#e9f5ff;font-size:15px;line-height:1.55;margin:0;max-width:620px}.hero-badge{position:relative;z-index:1;min-width:150px;padding:14px 18px;border:1px solid rgba(255,255,255,.2);border-radius:15px;background:rgba(255,255,255,.12);color:#fff}.hero-badge strong{font-size:19px;color:#fff}.hero-badge span{color:#d9edff;font-size:12px}
+.grid{gap:18px;margin:20px 0 26px}.card,.section,.profile-panel,.drive-card{border:1px solid rgba(226,236,248,.9);border-radius:17px;background:rgba(255,255,255,.96);box-shadow:var(--shadow)}.card{padding:20px;transition:box-shadow .2s,border-color .2s}.card:hover{box-shadow:0 12px 30px rgba(25,79,133,.10);border-color:#d4e5f8}.card.stat{position:relative;min-height:112px;display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:3px solid #0878e8}.card.stat:nth-child(2){border-bottom-color:#10b981}.card.stat:nth-child(3){border-bottom-color:#f59e0b}.card.stat:nth-child(4){border-bottom-color:#7c3aed}.stat strong{display:block;font-size:27px;line-height:1.2;margin-top:7px;color:#102d52;font-weight:800}.stat-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#e4f2ff;color:#0877d4;font-size:23px}.card.stat:nth-child(2) .stat-icon{background:#def8ed;color:#10a875}.card.stat:nth-child(3) .stat-icon{background:#fff0d9;color:#ee9200}.card.stat:nth-child(4) .stat-icon{background:#f0e5ff;color:#7938d0}
+.section{padding:20px;margin:22px 0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:15px;margin-bottom:15px;border-bottom:1px solid #edf2f8}.section h2,.section-title,.card h3{color:#102f57;font-size:17px;font-weight:800;margin:0}.section-head h2:before{color:#1685d0}.link-btn{color:#0874d5;font-weight:700;border-radius:9px;padding:8px 10px}.link-btn:hover{background:#eff7ff}.two-col{gap:22px;align-items:start}.course-grid{gap:14px}.course{overflow:hidden;padding:12px;display:flex;gap:16px;align-items:stretch}.course-cover{min-height:110px;min-width:190px;border-radius:13px;background:linear-gradient(135deg,#4aa8ef,#1761c8);color:#fff;display:grid;place-items:center;font-size:42px}.course-body{padding:8px 6px;flex:1}.course h3{font-size:17px;margin:0 0 9px}.course small{color:#6a83a6;font-size:12px;line-height:1.5}.course .muted{color:#6b83a4}.activity{padding:15px 4px;border-bottom:1px solid #edf2f8}.activity:last-child{border-bottom:0}.activity-icon{width:45px;height:45px;border-radius:50%;background:#e4f2ff;color:#1481d0}.activity h4{font-size:14px;color:#14345e;margin:0 0 5px}.activity small{color:#7188a7}.task-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.task-filter{border:1px solid #e0eaf6;background:#f8fbff;border-radius:10px;padding:8px 12px;color:#587493}.task-filter.active{background:#e5f2ff;color:#096ac2;border-color:#bfddfb}.task-card{border:1px solid #e8eff8;border-radius:13px;padding:16px;margin:10px 0;background:#fff}.task-badge{border-radius:20px;padding:5px 9px;font-size:11px;font-weight:700}.empty{border:1px dashed #d8e5f4;border-radius:14px;background:#f9fcff;color:#7890ad;padding:26px;text-align:center}.empty i{color:#3c95db}
+.profile-panel{padding:24px}.profile-head{border-bottom:1px solid #edf2f8;padding-bottom:18px;margin-bottom:18px}.big-avatar{background:#e6f3ff;color:#0875d1;border:4px solid #fff;box-shadow:0 0 0 1px #dceafa}.field label{font-size:12px;color:#506b8e;font-weight:750}.field input{border:1px solid #dce7f4;border-radius:11px;background:#fbfdff;padding:12px 13px;color:#16375e}.field input:focus{outline:none;border-color:#65a9ec;box-shadow:0 0 0 3px rgba(36,130,214,.1)}.btn{border-radius:11px;padding:11px 16px;font-weight:750}.btn-primary{background:#0876d5;color:#fff;box-shadow:0 5px 12px rgba(8,118,213,.15)}.btn-primary:hover{background:#075fb2}.btn-secondary{background:#f3f8fe;color:#24547f;border:1px solid #dce9f7}.notice{border-radius:12px}
+.password-screen{backdrop-filter:blur(8px)}.password-card{border-radius:22px;box-shadow:0 24px 70px rgba(13,51,94,.16)}
+@media(max-width:1100px){.sidebar{width:250px}.main{margin-left:250px;width:calc(100% - 250px);padding-left:20px;padding-right:20px}.topbar{margin-left:-20px;margin-right:-20px;padding-left:22px;padding-right:22px}.two-col{grid-template-columns:1fr}.hero h2{font-size:22px}}
+@media(max-width:760px){.sidebar{position:relative;width:100%;inset:auto;padding:12px;max-height:none}.layout{display:block}.brand{padding-bottom:12px;margin-bottom:10px}.brand-logo{width:44px;height:44px;flex-basis:44px}.nav{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px}.nav-title,.sidebar-footer{display:none}.nav a{white-space:nowrap;padding:10px 12px;margin:0;font-size:12px}.main{margin:0;width:100%;padding:0 14px 22px}.topbar{margin:0 -14px 16px;padding:14px;min-height:auto;align-items:flex-start;flex-direction:column}.welcome h1{font-size:18px}.top-actions{width:100%;justify-content:flex-end;flex-wrap:wrap}.hero{padding:23px 21px;min-height:0;align-items:flex-start;flex-direction:column}.hero h2{font-size:21px}.hero p{font-size:13px}.hero-badge{min-width:0;padding:10px 14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card.stat{min-height:100px;padding:14px}.stat strong{font-size:23px}.stat-icon{width:44px;height:44px;font-size:18px}.section{padding:15px;margin:16px 0}.course{flex-direction:column}.course-cover{min-width:0;min-height:120px}.profile-mini{max-width:100%}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.hero h2{font-size:19px}.top-actions{justify-content:flex-start}.mini-name{font-size:12px}}
+
+</style>
+<style id="independent-screen-styles">
+/* Navegación por pantallas independientes: solo cambia la presentación, no la lógica ni las consultas. */
+body.page-inicio #companeros,
+body.page-inicio #actividades,
+body.page-inicio #calificaciones,
+body.page-inicio #archivos,
+body.page-inicio #perfil { display:none !important; }
+body.page-inicio #cursos { display:block; }
+
+body.page-cursos .hero,
+body.page-cursos .grid,
+body.page-cursos #companeros,
+body.page-cursos #actividades,
+body.page-cursos #calificaciones,
+body.page-cursos #archivos,
+body.page-cursos #perfil,
+body.page-cursos #courseDetail { display:none !important; }
+body.page-cursos #cursos { display:block !important; }
+body.page-cursos #cursos .course-grid { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+
+body.page-tareas .hero,
+body.page-tareas .grid,
+body.page-tareas #cursos,
+body.page-tareas #companeros,
+body.page-tareas #calificaciones,
+body.page-tareas #archivos,
+body.page-tareas #perfil,
+body.page-tareas #courseDetail { display:none !important; }
+body.page-tareas .two-col { display:block !important; }
+body.page-tareas #actividades { display:block !important; }
+body.page-tareas #actividades .card { min-height:180px; }
+
+body.page-companeros .hero,
+body.page-companeros .grid,
+body.page-companeros #cursos,
+body.page-companeros #actividades,
+body.page-companeros #calificaciones,
+body.page-companeros #archivos,
+body.page-companeros #perfil,
+body.page-companeros #courseDetail,
+body.page-companeros .two-col { display:none !important; }
+body.page-companeros #companeros { display:block !important; }
+
+body.page-calificaciones .hero,
+body.page-calificaciones .grid,
+body.page-calificaciones #cursos,
+body.page-calificaciones #companeros,
+body.page-calificaciones #actividades,
+body.page-calificaciones #archivos,
+body.page-calificaciones #perfil,
+body.page-calificaciones #courseDetail { display:none !important; }
+body.page-calificaciones .two-col { display:block !important; }
+body.page-calificaciones #calificaciones { display:block !important; }
+
+body.page-perfil .hero,
+body.page-perfil .grid,
+body.page-perfil #cursos,
+body.page-perfil #companeros,
+body.page-perfil #actividades,
+body.page-perfil #calificaciones,
+body.page-perfil #archivos,
+body.page-perfil #courseDetail,
+body.page-perfil .two-col { display:none !important; }
+body.page-perfil #perfil { display:block !important; }
+body.page-perfil .profile-panel { display:block !important; }
+
+body.page-archivos .hero,
+body.page-archivos .grid,
+body.page-archivos #cursos,
+body.page-archivos #companeros,
+body.page-archivos #actividades,
+body.page-archivos #calificaciones,
+body.page-archivos #perfil,
+body.page-archivos #courseDetail,
+body.page-archivos .two-col { display:none !important; }
+body.page-archivos #archivos { display:block !important; }
+
+body.page-detalle .hero,
+body.page-detalle .grid,
+body.page-detalle #cursos,
+body.page-detalle #companeros,
+body.page-detalle #actividades,
+body.page-detalle #calificaciones,
+body.page-detalle #archivos,
+body.page-detalle #perfil,
+body.page-detalle .two-col { display:none !important; }
+body.page-detalle #courseDetail { display:block !important; }
+
+body[class*="page-"] .main > .topbar { margin-bottom:24px; }
+body[class*="page-"]:not(.page-inicio) .main > .topbar .welcome h1 { font-size:clamp(24px,2.3vw,32px); }
+body[class*="page-"]:not(.page-inicio) .section { margin-top:8px; }
+body[class*="page-"] .nav a { transition:background .18s ease, transform .18s ease; }
+body[class*="page-"] .nav a:hover { transform:translateX(2px); }
+body[class*="page-"] .card { box-shadow:0 8px 24px rgba(15,35,70,.045); }
+@media(max-width:760px) {
+  body[class*="page-"] .main { padding:20px 16px !important; }
+  body[class*="page-"] .main > .topbar { gap:14px; align-items:flex-start; flex-direction:column; }
+}
 </style>
 </head>
 
-<body data-student-page="calificaciones">
+<body data-student-page="calificaciones" class="page-calificaciones">
 
 <!-- =========================================
      PANTALLA OBLIGATORIA DE CAMBIO DE PASSWORD
@@ -1046,9 +1199,7 @@ button,.btn,a{transition:all .18s ease}button:hover,.btn:hover{filter:brightness
   <h2>Acceso denegado</h2>
   <p>No tienes permisos para esta pantalla.</p>
 
-  <a
-    class="btn btn-primary"
-    href="../index.html"
+  <a href="drive.html"
   >
     Volver al inicio
   </a>
@@ -1102,30 +1253,30 @@ button,.btn,a{transition:all .18s ease}button:hover,.btn:hover{filter:brightness
       </div>
 
       <a
-        class="active"
+       
         href="inicio.html"
       >
-        <i class="fa-solid fa-house"></i>
+        <i></i>
         <span>Inicio</span>
       </a>
 
       <a href="mis-cursos.html">
-        <i class="fa-solid fa-book-open"></i>
+        <i></i>
         <span>Mis cursos</span>
       </a>
 
       <a href="tareas.html">
-        <i class="fa-solid fa-list-check"></i>
+        <i></i>
         <span>Tareas y asignaciones</span>
       </a>
 
-      <a href="#companeros">
-        <i class="fa-solid fa-users"></i>
+      <a href="companeros.html">
+        <i></i>
         <span>Mi curso y compañeros</span>
       </a>
 
-      <a href="calificaciones.html" class="active">
-        <i class="fa-solid fa-chart-line"></i>
+      <a class="active" href="calificaciones.html">
+        <i></i>
         <span>Calificaciones</span>
       </a>
 
@@ -1137,12 +1288,12 @@ button,.btn,a{transition:all .18s ease}button:hover,.btn:hover{filter:brightness
         href="perfil.html"
         
       >
-        <i class="fa-solid fa-user"></i>
+        <i></i>
         <span>Mi perfil</span>
       </a>
 
       <a href="drive.html">
-        <i class="fa-solid fa-folder-open"></i>
+        <i></i>
         <span>Mis archivos</span>
       </a>
 
@@ -1173,16 +1324,9 @@ button,.btn,a{transition:all .18s ease}button:hover,.btn:hover{filter:brightness
 
       <div class="welcome">
 
-        <h1>
-          ¡Bienvenido/a,
-          <span data-user-name>
-            estudiante
-          </span>!
-        </h1>
+        <h1>Calificaciones</h1>
 
-        <div class="muted">
-          Aquí encontrarás tus cursos, actividades, calificaciones y materiales.
-        </div>
+        <div class="muted">Consulta tus resultados y el progreso de tu aprendizaje.</div>
 
       </div>
 
