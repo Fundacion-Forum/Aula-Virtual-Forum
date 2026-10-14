@@ -3,7 +3,32 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--primary:#2563eb;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#64748b;--border:#e2e8f0;--nav:#101c35}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px Arial,sans-serif;color:var(--text)}aside{position:fixed;inset:0 auto 0 0;width:250px;background:var(--nav);color:#fff;padding:25px 18px}aside h2{font-size:20px;margin:0 0 8px}aside p{color:#b8c6dc;font-size:13px;margin-bottom:30px}.nav{display:block;color:#dce7f8;text-decoration:none;padding:13px;border-radius:10px;margin:6px 0}.nav.active,.nav:hover{background:#24385d;color:#fff}main{margin-left:250px;padding:28px;max-width:1500px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.top h1{margin:0;font-size:28px}.muted{color:var(--muted)}.btn{border:0;border-radius:9px;background:var(--primary);color:#fff;padding:11px 15px;cursor:pointer;font-weight:600}.btn.secondary{background:#e8eefb;color:#1d4ed8}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0}.card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:20px;box-shadow:0 4px 15px #0f172a08}.stat{font-size:28px;font-weight:700;margin-top:8px}.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:15px}.course h3{margin:0 0 8px}.course .desc{min-height:42px;color:var(--muted)}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.notice{padding:12px;border-radius:10px;background:#eff6ff;color:#1d4ed8;margin-top:15px}.empty{padding:30px;text-align:center;color:var(--muted)}@media(max-width:800px){aside{position:static;width:auto;padding:16px}aside .nav{display:inline-block;margin:4px}main{margin:0;padding:18px}.stats{grid-template-columns:1fr}}
-</style></head><body>
+</style>
+<style id="tutor-visual-redesign">
+:root{--primary:#0878e8;--bg:#edf6ff;--card:#fff;--text:#092b5c;--muted:#6282a9;--border:#dceafa;--nav:#06264d}
+body{background:linear-gradient(135deg,#eef7ff,#f9fcff 58%,#eaf5ff);color:var(--text)}
+aside{background:linear-gradient(180deg,#062b57,#031b3a);box-shadow:5px 0 22px #07346a16}
+aside h2{font-size:18px;line-height:1.5}aside h2 i{color:#48b9ff}
+aside p{color:#a9c9ec}
+.nav{font-size:13px;border-radius:9px}.nav.active,.nav:hover{background:linear-gradient(90deg,#0878e8,#0b69c7);box-shadow:0 4px 12px #006ed42b}
+main{padding:28px 32px}
+.top{padding:20px 22px;background:#ffffffdf;border:1px solid #dceafa;border-radius:17px;box-shadow:0 8px 24px #1e5b9710}
+.top h1{color:#092e65;font-size:27px;letter-spacing:-.4px}
+.card{border-color:#dceafa;border-radius:15px;box-shadow:0 6px 18px #17558b0b}
+.card:not(.course){padding:22px}
+.stats{gap:17px;margin:22px 0}
+.stat{color:#0878e8;font-size:30px}
+.courses{gap:18px}
+.course{position:relative;overflow:hidden;border-radius:15px;padding:22px;border-top:3px solid #48a9ff}
+.course h3{color:#10396f}.course .desc{line-height:1.55}
+.btn{background:linear-gradient(135deg,#0878e8,#0563c7);border-radius:10px}
+.btn.secondary{background:#e7f2ff;color:#0759ad}
+.notice{background:#edf7ff;border:1px solid #d0e8ff;color:#1a5a9d;border-radius:11px}
+.empty{background:#f8fbff;border:1px dashed #c8dff6;border-radius:12px}
+@media(max-width:800px){main{padding:16px}.top{padding:16px}.stats{grid-template-columns:1fr}.card:not(.course){padding:17px}}
+</style>
+
+</head><body>
 <aside><h2><i class="fa-solid fa-graduation-cap"></i> Aula Virtual FAF</h2><p>Panel de gestión académica</p><a class="nav active" href="tutor.html"><i class="fa-solid fa-book-open"></i> Mis cursos</a><a class="nav" href="#" onclick="salir();return false"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a></aside>
 <main><div class="top"><div><h1>Panel del tutor</h1><p class="muted" id="welcome">Gestiona tus cursos, estudiantes y calificaciones.</p></div><button class="btn" onclick="crearCursoUI()"><i class="fa-solid fa-plus"></i> Crear curso</button></div>
 <div class="stats"><div class="card"><span class="muted">Mis cursos</span><div class="stat" id="nCursos">—</div></div><div class="card"><span class="muted">Estudiantes inscritos</span><div class="stat" id="nEstudiantes">—</div></div><div class="card"><span class="muted">Actividades</span><div class="stat" id="nActividades">—</div></div></div>

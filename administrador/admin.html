@@ -96,6 +96,126 @@ button:disabled{opacity:.65;cursor:not-allowed}
 @media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.sidebar{width:72px}.brand span,.nav span{display:none}.main{margin-left:72px;width:calc(100% - 72px);padding:20px}.brand{padding-left:10px}.nav a{justify-content:center;padding:12px 8px}}
 @media(max-width:600px){.grid,.form-grid,.drive-create-grid{grid-template-columns:1fr}.sidebar{display:none}.main{margin-left:0;width:100%;padding:16px}.topbar{align-items:flex-start;flex-direction:column}.credential-row{align-items:flex-start;flex-direction:column}.toolbar{align-items:flex-start;flex-direction:column}.drive-item{align-items:flex-start;flex-direction:column}.drive-actions{width:100%;flex-wrap:wrap}.drive-actions>*{flex:1}.drive-create-field[style]{grid-column:auto!important}}
+
+/* Rediseño visual inspirado en el panel estudiantil */
+:root{
+  --primary:#0878e8; --bg:#edf6fd; --card:#ffffff; --text:#082b59;
+  --muted:#6382a7; --border:#dcecfb; --success:#087f5b; --danger:#b42318;
+}
+body{
+  background:linear-gradient(135deg,#eef7ff 0%,#f8fbff 52%,#eaf5ff 100%);
+  color:var(--text);
+}
+.sidebar{
+  width:238px; padding:22px 14px; color:#eaf5ff;
+  background:linear-gradient(180deg,#062b56 0%,#031b39 100%);
+  box-shadow:8px 0 28px rgba(4,35,72,.10);
+}
+.brand{
+  margin:0 4px 24px; padding:12px 10px 18px; min-height:54px;
+  border-radius:12px; background:rgba(255,255,255,.98); color:#07346b;
+  font-size:15px; letter-spacing:.2px; line-height:1.25; gap:10px;
+}
+.brand i{color:#0787f9;font-size:22px}
+.nav a{
+  gap:11px; padding:11px 12px; margin:4px 0; border-radius:9px;
+  color:#d3e6fb; font-size:13px; transition:background .18s ease,color .18s ease;
+}
+.nav a:hover,.nav a.active{
+  background:linear-gradient(90deg,#0788f5,#0866c5); color:white;
+  box-shadow:0 5px 14px rgba(0,119,232,.22);
+}
+.nav i{font-size:14px}
+.main{
+  margin-left:238px; width:calc(100% - 238px); padding:26px 30px 34px;
+}
+.topbar{
+  padding:14px 18px; margin-bottom:22px; border:1px solid #dcecfb;
+  border-radius:16px; background:rgba(255,255,255,.88);
+  box-shadow:0 5px 20px rgba(26,94,157,.06);
+}
+.welcome h1{font-size:25px; letter-spacing:-.5px;color:#082f68}
+.profile{
+  border:1px solid #e1effb; background:#f9fcff; padding:8px 12px;
+  border-radius:14px; color:#123f75;
+}
+.avatar{background:linear-gradient(135deg,#d7edff,#a9d6ff);color:#0878e8}
+.grid{gap:15px}
+.card{
+  border:1px solid #dfedfa; border-radius:15px; padding:20px;
+  box-shadow:0 7px 22px rgba(23,91,150,.065);
+  transition:box-shadow .18s ease,transform .18s ease;
+}
+.card:hover{box-shadow:0 10px 27px rgba(23,91,150,.095)}
+.stat{min-height:112px}
+.stat-icon{
+  width:48px;height:48px;border-radius:15px;
+  background:linear-gradient(135deg,#e0f1ff,#c7e6ff);color:#0878e8;
+}
+.stat strong{font-size:30px;color:#082f68}
+.section{margin-top:22px}
+.section h2{font-size:19px;letter-spacing:-.2px;color:#0a3269}
+button,.btn{border-radius:10px;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+button:active,.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(100deg,#0878e8,#0a65c5);color:#fff;box-shadow:0 4px 12px rgba(8,120,232,.16)}
+.btn-primary:hover:not(:disabled){background:linear-gradient(100deg,#0668cc,#084fa4);box-shadow:0 6px 15px rgba(8,120,232,.22)}
+.btn-secondary{background:#edf6ff;color:#174b83;border:1px solid #d7eaff}
+.btn-secondary:hover:not(:disabled){background:#dceeff}
+.btn-success{background:#0a9b73;color:white}
+.toolbar{gap:12px}
+.table-wrap{border:1px solid #e5f0fa;border-radius:11px}
+.table{background:#fff}
+.table th,.table td{padding:13px 14px;border-bottom:1px solid #e8f1fa}
+.table th{background:#f6faff;color:#55769a;font-size:11px;letter-spacing:.45px}
+.table tbody tr:hover{background:#f6fbff}
+.table tbody tr:last-child td{border-bottom:0}
+.form-grid{gap:16px}
+.field label,.drive-create-field label{color:#234d7b}
+.field input,.field select,.drive-create-field input,.drive-create-field select,.drive-create-field textarea{
+  border:1px solid #d8e8f7;border-radius:10px;background:#fbfdff;color:#143d6b;
+}
+.field input:focus,.field select:focus,.drive-create-field input:focus,.drive-create-field select:focus,.drive-create-field textarea:focus{
+  outline:3px solid #d8ecff;border-color:#69b6fa;
+}
+.note{background:#f0f8ff;border:1px solid #cfe7ff;border-radius:12px;color:#285982}
+.success-box{background:#ecfbf5;border-color:#b9efda;color:#08734f}
+.error-box{background:#fff4f3;border-color:#ffd4d0;color:#a12a20}
+.credentials{border-color:#b9efda;border-radius:12px}
+.credential-value{background:#f1f7fd;color:#123d6d}
+.badge{background:#e4f2ff;color:#0869c2}
+.drive-header-icon{background:#e4f2ff;color:#0878e8;border-radius:13px}
+.drive-breadcrumb{background:#f6faff;border-color:#deecf9;border-radius:11px}
+.drive-item{padding:15px 14px;border-bottom-color:#e8f1fa}
+.drive-icon{background:#e4f2ff;color:#0878e8;border-radius:11px}
+.drive-icon.file{background:#f1f7fd;color:#6a88a8}
+.drive-create-panel{background:#f7fbff;border-color:#deecf9;border-radius:14px}
+.loading{background:rgba(240,248,255,.96)}
+.spinner{border-color:#d5eaff;border-top-color:#0878e8}
+.error{box-shadow:0 8px 24px rgba(23,91,150,.08)}
+@media(max-width:1000px){
+  .main{padding:22px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .sidebar{width:210px}
+  .main{margin-left:210px;width:calc(100% - 210px)}
+}
+@media(max-width:600px){
+  .sidebar{width:100%;position:relative;inset:auto;padding:12px}
+  .layout{display:block}
+  .brand{margin-bottom:10px;padding:10px}
+  .nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+  .nav a{margin:0;padding:10px;font-size:12px}
+  .main{margin-left:0;width:100%;padding:14px}
+  .topbar{align-items:flex-start;flex-direction:column;padding:14px}
+  .welcome h1{font-size:22px}
+  .grid{grid-template-columns:1fr;gap:11px}
+  .form-grid,.drive-create-grid{grid-template-columns:1fr}
+  .card{padding:15px}
+  .toolbar{align-items:flex-start;flex-direction:column}
+  .table th,.table td{padding:10px}
+}
+
 </style>
 </head>
 

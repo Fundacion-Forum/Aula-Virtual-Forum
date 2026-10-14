@@ -19,7 +19,42 @@ button,.btn{border:0;border-radius:9px;padding:10px 14px;font:inherit;font-size:
 #loading{position:fixed;inset:0;z-index:5;background:var(--bg);display:grid;place-items:center}.spinner{width:38px;height:38px;border:4px solid #dbeafe;border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.hidden{display:none!important}
 @media(max-width:850px){aside{width:68px;padding:20px 8px}.brand span,nav span{display:none}nav a{justify-content:center;padding:12px 6px}main{margin-left:68px;padding:20px}}
 @media(max-width:600px){aside{display:none}main{margin:0;padding:14px}.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.item{flex-direction:column}}
-</style></head><body>
+</style>
+<style id="tutor-visual-redesign">
+:root{--p:#0878e8;--bg:#edf6ff;--text:#092b5c;--muted:#6282a9;--border:#dceafa}
+body{background:linear-gradient(135deg,#eef7ff 0%,#f8fbff 55%,#eaf5ff 100%);color:var(--text)}
+aside{background:linear-gradient(180deg,#062b57 0%,#031b3a 100%);box-shadow:5px 0 22px #07346a16}
+.brand{font-size:17px;letter-spacing:.2px;padding:12px 12px 28px}
+.brand i{color:#48b9ff}
+nav a{border-radius:9px;font-size:13px;transition:background .2s}
+nav a:hover,nav a:focus{background:#0b69c7;color:#fff}
+main{padding:28px 32px;max-width:1600px}
+.top{padding:18px 22px;background:#ffffffd9;border:1px solid #dceafa;border-radius:17px;box-shadow:0 8px 24px #1e5b9710;margin-bottom:20px}
+h1{color:#092e65;font-size:27px;letter-spacing:-.4px}
+h2{color:#10396f;font-size:18px}
+.card,.profile{background:#fff;border:1px solid #dceafa;border-radius:15px;box-shadow:0 6px 18px #17558b0b}
+.card{padding:22px}
+.profile{padding:10px 14px}
+.avatar{background:linear-gradient(135deg,#d9efff,#b7dcff);color:#0878e8}
+.grid{gap:20px}
+.section{margin-top:20px}
+label{color:#315b8b}
+input,select,textarea{border-color:#d5e5f7;background:#fbfdff;border-radius:10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#5ca9f5;box-shadow:0 0 0 3px #1685f515}
+button,.btn{border-radius:10px;transition:transform .15s,box-shadow .15s}
+button:hover,.btn:hover{box-shadow:0 5px 12px #086ac522;transform:translateY(-1px)}
+.primary,.btn.primary,.btn:not(.secondary){background:linear-gradient(135deg,#0878e8,#0563c7);color:#fff}
+.secondary{background:#e7f2ff;color:#0759ad}
+.note{background:#edf7ff;border-color:#d0e8ff;color:#1a5a9d}
+.item{background:#f9fcff;border:1px solid #e2eefb;border-radius:11px;padding:12px}
+.list{gap:10px}
+.empty{background:#f8fbff;border:1px dashed #c8dff6;border-radius:12px;padding:25px}
+.ok{border-radius:11px}
+.err{border-radius:11px}
+@media(max-width:800px){aside{box-shadow:none}main{padding:16px}.top{padding:16px}.card{padding:17px}.grid{grid-template-columns:1fr}}
+</style>
+
+</head><body>
 <div id="loading"><div><div class="spinner"></div><p>Verificando acceso...</p></div></div>
 <div id="denied" class="card hidden" style="max-width:500px;margin:70px auto;text-align:center"><h2>Acceso denegado</h2><p id="deniedText">Esta pantalla requiere una cuenta de tutor activa.</p><a class="btn primary" href="../index.html">Volver al inicio</a></div>
 <div id="app" class="hidden">
